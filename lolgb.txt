@@ -1,0 +1,21 @@
+- Core / RAM
+	- Clock potable
+- ROMs
+	- MBC1
+	- MBC2
+	- MBC3
+	- MBC5
+- I/O
+- Display
+- Synth chip
+- Gui
+	- Load
+	- Play
+	- Pause
+	- Save State
+- Interface Debug
+	- Etat Registres
+	- Instruction suivante
+- Link over TCP
+- Choix type gameboy
+- .app
