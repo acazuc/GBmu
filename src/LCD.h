@@ -27,7 +27,7 @@ class LCD
 		void renderBG();
 		void renderOBJ();
 		void renderChars();
-		void printChar(uint8_t charcode);
+		void printChar(uint8_t cx, uint8_t cy, uint8_t charcode);
 
 };
 
