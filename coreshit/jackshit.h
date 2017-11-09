@@ -6,6 +6,7 @@
 #include <asmtypes.h>
 #include <iostream>
 #include <colors.h>
+#include <cstring>
 
 using namespace std;
 

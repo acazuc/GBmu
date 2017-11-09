@@ -14,6 +14,27 @@ int main( int ac, char **av )
 
 	for ( ; ; )
 	{
-		cout << SKY << core::getpc() << WHITE << " : " << core::cue() << endl;
+		const char *s;
+		const char *s2;
+
+		cout << GREY << std::hex << core::getpc() << WHITE << " : ";
+		if ( s = core::cue() )
+		{
+			if ( *s == '_' )
+				cout << DARK << s;
+			else
+			{
+				s2 = strchr( s, ' ' );
+				cout << BLUE;
+				if ( !s2 )
+					cout << s;
+				else
+				{
+					cout.write( s, s2 - s );
+					cout << WHITE << s2;
+				}
+			}
+		}
+		cout << endl;
 	}
 }

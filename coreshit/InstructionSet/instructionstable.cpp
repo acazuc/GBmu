@@ -35,9 +35,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld b, n",
+		2,
+		&ldbn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -77,9 +77,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld c, n",
+		2,
+		&ldcn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -119,9 +119,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld d, n",
+		2,
+		&lddn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -161,9 +161,9 @@ struct core::instruction core::decode[256] =
 
 	// 30
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld e, n",
+		2,
+		&lden
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -201,9 +201,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld h, n",
+		2,
+		&ldhn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -243,9 +243,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld l, n",
+		2,
+		&ldln
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -327,9 +327,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld a, n",
+		2,
+		&ldan
 	},
 	{
 		"__ NO INSTRUCTION __",
