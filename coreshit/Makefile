@@ -2,12 +2,16 @@
 CC	= g++
 NAME	= Coretest
 
-SRC	= memboy.cpp \
-	  try.cpp
+SRC	= InstructionSet/_blank.cpp \
+	  InstructionSet/instructionstable.cpp \
+	  InstructionSet/nop.cpp \
+	  memboy.cpp \
+	  core.cpp \
+	  mastercore.cpp
 
 OBJ	= $(SRC:.cpp=.o)
 
-CFLAGS	= -I . -I Essentials -std=gnu++11
+CFLAGS	= -I . -I InstructionSet -I Essentials -std=gnu++11
 
 RM	= rm -f
 

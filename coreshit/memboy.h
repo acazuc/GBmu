@@ -3,6 +3,7 @@
 #define MEMBOY_H
 
 #include <asmtypes.h>
+#include <fstream>
 
 #define P1 0xFF00
 #define SB 0xFF01
@@ -43,6 +44,8 @@
 //#define NR 0xFF10~FF26
 //#define RAM 0xFF30~FF3F 
 
+using namespace std;
+
 class memboy
 {
 	private:
@@ -55,6 +58,9 @@ class memboy
 
 		// Accessers
 		byte &operator []( word addr );
+
+		// Setters
+		bool romload( const char *path );
 
 		// Destructor
 		~memboy( void );

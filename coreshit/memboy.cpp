@@ -31,6 +31,22 @@ byte &memboy::operator []( word addr )
 	return map[addr];
 }
 
+bool memboy::romload( const char *path )
+{
+	ifstream in;
+
+	in.open( path );
+	if ( !in || in.eof() )
+		return false;
+	for ( byte *cmap = map ; cmap < ( map + 0x10000 ) ; cmap++ )
+	{
+		*cmap = in.get();
+		if ( in.eof() )
+			return true;
+	}
+	return false;
+}
+
 memboy::~memboy( void )
 {
 	delete [] map;

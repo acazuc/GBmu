@@ -2,10 +2,17 @@
 #ifndef JACKSHIT_H
 #define JACKSHIT_H
 
+#include <memboy.h>
+#include <asmtypes.h>
+#include <iostream>
+#include <colors.h>
+
+using namespace std;
+
 class core
 {
 	private:
-		static union
+		union registers
 		{
 			struct
 			{
@@ -32,21 +39,33 @@ class core
 			}
 			w;
 			//byte id[sizeof name];
-		}
-		regs;
+		};
+
+		static union registers regs;
 
 		struct instruction
 		{
-			char *mnemonic;
+			const char *mnemonic;
 			byte cycles;
 			void (*function)( void );
 		};
 
+		static byte cycle;
 		static struct instruction *next;
 
+		#include <InstructionSet/instructionset.h>
 	public:
 		static memboy mem;
 		static struct instruction decode[256];
-}
+
+		// Initialiser
+		static void init( void );
+
+		// Control
+		static const char *cue( void );
+
+		// Getters
+		static word getpc( void );
+};
 
 #endif
