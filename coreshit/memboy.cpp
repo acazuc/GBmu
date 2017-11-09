@@ -31,6 +31,18 @@ byte &memboy::operator []( word addr )
 	return map[addr];
 }
 
+byte &memboy::cbank0( word addr )
+{
+	return map[addr];
+}
+
+byte &memboy::cbank1( word addr )
+{
+	if ( addr < 0x8000 || addr > 0x9fff )
+		return map[addr];
+	return bank1chardts[addr - 0x8000];
+}
+
 bool memboy::romload( const char *path )
 {
 	ifstream in;

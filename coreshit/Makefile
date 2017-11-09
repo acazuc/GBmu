@@ -5,6 +5,7 @@ NAME	= Coretest
 SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/instructionstable.cpp \
 	  InstructionSet/nop.cpp \
+	  InstructionSet/ldrr.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp

@@ -337,34 +337,34 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, b",
 		1,
-		&_blank
+		&ldbb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, c",
 		1,
-		&_blank
+		&ldbc
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, d",
 		1,
-		&_blank
+		&ldbd
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, e",
 		1,
-		&_blank
+		&ldbe
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, h",
 		1,
-		&_blank
+		&ldbh
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, l",
 		1,
-		&_blank
+		&ldbl
 	},
 
 	// 70
@@ -374,9 +374,39 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld b, a",
 		1,
-		&_blank
+		&ldba
+	},
+	{
+		"ld c, b",
+		1,
+		&ldcb
+	},
+	{
+		"ld c, c",
+		1,
+		&ldcc
+	},
+	{
+		"ld c, d",
+		1,
+		&ldcd
+	},
+	{
+		"ld c, e",
+		1,
+		&ldce
+	},
+	{
+		"ld c, h",
+		1,
+		&ldch
+	},
+	{
+		"ld c, l",
+		1,
+		&ldcl
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -384,46 +414,41 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld c, a",
 		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		&ldca
 	},
 
 	// 80
 	{
-		"__ NO INSTRUCTION __",
+		"ld d, b",
 		1,
-		&_blank
+		&lddb
+	},
+	{
+		"ld d, c",
+		1,
+		&lddc
+	},
+	{
+		"ld d, d",
+		1,
+		&lddd
+	},
+	{
+		"ld d, e",
+		1,
+		&ldde
+	},
+	{
+		"ld d, h",
+		1,
+		&lddh
+	},
+	{
+		"ld d, l",
+		1,
+		&lddl
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -431,51 +456,41 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld d, a",
 		1,
-		&_blank
+		&ldda
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld e, b",
 		1,
-		&_blank
+		&ldeb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld e, c",
 		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		&ldec
 	},
 
 	// 90
 	{
-		"__ NO INSTRUCTION __",
+		"ld e, d",
 		1,
-		&_blank
+		&lded
+	},
+	{
+		"ld e, e",
+		1,
+		&ldee
+	},
+	{
+		"ld e, h",
+		1,
+		&ldeh
+	},
+	{
+		"ld e, l",
+		1,
+		&ldel
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -483,51 +498,41 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld e, a",
 		1,
-		&_blank
+		&ldea
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld h, b",
 		1,
-		&_blank
+		&ldhb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld h, c",
 		1,
-		&_blank
+		&ldhc
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld h, d",
 		1,
-		&_blank
+		&ldhd
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld h, e",
 		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		&ldhe
 	},
 
 	// 100
 	{
-		"__ NO INSTRUCTION __",
+		"ld h, h",
 		1,
-		&_blank
+		&ldhh
+	},
+	{
+		"ld h, l",
+		1,
+		&ldhl
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -535,44 +540,39 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld h, a",
 		1,
-		&_blank
+		&ldha
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, b",
 		1,
-		&_blank
+		&ldlb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, c",
 		1,
-		&_blank
+		&ldlc
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, d",
 		1,
-		&_blank
+		&ldld
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, e",
 		1,
-		&_blank
+		&ldle
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, h",
 		1,
-		&_blank
+		&ldlh
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, l",
 		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		&ldll
 	},
 
 	// 110
@@ -582,9 +582,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld l, a",
 		1,
-		&_blank
+		&ldla
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -629,9 +629,34 @@ struct core::instruction core::decode[256] =
 
 	// 120
 	{
-		"__ NO INSTRUCTION __",
+		"ld a, b",
 		1,
-		&_blank
+		&ldab
+	},
+	{
+		"ld a, c",
+		1,
+		&ldac
+	},
+	{
+		"ld a, d",
+		1,
+		&ldad
+	},
+	{
+		"ld a, e",
+		1,
+		&ldae
+	},
+	{
+		"ld a, h",
+		1,
+		&ldah
+	},
+	{
+		"ld a, l",
+		1,
+		&ldal
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -639,34 +664,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ld a, a",
 		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		&ldaa
 	},
 	{
 		"__ NO INSTRUCTION __",

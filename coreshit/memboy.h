@@ -58,6 +58,8 @@ class memboy
 
 		// Accessers
 		byte &operator []( word addr );
+		byte &cbank0( word addr );
+		byte &cbank1( word addr );
 
 		// Setters
 		bool romload( const char *path );
