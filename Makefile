@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/10/22 21:07:35 by acazuc           ###   ########.fr        #
+#    Updated: 2017/11/09 16:05:32 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = gcc
 
 CFLAGS = -Wall -Wextra -Werror -O3
 
-INCLUDES_PATH = include/
+INCLUDES_PATH = include/ -I coreshit
 
 SRCS_PATH = src/
 
