@@ -242,6 +242,32 @@ static void cb_tool_size(GtkWidget *osef1, gpointer osef2)
 	gtk_window_resize(GTK_WINDOW(Main::getMainDisplay()->getWindow()), 160 * (unsigned long)osef2, 144 * (unsigned long)osef2);
 }
 
+static void cb_dialog_quit(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef2;
+	gtk_widget_destroy(osef1);
+}
+
+static void cb_help_about(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	GtkWidget *dialog = gtk_about_dialog_new();
+	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(dialog), "GBmu");
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(dialog), "1.0.0");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(dialog), "2 mecs un peu foufou");
+	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(dialog), "So many emulation right now");
+	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), "xdbcp license v1");
+	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/acazuc/GBmu");
+	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog), "Le github interdit");
+	char *authors[2] = {(char*)"moi", (char*)"lui"};
+	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), (const char**)authors);
+	g_signal_connect(G_OBJECT(dialog), "destroy", G_CALLBACK(cb_dialog_quit), NULL);
+	gint result = gtk_dialog_run(GTK_DIALOG(dialog));
+	(void)result;
+	gtk_widget_destroy(dialog);
+}
+
 MainDisplay::MainDisplay()
 {
 	this->texDatas = new uint8_t[160 * 144 * 3];
@@ -261,37 +287,27 @@ MainDisplay::MainDisplay()
 
 	//File
 	GtkWidget *file = gtk_menu_item_new_with_label("File");
-	gtk_widget_show(file);
 	GtkWidget *file_menu = gtk_menu_new();
-	gtk_widget_show(file_menu);
 	GtkWidget *file_open = gtk_menu_item_new_with_label("Open");
 	g_signal_connect(G_OBJECT(file_open), "activate", G_CALLBACK(cb_file_open), NULL);
-	gtk_widget_show(file_open);
 	GtkWidget *file_quit = gtk_menu_item_new_with_label("Quit");
 	g_signal_connect(G_OBJECT(file_quit), "activate", G_CALLBACK(cb_file_quit), NULL);
-	gtk_widget_show(file_quit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_quit);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), file_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
 	//Tools
 	GtkWidget *tool = gtk_menu_item_new_with_label("Tools");
-	gtk_widget_show(tool);
 	GtkWidget *tool_menu = gtk_menu_new();
-	gtk_widget_show(tool_menu);
 	GtkWidget *tool_debug = gtk_menu_item_new_with_label("Debugger");
 	g_signal_connect(G_OBJECT(tool_debug), "activate", G_CALLBACK(cb_tool_debug), NULL);
-	gtk_widget_show(tool_debug);
 	GtkWidget *tool_size_menu = gtk_menu_new();
-	gtk_widget_show(tool_size_menu);
 	GtkWidget *tool_size = gtk_menu_item_new_with_label("Size");
-	gtk_widget_show(tool_size);
 	for (uint8_t i = 1; i < 20; ++i)
 	{
 		std::string a = std::to_string(160 * i) + "x" + std::to_string(144 * i);
 		GtkWidget *tool_size_x = gtk_menu_item_new_with_label(a.c_str());
 		g_signal_connect(G_OBJECT(tool_size_x), "activate", G_CALLBACK(cb_tool_size), (void*)((unsigned long)i));
-		gtk_widget_show(tool_size_x);
 		gtk_menu_shell_append(GTK_MENU_SHELL(tool_size_menu), tool_size_x);
 	}
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_size), tool_size_menu);
@@ -299,8 +315,16 @@ MainDisplay::MainDisplay()
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_size);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool), tool_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), tool);
+	//Help
+	GtkWidget *help = gtk_menu_item_new_with_label("Help");
+	GtkWidget *help_menu = gtk_menu_new();
+	GtkWidget *help_about = gtk_menu_item_new_with_label("About");
+	g_signal_connect(G_OBJECT(help_about), "activate", G_CALLBACK(cb_help_about), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(help_menu), help_about);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), help_menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 
-	gtk_widget_show(menubar);
+	gtk_widget_show_all(menubar);
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	this->gl = gtk_gl_area_new();
 	gtk_widget_set_hexpand(this->gl, true);
