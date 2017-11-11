@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/11/11 15:37:04 by acazuc           ###   ########.fr        #
+#    Updated: 2017/11/11 22:31:56 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = gbmu
 
 CC = g++
 
-CFLAGS = -g -Wall -Wextra -Werror -Og
+CFLAGS = -g -O2 -std=c++11
 
 INCLUDES_PATH = include/ -I coreshit -I coreshit/Essentials
 
