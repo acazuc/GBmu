@@ -25,9 +25,8 @@ int main( int ac, char **av )
 
 	for ( yay[SVBK] = 1 ; yay[SVBK] <= 7 ; yay[SVBK]++ )
 	{
-		cout << ( int ) yay[0xD000] << endl;
+		cout << ( int ) yay[0xD000] << ' ' << ( int ) yay[SVBK] << endl;
 	}
-
 
 	return 0;
 }

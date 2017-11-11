@@ -1,34 +1,79 @@
 
 #include <memboy.h>
 
+memboy::mempassthru::operator byte( void )
+{
+	return *ptchosen;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator =( byte b )
+{
+	*ptchosen = b;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator =( mempassthru &m )
+{
+	*ptchosen = *m.ptchosen;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator ++( int n )
+{
+	(*ptchosen)++;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator --( int n )
+{
+	(*ptchosen)--;
+	return *this;
+}
+
 memboy::memboy( void )
 {
 	map = new byte [0x10000];
 	bank1chardts = new byte [0x2000];
 	svbk2to7 = new byte [0x6000];
+
+	blockid = 0;
 }
 
-byte &memboy::operator []( word addr )
+memboy::mempassthru &memboy::operator []( word addr )
 {
+	if ( blockid == MEMBOY_MAXSTACK )
+		blockid = 0;
+
 	if ( addr < 0x8000 )
-		return map[addr];
+	{
+		block[blockid].ptchosen = &map[addr];
+		return block[blockid++];
+	}
 	if ( addr < 0xA000 )
 	{
 		if ( map[VBK] & 1 )
-			return bank1chardts[addr - 0x8000];
-		return map[addr];
+			block[blockid].ptchosen = &bank1chardts[addr - 0x8000];
+		else
+			block[blockid].ptchosen = &map[addr];
+		return block[blockid++];
 	}
 	if ( addr < 0xD000 )
-		return map[addr];
+	{
+		block[blockid].ptchosen = &map[addr];
+		return block[blockid++];
+	}
 	if ( addr < 0xE000 )
 	{
 		byte bkid = map[SVBK] & 7;
 
 		if ( bkid > 1 )
-			return svbk2to7[0x1000 * ( bkid - 2 ) + ( addr - 0xD000 )];
-		return map[addr];
+			block[blockid].ptchosen = &svbk2to7[0x1000 * ( bkid - 2 ) + ( addr - 0xD000 )];
+		else
+			block[blockid].ptchosen = &map[addr];
+		return block[blockid++];
 	}
-	return map[addr];
+	block[blockid].ptchosen = &map[addr];
+	return block[blockid++];
 }
 
 byte &memboy::cbank0( word addr )
