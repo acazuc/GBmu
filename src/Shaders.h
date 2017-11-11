@@ -9,7 +9,7 @@ uniform sampler2D texture;\n\
 \n\
 void main()\n\
 {\n\
-	gl_FragColor = mix(vec4(1, 0, 1, 1), texture2D(texture, UV), .5);\n\
+	gl_FragColor = mix(vec4(1, 1, 1, 1), texture2D(texture, UV), .75);\n\
 }\n\
 "};
 
