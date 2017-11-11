@@ -1,28 +1,168 @@
 #include "MainDisplay.h"
+#include "Shaders.h"
 #include "Main.h"
 #include <cstring>
 #include <iostream>
 
+static float mat[16];
 static int32_t ctx_width = 160;
 static int32_t ctx_height = 144;
-static bool initialized = false;
+static GLint texCoordsLocation;
+static GLint vertexesLocation;
+static GLint textureLocation;
+static GLint mvpLocation;
+static GLuint program;
+static GLuint texture;
+static GLuint vao;
 
-static void gl_render(GtkGLArea *area, GdkGLContext *context)
+struct vertex_info
 {
-	if (!initialized && !area)
-		return;
+	float texCoords[2];
+	float position[2];
+};
+
+static const struct vertex_info vertex_data[] =
+{
+	{{0, 0}, {0, 0}},
+	{{1, 0}, {160, 0}},
+	{{0, 1}, {0, 144}},
+	{{1, 0}, {160, 0}},
+	{{1, 1}, {160, 144}},
+	{{0, 1}, {0, 144}}
+};
+
+static void initFragmentShader(GLuint &fs)
+{
+	fs = glCreateShader(GL_FRAGMENT_SHADER);
+	GLchar *tamer = fragShader;
+	glShaderSource(fs, 1, &tamer, NULL);
+	glCompileShader(fs);
+	GLint result = GL_FALSE;
+	glGetShaderiv(fs, GL_COMPILE_STATUS, &result);
+	if (!result)
+	{
+		int errorLen;
+		glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &errorLen);
+		char *error = new char[errorLen + 1];
+		std::memset(error, 0, errorLen + 1);
+		glGetShaderInfoLog(fs, errorLen, NULL, error);
+		std::cerr << "Fragment shader error: " << std::endl << error << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+static void initVertexShader(GLuint &vs)
+{
+	vs = glCreateShader(GL_VERTEX_SHADER);
+	GLchar *tamer = vertShader;
+	glShaderSource(vs, 1, &tamer, NULL);
+	glCompileShader(vs);
+	GLint result = GL_FALSE;
+	glGetShaderiv(vs, GL_COMPILE_STATUS, &result);
+	if (!result)
+	{
+		int errorLen;
+		glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &errorLen);
+		char *error = new char[errorLen + 1];
+		std::memset(error, 0, errorLen + 1);
+		glGetShaderInfoLog(vs, errorLen, NULL, error);
+		std::cerr << "Vertex shader error: " << std::endl << error << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+static void initProgram()
+{
+	GLuint fs;
+	GLuint vs;
+	initFragmentShader(fs);
+	initVertexShader(vs);
+	program = glCreateProgram();
+	glAttachShader(program, fs);
+	glAttachShader(program, vs);
+	glLinkProgram(program);
+	GLint result = GL_FALSE;
+	glGetProgramiv(program, GL_LINK_STATUS, &result);
+	if (!result)
+	{
+		int errorLen;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &errorLen);
+		char *error = new char[errorLen + 1];
+		std::memset(error, 0, errorLen + 1);
+		glGetProgramInfoLog(program, errorLen, NULL, error);
+		std::cerr << "Program error:" << std::endl << error << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	glUseProgram(program);
+	texCoordsLocation = glGetAttribLocation(program, "texCoords");
+	glEnableVertexAttribArray(texCoordsLocation);
+	vertexesLocation = glGetAttribLocation(program, "vertexes");
+	glEnableVertexAttribArray(vertexesLocation);
+	textureLocation = glGetUniformLocation(program, "texture");
+	glUniform1i(textureLocation, 0);
+	mvpLocation = glGetUniformLocation(program, "MVP");
+	glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mat[0]);
+	glDetachShader(program, fs);
+	glDetachShader(program, vs);
+	glDeleteShader(fs);
+	glDeleteShader(vs);
+}
+
+static void initBuffers()
+{
+	glBindVertexArray(vao);
+	GLuint buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
+	glVertexAttribPointer(vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
+	glVertexAttribPointer(texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	glDeleteBuffers(1, &buffer);
+}
+
+static void gl_realize(GtkGLArea *area)
+{
+	(void)area;
+	gtk_gl_area_make_current(area);
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glActiveTexture(GL_TEXTURE0);
+	glBlendEquation(GL_FUNC_ADD);
+	glClearColor(0, 0, 0, 0);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+	initProgram();
+	initBuffers();
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	char *data = new char[144 * 160 * 4];
+	for (uint8_t x = 0; x < 144; ++x)
+	{
+		for (uint8_t y = 0; y < 160; ++y)
+		{
+			((int*)data)[y * 144 + x] = rand();
+		}
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 160, 144, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	delete[] (data);
+}
+
+static bool gl_render(GtkGLArea *area, GdkGLContext *context)
+{
 	(void)area;
 	(void)context;
+	gdk_gl_context_make_current(context);
 	std::cout << (const char*)glGetString(GL_RENDERER) << std::endl;
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	if (!initialized)
-	{
-		initialized = true;
-		MainDisplay *display = Main::getMainDisplay();
-		glGenBuffers(1, &display->getTexCoords());
-		glGenBuffers(1, &display->getVertexes());
-	}
+	//glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(program);
+	glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &(mat[0]));
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glFlush();
+	return (TRUE);
 }
 
 static void gl_resize(GtkGLArea *area, gint width, gint height, gpointer osef)
@@ -32,6 +172,22 @@ static void gl_resize(GtkGLArea *area, gint width, gint height, gpointer osef)
 	std::cout << "width: " << width << ", height: " << height << std::endl;
 	ctx_width = width;
 	ctx_height = height;
+	mat[0] = 2 / width;
+	mat[1] = 0;
+	mat[2] = 0;
+	mat[3] = 0;
+	mat[4] = 0;
+	mat[5] = 2 / -height;
+	mat[6] = 0;
+	mat[7] = 0;
+	mat[8] = 0;
+	mat[9] = 0;
+	mat[10] = -2 / 4;
+	mat[11] = 0;
+	mat[12] = -1;
+	mat[13] = 1;
+	mat[14] = 0;
+	mat[15] = 1;
 }
 
        //Choualbox dbar
@@ -111,7 +267,9 @@ MainDisplay::MainDisplay()
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	this->gl = gtk_gl_area_new();
 	gtk_widget_set_hexpand(this->gl, true);
+	g_signal_connect(this->gl, "realize", G_CALLBACK(gl_realize), NULL);
 	g_signal_connect(this->gl, "resize", G_CALLBACK(gl_resize), NULL);
+	g_signal_connect(this->gl, "render", G_CALLBACK(gl_render), NULL);
 	gtk_widget_set_size_request(this->gl, 160, 144);
 	gtk_container_add(GTK_CONTAINER(box), this->gl);
 	g_object_set(this->gl, "expand", TRUE, NULL);
@@ -129,8 +287,8 @@ MainDisplay::~MainDisplay()
 
 void MainDisplay::iter()
 {
+	gtk_widget_queue_draw(this->gl);
 	gtk_main_iteration_do(false);
-	gl_render(NULL, NULL);
 }
 
 void MainDisplay::putPixel(int32_t x, int32_t y, int32_t color)
