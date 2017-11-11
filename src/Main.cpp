@@ -5,6 +5,7 @@
 
 DebugDisplay *Main::debugDisplay;
 MainDisplay *Main::mainDisplay;
+LCD *Main::lcd;
 
 void Main::run(int ac, char **av)
 {
@@ -12,8 +13,10 @@ void Main::run(int ac, char **av)
 	(void)av;
 	debugDisplay = new DebugDisplay();
 	mainDisplay = new MainDisplay();
+	lcd = new LCD();
 	while (true)
 	{
+		lcd->render();
 		mainDisplay->iter();
 	}
 }

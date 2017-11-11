@@ -138,17 +138,6 @@ static void gl_realize(GtkGLArea *area)
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	char *data = new char[144 * 160 * 3];
-	for (uint8_t x = 0; x < 144; ++x)
-	{
-		for (uint8_t y = 0; y < 160; ++y)
-		{
-			for (uint8_t i = 0; i < 3; ++i)
-				data[(y * 144 + x) * 3 + i] = rand();
-		}
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-	delete[] (data);
 }
 
 static bool gl_render(GtkGLArea *area, GdkGLContext *context)
@@ -156,6 +145,7 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	(void)area;
 	(void)context;
 	gdk_gl_context_make_current(context);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
 	//std::cout << (const char*)glGetString(GL_RENDERER) << std::endl;
 	//glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(program);

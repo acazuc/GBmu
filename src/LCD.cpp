@@ -1,9 +1,19 @@
 #include "LCD.h"
+#include "Main.h"
 
 static memboy memboy;
 
 void LCD::render()
 {
+	for (uint8_t x = 0; x < 144; ++x)
+	{
+		for (uint8_t y = 0; y < 160; ++y)
+		{
+			for (uint8_t i = 0; i < 3; ++i)
+				Main::getMainDisplay()->getTexDatas()[(y * 144 + x) * 3 + i] = rand();
+		}
+	}
+	return;
 	renderBG();
 	renderOBJ();
 }
