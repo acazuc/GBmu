@@ -44,6 +44,8 @@
 //#define NR 0xFF10~FF26
 //#define RAM 0xFF30~FF3F 
 
+#define MEMBOY_MAXSTACK 8
+
 using namespace std;
 
 class memboy
@@ -52,12 +54,30 @@ class memboy
 		byte *map;
 		byte *bank1chardts;
 		byte *svbk2to7;
+
+		class mempassthru
+		{
+			friend class memboy;
+
+			private:
+				byte *ptchosen;
+				byte ptmode;
+			public:
+				operator byte( void );
+				mempassthru &operator =( byte b );
+				mempassthru &operator =( mempassthru &m );
+				mempassthru &operator ++( int n );
+				mempassthru &operator --( int n );
+		};
+
+		mempassthru block[MEMBOY_MAXSTACK];
+		int blockid;
 	public:
 		// Constructor
 		memboy( void );
 
 		// Accessers
-		byte &operator []( word addr );
+		mempassthru &operator []( word addr );
 		byte &cbank0( word addr );
 		byte &cbank1( word addr );
 
