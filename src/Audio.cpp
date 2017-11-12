@@ -15,6 +15,12 @@ static uint64_t c4len = 0;
 static uint64_t c1nextenvstepchange = 0;
 static uint64_t c1nextswpstepchange = 0;
 static uint64_t c2nextenvstepchange = 0;
+static uint64_t c4nextenvstepchange = 0;
+static uint64_t c4nextclocktick = 0;
+
+static uint16_t c4stepcounter = 0;
+static uint16_t c4stepstate = 0xff;
+static float c4divider = 1;
 
 static uint8_t NR10 = 0b00001001;
 static uint8_t NR11 = 0b10101010;
@@ -33,14 +39,14 @@ static uint8_t NR32 = 0b00000000;
 static uint8_t NR33 = 0b00000000;
 static uint8_t NR34 = 0b00000000;
 
-static uint8_t NR41 = 0b00000000;
+static uint8_t NR41 = 0b10000111;
 static uint8_t NR42 = 0b00000000;
 static uint8_t NR43 = 0b00000000;
-static uint8_t NR44 = 0b00000000;
+static uint8_t NR44 = 0b10000000;
 
-static uint8_t NR50 = 0b00010001;
-static uint8_t NR51 = 0b00100001;
-static uint8_t NR52 = 0b10000011;
+static uint8_t NR50 = 0b01000100;
+static uint8_t NR51 = 0b10001000;
+static uint8_t NR52 = 0b10001000;
 
 static uint32_t c1regtofreq(uint8_t nr13, uint8_t nr14)
 {
@@ -84,7 +90,7 @@ static int16_t getc1val()
 	{
 		if (NR14 & 0b10000000)
 		{
-			c1len = NR11 & 0b00111111;
+			c1len = (64 - (NR11 & 0b00111111)) * freq / 256;
 			NR14 &= 0b01111111;
 		}
 		if (c1len == 0)
@@ -169,7 +175,7 @@ static int16_t getc2val()
 	{
 		if (NR24 & 0b10000000)
 		{
-			c2len = NR21 & 0b00111111;
+			c2len = (64 - (NR21 & 0b00111111)) * freq / 256;
 			NR24 &= 0b01111111;
 		}
 		if (c2len == 0)
@@ -220,8 +226,7 @@ static int16_t getc2val()
 	uint32_t curr = frame & inter;
 	if (curr / (float)inter > dutyper)
 		return (SHRT_MAX * envVal);
-	else
-		return (SHRT_MIN * envVal);
+	return (SHRT_MIN * envVal);
 }
 
 static int16_t getc3val()
@@ -230,7 +235,7 @@ static int16_t getc3val()
 	{
 		if (NR34 & 0b10000000)
 		{
-			c3len = NR31;
+			c3len = (256 - NR31) * freq / 256;
 			NR34 &= 0b01111111;
 		}
 		if (c3len == 0)
@@ -248,13 +253,21 @@ static int16_t getc3val()
 
 static int16_t getc4val()
 {
+	if (NR44 & 0b10000000)
+	{
+		c4stepstate = 0xff;
+		c4stepcounter = 0;
+		c4len = (64 - (NR41 & 0b00111111)) * freq / 256;
+		uint8_t tmp = NR43 & 0b00000111;
+		if (tmp == 0b000)
+			c4divider = .5;
+		else
+			c4divider = tmp;
+		c4divider /= pow(2, ((NR41 & 0b11110000) >> 4) + 1);
+		NR44 &= 0b01111111;
+	}
 	if (NR44 & 0b01000000)
 	{
-		if (NR44 & 0b10000000)
-		{
-			c4len = NR41 & 0b00111111;
-			NR44 &= 0b01111111;
-		}
 		if (c4len == 0)
 		{
 			NR52 &= 0b11110111;
@@ -265,7 +278,45 @@ static int16_t getc4val()
 			c4len--;
 		}
 	}
-	return (0);
+	if (frame >= c4nextenvstepchange)
+	{
+		uint8_t envstep = NR22 & 0b00000111;
+		if (envstep != 0)
+		{
+			c4nextenvstepchange = frame + envstep * freq / 64;
+			bool goUp = NR42 & 0b00001000;
+			uint8_t soundVal = (NR42 & 0b11110000) >> 4;
+			if (goUp)
+			{
+				if (soundVal != 0b1111)
+					soundVal++;
+			}
+			else
+			{
+				if (soundVal != 0)
+					soundVal--;
+			}
+			NR42 = (NR42 & 0b00001111) | (soundVal << 4);
+		}
+	}
+	if (frame >= c4nextclocktick)
+	{
+		if (c4stepcounter > 32767)
+		{
+			c4stepcounter = 0;
+			c4stepstate = 0xffff;
+		}
+		uint8_t xored = (c4stepstate & 0x1) ^ ((c4stepstate & 0x2) >> 1);
+		c4stepstate = c4stepstate >> 1;
+		c4stepstate = (c4stepstate & 0b011111111111111) | (xored << 14);
+		if (NR43 & 0b00001000)
+			c4stepstate = (c4stepstate & 0b0111111) | (xored << 6);
+		c4nextclocktick = frame + freq / (4194.304 / c4divider);
+		++c4stepcounter;
+	}
+	if (c4stepstate & 0x1)
+		return (SHRT_MAX);
+	return (SHRT_MIN);
 }
 
 static int paCallback(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo *paTimeInfo, PaStreamCallbackFlags statusFlags, void *userData)
@@ -283,41 +334,29 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 		out[i] = 0;
 		if (NR52 & 0b10000000)
 		{
-			int16_t c1 = 0;
-			int16_t c2 = 0;
-			int16_t c3 = 0;
-			int16_t c4 = 0;
 			bool c1on = (NR51 & 0b00010001) && (NR52 & 0b00000001);
 			bool c2on = (NR51 & 0b00100010) && (NR52 & 0b00000010);
 			bool c3on = (NR51 & 0b01000100) && (NR52 & 0b00000100);
 			bool c4on = (NR51 & 0b10001000) && (NR52 & 0b00001000);
-			if (c1on)
-				c1 = getc1val();
-			if (c2on)
-				c2 = getc2val();
-			if (c3on)
-				c3 = getc3val();
-			if (c4on)
-				c4 = getc4val();
+			int16_t c1 = getc1val();
+			int16_t c2 = getc2val();
+			int16_t c3 = getc3val();
+			int16_t c4 = getc4val();
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (NR51 & 0b00000001);
 				bool lc2on = c2on && (NR51 & 0b00000010);
 				bool lc3on = c3on && (NR51 & 0b00000100);
 				bool lc4on = c4on && (NR51 & 0b00001000);
-				uint8_t nb = (lc1on ? 1 : 0) + (lc2on ? 1 : 0) + (lc3on ? 1 : 0) + (lc4on ? 1 : 0);
-				if (nb)
-				{
-					if (lc1on)
-						out[i] += c1 / nb;
-					if (lc2on)
-						out[i] += c2 / nb;
-					if (lc3on)
-						out[i] += c3 / nb;
-					if (lc4on)
-						out[i] += c4 / nb;
-					out[i] *= ((NR50 & 0b00000111) >> 0) / 7.;
-				}
+				if (lc1on)
+					out[i] += c1 / 4;
+				if (lc2on)
+					out[i] += c2 / 4;
+				if (lc3on)
+					out[i] += c3 / 4;
+				if (lc4on)
+					out[i] += c4 / 4;
+				out[i] *= ((NR50 & 0b00000111) >> 0) / 7.;
 			}
 			else
 			{
@@ -325,19 +364,15 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				bool lc2on = c2on && (NR51 & 0b00100000);
 				bool lc3on = c3on && (NR51 & 0b01000000);
 				bool lc4on = c4on && (NR51 & 0b10000000);
-				uint8_t nb = (lc1on ? 1 : 0) + (lc2on ? 1 : 0) + (lc3on ? 1 : 0) + (lc4on ? 1 : 0);
-				if (nb)
-				{
-					if (lc1on)
-						out[i] += c1 / nb;
-					if (lc2on)
-						out[i] += c2 / nb;
-					if (lc3on)
-						out[i] += c3 / nb;
-					if (lc4on)
-						out[i] += c4 / nb;
-					out[i] *= ((NR50 & 0b01110000) >> 4) / 7.;
-				}
+				if (lc1on)
+					out[i] += c1 / 4;
+				if (lc2on)
+					out[i] += c2 / 4;
+				if (lc3on)
+					out[i] += c3 / 4;
+				if (lc4on)
+					out[i] += c4 / 4;
+				out[i] *= ((NR50 & 0b01110000) >> 4) / 7.;
 			}
 		}
 		if (i & 0x1)
