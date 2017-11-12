@@ -8,6 +8,10 @@
 static uint64_t freq = 100000;
 static uint64_t frame = 0;
 
+static uint64_t c1len = 0;
+static uint64_t c2len = 0;
+static uint64_t c3len = 0;
+static uint64_t c4len = 0;
 static uint64_t c1nextenvstepchange = 0;
 static uint64_t c1nextswpstepchange = 0;
 static uint64_t c2nextenvstepchange = 0;
@@ -22,6 +26,12 @@ static uint8_t NR21 = 0b11101010;
 static uint8_t NR22 = 0b10011011;
 static uint8_t NR23 = 0b10101101;
 static uint8_t NR24 = 0b00100011;
+
+static uint8_t NR30 = 0b00000000;
+static uint8_t NR31 = 0b00000000;
+static uint8_t NR32 = 0b00000000;
+static uint8_t NR33 = 0b00000000;
+static uint8_t NR34 = 0b00000000;
 
 static uint8_t NR41 = 0b00000000;
 static uint8_t NR42 = 0b00000000;
@@ -70,6 +80,23 @@ static void c2freqtoreg(uint32_t freq, uint8_t *nr23, uint8_t *nr24)
 
 static int16_t getc1val()
 {
+	if (NR14 & 0b01000000)
+	{
+		if (NR14 & 0b10000000)
+		{
+			c1len = NR11 & 0b00111111;
+			NR14 &= 0b01111111;
+		}
+		if (c1len == 0)
+		{
+			NR52 &= 0b11111110;
+			return (0);
+		}
+		else
+		{
+			c1len--;
+		}
+	}
 	uint32_t c1freq = c1regtofreq(NR13, NR14);
 	if (frame >= c1nextenvstepchange)
 	{
@@ -138,6 +165,23 @@ static int16_t getc1val()
 
 static int16_t getc2val()
 {
+	if (NR24 & 0b01000000)
+	{
+		if (NR24 & 0b10000000)
+		{
+			c2len = NR21 & 0b00111111;
+			NR24 &= 0b01111111;
+		}
+		if (c2len == 0)
+		{
+			NR52 &= 0b11111101;
+			return (0);
+		}
+		else
+		{
+			c2len--;
+		}
+	}
 	uint32_t c2freq = c1regtofreq(NR23, NR24);
 	if (frame >= c1nextenvstepchange)
 	{
@@ -182,12 +226,45 @@ static int16_t getc2val()
 
 static int16_t getc3val()
 {
+	if (NR34 & 0b01000000)
+	{
+		if (NR34 & 0b10000000)
+		{
+			c3len = NR31;
+			NR34 &= 0b01111111;
+		}
+		if (c3len == 0)
+		{
+			NR52 &= 0b11111011;
+			return (0);
+		}
+		else
+		{
+			c3len--;
+		}
+	}
 	return (0);
 }
 
 static int16_t getc4val()
 {
-	//
+	if (NR44 & 0b01000000)
+	{
+		if (NR44 & 0b10000000)
+		{
+			c4len = NR41 & 0b00111111;
+			NR44 &= 0b01111111;
+		}
+		if (c4len == 0)
+		{
+			NR52 &= 0b11110111;
+			return (0);
+		}
+		else
+		{
+			c4len--;
+		}
+	}
 	return (0);
 }
 
