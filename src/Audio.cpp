@@ -39,8 +39,8 @@ static uint8_t NR32 = 0b00000000;
 static uint8_t NR33 = 0b00000000;
 static uint8_t NR34 = 0b00000000;
 
-static uint8_t NR41 = 0b10000111;
-static uint8_t NR42 = 0b00000000;
+static uint8_t NR41 = 0b00000000;
+static uint8_t NR42 = 0b11110111;
 static uint8_t NR43 = 0b00000000;
 static uint8_t NR44 = 0b10000000;
 
@@ -314,9 +314,10 @@ static int16_t getc4val()
 		c4nextclocktick = frame + freq / (4194.304 / c4divider);
 		++c4stepcounter;
 	}
+	float envVal = ((NR42 & 0b11110000) >> 4) / 15.;
 	if (c4stepstate & 0x1)
-		return (SHRT_MAX);
-	return (SHRT_MIN);
+		return (SHRT_MAX * envVal);
+	return (SHRT_MIN * envVal);
 }
 
 static int paCallback(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo *paTimeInfo, PaStreamCallbackFlags statusFlags, void *userData)
