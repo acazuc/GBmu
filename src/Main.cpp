@@ -5,6 +5,7 @@
 
 DebugDisplay *Main::debugDisplay;
 MainDisplay *Main::mainDisplay;
+Audio *Main::audio;
 LCD *Main::lcd;
 
 void Main::run(int ac, char **av)
@@ -13,6 +14,7 @@ void Main::run(int ac, char **av)
 	(void)av;
 	debugDisplay = new DebugDisplay();
 	mainDisplay = new MainDisplay();
+	audio = new Audio();
 	lcd = new LCD();
 	while (true)
 	{
@@ -50,6 +52,11 @@ void Main::GLError(std::string text)
 
 int main(int ac, char **av)
 {
+	if (Pa_Initialize())
+	{
+		std::cerr << "Failed to init PA" << std::endl;
+		return (-1);
+	}
 	gtk_init(&ac, &av);
 	Main::run(ac, av);
 	return (0);
