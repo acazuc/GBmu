@@ -17,10 +17,16 @@ static uint8_t NR11 = 0b10101010;
 static uint8_t NR12 = 0b10011011;
 static uint8_t NR13 = 0b00000000;
 static uint8_t NR14 = 0b00100000;
+
 static uint8_t NR21 = 0b11101010;
 static uint8_t NR22 = 0b10011011;
 static uint8_t NR23 = 0b10101101;
 static uint8_t NR24 = 0b00100011;
+
+static uint8_t NR41 = 0b00000000;
+static uint8_t NR42 = 0b00000000;
+static uint8_t NR43 = 0b00000000;
+static uint8_t NR44 = 0b00000000;
 
 static uint8_t NR50 = 0b00010001;
 static uint8_t NR51 = 0b00100001;
@@ -174,6 +180,17 @@ static int16_t getc2val()
 		return (SHRT_MIN * envVal);
 }
 
+static int16_t getc3val()
+{
+	return (0);
+}
+
+static int16_t getc4val()
+{
+	//
+	return (0);
+}
+
 static int paCallback(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo *paTimeInfo, PaStreamCallbackFlags statusFlags, void *userData)
 {
 	(void)input;
@@ -201,6 +218,10 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				c1 = getc1val();
 			if (c2on)
 				c2 = getc2val();
+			if (c3on)
+				c3 = getc3val();
+			if (c4on)
+				c4 = getc4val();
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (NR51 & 0b00000001);

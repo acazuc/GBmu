@@ -339,7 +339,6 @@ MainDisplay::~MainDisplay()
 void MainDisplay::iter()
 {
 	gtk_widget_queue_draw(this->window);
-	gtk_main_iteration_do(false);
 }
 
 void MainDisplay::putPixel(int32_t x, int32_t y, int32_t color)

@@ -14,12 +14,14 @@ void Main::run(int ac, char **av)
 	(void)av;
 	debugDisplay = new DebugDisplay();
 	mainDisplay = new MainDisplay();
-	audio = new Audio();
+	//audio = new Audio();
 	lcd = new LCD();
 	while (true)
 	{
 		lcd->render();
 		mainDisplay->iter();
+		debugDisplay->iter();
+		gtk_main_iteration_do(false);
 	}
 }
 
