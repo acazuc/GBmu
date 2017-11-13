@@ -12,12 +12,16 @@ static uint64_t c1len = 0;
 static uint64_t c2len = 0;
 static uint64_t c3len = 0;
 static uint64_t c4len = 0;
+static uint64_t c1env = 0;
+static uint64_t c2env = 0;
+static uint64_t c3env = 0;
+static uint64_t c4env = 0;
 static uint64_t c1nextenvstepchange = 0;
 static uint64_t c1nextswpstepchange = 0;
 static uint64_t c2nextenvstepchange = 0;
 static uint64_t c4nextenvstepchange = 0;
-static uint64_t c4nextclocktick = 0;
 
+static uint64_t c4nextclocktick = 0;
 static uint16_t c4stepcounter = 0;
 static uint16_t c4stepstate = 0xff;
 static float c4divider = 1;
@@ -41,7 +45,7 @@ static uint8_t NR34 = 0b00000000;
 
 static uint8_t NR41 = 0b00000000;
 static uint8_t NR42 = 0b11110111;
-static uint8_t NR43 = 0b00000000;
+static uint8_t NR43 = 0b10010110;
 static uint8_t NR44 = 0b10000000;
 
 static uint8_t NR50 = 0b01000100;
@@ -86,13 +90,14 @@ static void c2freqtoreg(uint32_t freq, uint8_t *nr23, uint8_t *nr24)
 
 static int16_t getc1val()
 {
+	if (NR14 & 0b10000000)
+	{
+		c1len = (64 - (NR11 & 0b00111111)) * freq / 256;
+		c1env = (NR12 & 0b11110000) >> 4;
+		NR14 &= 0b01111111;
+	}
 	if (NR14 & 0b01000000)
 	{
-		if (NR14 & 0b10000000)
-		{
-			c1len = (64 - (NR11 & 0b00111111)) * freq / 256;
-			NR14 &= 0b01111111;
-		}
 		if (c1len == 0)
 		{
 			NR52 &= 0b11111110;
@@ -111,18 +116,18 @@ static int16_t getc1val()
 		{
 			c1nextenvstepchange = frame + envstep * freq / 64;
 			bool goUp = NR12 & 0b00001000;
-			uint8_t soundVal = (NR12 & 0b11110000) >> 4;
 			if (goUp)
 			{
-				if (soundVal != 0b1111)
-					soundVal++;
+				if (c1env != 0b1111)
+					c1env++;
 			}
 			else
 			{
-				if (soundVal != 0)
-					soundVal--;
+				if (c1env == 0)
+					NR52 &= 0b11111110;
+				else
+					c1env--;
 			}
-			NR12 = (NR12 & 0b00001111) | (soundVal << 4);
 		}
 	}
 	if (frame >= c1nextswpstepchange)
@@ -150,7 +155,6 @@ static int16_t getc1val()
 		}
 	}
 	c1freqtoreg(c1freq, &NR13, &NR14);
-	float envVal = ((NR12 & 0b11110000) >> 4) / 15.;
 	uint8_t duty = (NR11 & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
@@ -163,21 +167,23 @@ static int16_t getc1val()
 		dutyper = .875;
 	uint32_t inter = freq / c1freq;
 	uint32_t curr = frame & inter;
+	float envfac = c1env / 15.;
 	if (curr / (float)inter > dutyper)
-		return (SHRT_MAX * envVal);
+		return (SHRT_MAX * envfac);
 	else
-		return (SHRT_MIN * envVal);
+		return (SHRT_MIN * envfac);
 }
 
 static int16_t getc2val()
 {
+	if (NR24 & 0b10000000)
+	{
+		c2len = (64 - (NR21 & 0b00111111)) * freq / 256;
+		c2env = (NR22 & 0b11110000) >> 4;
+		NR24 &= 0b01111111;
+	}
 	if (NR24 & 0b01000000)
 	{
-		if (NR24 & 0b10000000)
-		{
-			c2len = (64 - (NR21 & 0b00111111)) * freq / 256;
-			NR24 &= 0b01111111;
-		}
 		if (c2len == 0)
 		{
 			NR52 &= 0b11111101;
@@ -196,22 +202,21 @@ static int16_t getc2val()
 		{
 			c2nextenvstepchange = frame + envstep * freq / 64;
 			bool goUp = NR22 & 0b00001000;
-			uint8_t soundVal = (NR22 & 0b11110000) >> 4;
 			if (goUp)
 			{
-				if (soundVal != 0b1111)
-					soundVal++;
+				if (c2env != 0b1111)
+					c2env++;
 			}
 			else
 			{
-				if (soundVal != 0)
-					soundVal--;
+				if (c2env == 0)
+					NR52 &= 0b11111101;
+				else
+					c2env--;
 			}
-			NR22 = (NR22 & 0b00001111) | (soundVal << 4);
 		}
 	}
 	c2freqtoreg(c2freq, &NR23, &NR24);
-	float envVal = ((NR22 & 0b11110000) >> 4) / 15.;
 	uint8_t duty = (NR21 & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
@@ -224,20 +229,21 @@ static int16_t getc2val()
 		dutyper = .875;
 	uint32_t inter = freq / c2freq;
 	uint32_t curr = frame & inter;
+	float envfac = c2env / 15.;
 	if (curr / (float)inter > dutyper)
-		return (SHRT_MAX * envVal);
-	return (SHRT_MIN * envVal);
+		return (SHRT_MAX * envfac);
+	return (SHRT_MIN * envfac);
 }
 
 static int16_t getc3val()
 {
+	if (NR34 & 0b10000000)
+	{
+		c3len = (256 - NR31) * freq / 256;
+		NR34 &= 0b01111111;
+	}
 	if (NR34 & 0b01000000)
 	{
-		if (NR34 & 0b10000000)
-		{
-			c3len = (256 - NR31) * freq / 256;
-			NR34 &= 0b01111111;
-		}
 		if (c3len == 0)
 		{
 			NR52 &= 0b11111011;
@@ -263,7 +269,9 @@ static int16_t getc4val()
 			c4divider = .5;
 		else
 			c4divider = tmp;
-		c4divider /= pow(2, ((NR41 & 0b11110000) >> 4) + 1);
+		c4divider *= pow(2, ((NR43 & 0b11110000) >> 4) + 1);
+		c4nextclocktick = frame + freq / (41943040. / c4divider);
+		c4env = (NR42 & 0b11110000) >> 4;
 		NR44 &= 0b01111111;
 	}
 	if (NR44 & 0b01000000)
@@ -285,18 +293,18 @@ static int16_t getc4val()
 		{
 			c4nextenvstepchange = frame + envstep * freq / 64;
 			bool goUp = NR42 & 0b00001000;
-			uint8_t soundVal = (NR42 & 0b11110000) >> 4;
 			if (goUp)
 			{
-				if (soundVal != 0b1111)
-					soundVal++;
+				if (c4env != 0b1111)
+					c4env++;
 			}
 			else
 			{
-				if (soundVal != 0)
-					soundVal--;
+				if (c4env == 0)
+					NR52 &= 0b11110111;
+				else
+					c4env--;
 			}
-			NR42 = (NR42 & 0b00001111) | (soundVal << 4);
 		}
 	}
 	if (frame >= c4nextclocktick)
@@ -311,13 +319,13 @@ static int16_t getc4val()
 		c4stepstate = (c4stepstate & 0b011111111111111) | (xored << 14);
 		if (NR43 & 0b00001000)
 			c4stepstate = (c4stepstate & 0b0111111) | (xored << 6);
-		c4nextclocktick = frame + freq / (4194.304 / c4divider);
+		c4nextclocktick = frame + freq / (41943040. / c4divider);
 		++c4stepcounter;
 	}
-	float envVal = ((NR42 & 0b11110000) >> 4) / 15.;
+	float envfac = c4env / 15.;
 	if (c4stepstate & 0x1)
-		return (SHRT_MAX * envVal);
-	return (SHRT_MIN * envVal);
+		return (SHRT_MAX * envfac);
+	return (SHRT_MIN * envfac);
 }
 
 static int paCallback(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo *paTimeInfo, PaStreamCallbackFlags statusFlags, void *userData)
@@ -339,10 +347,18 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			bool c2on = (NR51 & 0b00100010) && (NR52 & 0b00000010);
 			bool c3on = (NR51 & 0b01000100) && (NR52 & 0b00000100);
 			bool c4on = (NR51 & 0b10001000) && (NR52 & 0b00001000);
-			int16_t c1 = getc1val();
-			int16_t c2 = getc2val();
-			int16_t c3 = getc3val();
-			int16_t c4 = getc4val();
+			int16_t c1 = 0;
+			int16_t c2 = 0;
+			int16_t c3 = 0;
+			int16_t c4 = 0;
+			if (c1on)
+				getc1val();
+			if (c2on)
+				getc2val();
+			if (c3on)
+				getc3val();
+			if (c4on)
+				getc4val();
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (NR51 & 0b00000001);
