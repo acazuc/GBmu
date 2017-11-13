@@ -5,11 +5,6 @@
 #include <climits>
 #include <cmath>
 
-#define C12_TYPE_SQUARE 1
-#define C12_TYPE_SIN 2
-#define C12_TYPE_SAW 4
-#define C12_TYPE C12_TYPE_SAW
-
 static uint64_t freq = 100000;
 static uint64_t frame = 0;
 
@@ -56,9 +51,9 @@ static uint8_t NR42 = 0b11110111;
 static uint8_t NR43 = 0b01100000;
 static uint8_t NR44 = 0b10000000;
 
-static uint8_t NR50 = 0b01000100;
+static uint8_t NR50 = 0b00100010;
 static uint8_t NR51 = 0b00100010;
-static uint8_t NR52 = 0b10000010;
+static uint8_t NR52 = 0b00000010;
 
 static uint8_t mem[0xFFFF];
 
@@ -183,18 +178,18 @@ static int16_t getc1val()
 	uint32_t inter = freq / c1freq;
 	uint32_t curr = frame % inter;
 	float envfac = c1env / 15.;
-	if (C12_TYPE == C12_TYPE_SIN)
+	if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SIN)
 	{
 		float a = curr / (float)inter - dutyper;
 		if (a > 0)
 			return (SHRT_MAX * sin(a / (1 - dutyper) * M_PI) * envfac);
 		return (SHRT_MIN * sin(-a / (dutyper) * M_PI) * envfac);
 	}
-	else if (C12_TYPE == C12_TYPE_SAW)
+	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SAW)
 	{
 		return (SHRT_MIN + (SHRT_MAX - SHRT_MIN) * (inter - curr) / (float)inter * envfac);
 	}
-	else if (C12_TYPE == C12_TYPE_SQUARE)
+	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SQUARE)
 	{
 		if (curr / (float)inter > dutyper)
 			return (SHRT_MAX * envfac);
@@ -257,18 +252,18 @@ static int16_t getc2val()
 	uint32_t inter = freq / c2freq;
 	uint32_t curr = frame % inter;
 	float envfac = c2env / 15.;
-	if (C12_TYPE == C12_TYPE_SIN)
+	if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SIN)
 	{
 		float a = curr / (float)inter - dutyper;
 		if (a > 0)
 			return (SHRT_MAX * sin(a / (1 - dutyper) * M_PI) * envfac);
 		return (SHRT_MIN * sin(-a / (dutyper) * M_PI) * envfac);
 	}
-	else if (C12_TYPE == C12_TYPE_SAW)
+	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SAW)
 	{
 		return (SHRT_MIN + (SHRT_MAX - SHRT_MIN) * (inter - curr) / (float)inter * envfac);
 	}
-	else if (C12_TYPE == C12_TYPE_SQUARE)
+	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SQUARE)
 	{
 		if (curr / (float)inter > dutyper)
 			return (SHRT_MAX * envfac);
@@ -468,6 +463,7 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 }
 
 Audio::Audio()
+: c12type(AUDIO_C12_TYPE_SQUARE)
 {
 	*((uint32_t*)&(mem[0xFF30])) = 0x01234567;
 	*((uint32_t*)&(mem[0xFF34])) = 0x89ABCDEF;
