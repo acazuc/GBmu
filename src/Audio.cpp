@@ -23,7 +23,7 @@ static uint64_t c4nextenvstepchange = 0;
 
 static uint64_t c4nextclocktick = 0;
 static uint16_t c4stepcounter = 0;
-static uint16_t c4stepstate = 0xff;
+static uint16_t c4stepstate = 0xffff;
 static float c4divider = 1;
 
 static uint8_t NR10 = 0b00001001;
@@ -45,7 +45,7 @@ static uint8_t NR34 = 0b00000000;
 
 static uint8_t NR41 = 0b00000000;
 static uint8_t NR42 = 0b11110111;
-static uint8_t NR43 = 0b10010110;
+static uint8_t NR43 = 0b01100000;
 static uint8_t NR44 = 0b10000000;
 
 static uint8_t NR50 = 0b01000100;
@@ -270,7 +270,7 @@ static int16_t getc4val()
 		else
 			c4divider = tmp;
 		c4divider *= pow(2, ((NR43 & 0b11110000) >> 4) + 1);
-		c4nextclocktick = frame + freq / (41943040. / c4divider);
+		c4nextclocktick = frame + freq / (524288 / c4divider);
 		c4env = (NR42 & 0b11110000) >> 4;
 		NR44 &= 0b01111111;
 	}
@@ -319,7 +319,7 @@ static int16_t getc4val()
 		c4stepstate = (c4stepstate & 0b011111111111111) | (xored << 14);
 		if (NR43 & 0b00001000)
 			c4stepstate = (c4stepstate & 0b0111111) | (xored << 6);
-		c4nextclocktick = frame + freq / (41943040. / c4divider);
+		c4nextclocktick = frame + freq / (524288 / c4divider);
 		++c4stepcounter;
 	}
 	float envfac = c4env / 15.;
@@ -352,13 +352,13 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			int16_t c3 = 0;
 			int16_t c4 = 0;
 			if (c1on)
-				getc1val();
+				c1 = getc1val();
 			if (c2on)
-				getc2val();
+				c2 = getc2val();
 			if (c3on)
-				getc3val();
+				c3 = getc3val();
 			if (c4on)
-				getc4val();
+				c4 = getc4val();
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (NR51 & 0b00000001);
