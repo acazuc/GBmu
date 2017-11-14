@@ -3,106 +3,111 @@
 #define INSTRUCTIONSET_H
 
 // __NO INSTRUCTION__
-static void _blank( void );
+static byte _blank( void );
 
 // ldrr
-static void ldaa( void );
-static void ldab( void );
-static void ldac( void );
-static void ldad( void );
-static void ldae( void );
-static void ldah( void );
-static void ldal( void );
-static void ldba( void );
-static void ldbb( void );
-static void ldbc( void );
-static void ldbd( void );
-static void ldbe( void );
-static void ldbh( void );
-static void ldbl( void );
-static void ldca( void );
-static void ldcb( void );
-static void ldcc( void );
-static void ldcd( void );
-static void ldce( void );
-static void ldch( void );
-static void ldcl( void );
-static void ldda( void );
-static void lddb( void );
-static void lddc( void );
-static void lddd( void );
-static void ldde( void );
-static void lddh( void );
-static void lddl( void );
-static void ldea( void );
-static void ldeb( void );
-static void ldec( void );
-static void lded( void );
-static void ldee( void );
-static void ldeh( void );
-static void ldel( void );
-static void ldha( void );
-static void ldhb( void );
-static void ldhc( void );
-static void ldhd( void );
-static void ldhe( void );
-static void ldhh( void );
-static void ldhl( void );
-static void ldla( void );
-static void ldlb( void );
-static void ldlc( void );
-static void ldld( void );
-static void ldle( void );
-static void ldlh( void );
-static void ldll( void );
+static byte ldaa( void );
+static byte ldab( void );
+static byte ldac( void );
+static byte ldad( void );
+static byte ldae( void );
+static byte ldah( void );
+static byte ldal( void );
+static byte ldba( void );
+static byte ldbb( void );
+static byte ldbc( void );
+static byte ldbd( void );
+static byte ldbe( void );
+static byte ldbh( void );
+static byte ldbl( void );
+static byte ldca( void );
+static byte ldcb( void );
+static byte ldcc( void );
+static byte ldcd( void );
+static byte ldce( void );
+static byte ldch( void );
+static byte ldcl( void );
+static byte ldda( void );
+static byte lddb( void );
+static byte lddc( void );
+static byte lddd( void );
+static byte ldde( void );
+static byte lddh( void );
+static byte lddl( void );
+static byte ldea( void );
+static byte ldeb( void );
+static byte ldec( void );
+static byte lded( void );
+static byte ldee( void );
+static byte ldeh( void );
+static byte ldel( void );
+static byte ldha( void );
+static byte ldhb( void );
+static byte ldhc( void );
+static byte ldhd( void );
+static byte ldhe( void );
+static byte ldhh( void );
+static byte ldhl( void );
+static byte ldla( void );
+static byte ldlb( void );
+static byte ldlc( void );
+static byte ldld( void );
+static byte ldle( void );
+static byte ldlh( void );
+static byte ldll( void );
 
 // ldrn
-static void ldan( void );
-static void ldbn( void );
-static void ldcn( void );
-static void lddn( void );
-static void lden( void );
-static void ldhn( void );
-static void ldln( void );
+static byte ldan( void );
+static byte ldbn( void );
+static byte ldcn( void );
+static byte lddn( void );
+static byte lden( void );
+static byte ldhn( void );
+static byte ldln( void );
 
 // ldrhl
-static void ldahl( void );
-static void ldbhl( void );
-static void ldchl( void );
-static void lddhl( void );
-static void ldehl( void );
-static void ldhhl( void );
-static void ldlhl( void );
+static byte ldahl( void );
+static byte ldbhl( void );
+static byte ldchl( void );
+static byte lddhl( void );
+static byte ldehl( void );
+static byte ldhhl( void );
+static byte ldlhl( void );
 
 // ldhlr
-static void ldhla( void );
-static void ldhlb( void );
-static void ldhlc( void );
-static void ldhld( void );
-static void ldhle( void );
-static void ldhlh( void );
-static void ldhll( void );
+static byte ldhla( void );
+static byte ldhlb( void );
+static byte ldhlc( void );
+static byte ldhld( void );
+static byte ldhle( void );
+static byte ldhlh( void );
+static byte ldhll( void );
 
 // ldhln
-static void ldhln( void );
+static byte ldhln( void );
 
 // ldabc
-static void ldabc( void );
+static byte ldabc( void );
 
 // ldade
-static void ldade( void );
+static byte ldade( void );
 
+// ldac
+static byte ldarc( void );
+
+// ldca
+static byte ldrca( void );
 
 // jp
-static void jp( void );
+static byte jp( void );
 
 // jpcc
-static void jpnz( void );
-static void jpz( void );
-static void jpnc( void );
-static void jpc( void );
+static byte jpnz( void );
+static byte jpz( void );
+static byte jpnc( void );
+static byte jpc( void );
 
 // nop
-static void ins_nop( void );
+static byte ins_nop( void );
 
 #endif

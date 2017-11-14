@@ -1,44 +1,51 @@
 
 #include <jackshit.h>
 
-void core::ldhla( void )
+byte core::ldhla( void )
 {
 	mem[regs.w.hl] = regs.b.a;
 	regs.w.pc++;
+	return 2;
 }
 
-void core::ldhlb( void )
+byte core::ldhlb( void )
 {
 	mem[regs.w.hl] = regs.b.b;
 	regs.w.pc++;
+	return 2;
 }
 
-void core::ldhlc( void )
+byte core::ldhlc( void )
 {
 	mem[regs.w.hl] = regs.b.c;
 	regs.w.pc++;
+	return 2;
 }
 
-void core::ldhld( void )
+byte core::ldhld( void )
 {
 	mem[regs.w.hl] = regs.b.d;
 	regs.w.pc++;
+	return 2;
 }
 
-void core::ldhle( void )
+byte core::ldhle( void )
 {
 	mem[regs.w.hl] = regs.b.e;
 	regs.w.pc++;
+	return 2;
 }
 
-void core::ldhlh( void )
+byte core::ldhlh( void )
 {
 	mem[regs.w.hl] = regs.b.h;
 	regs.w.pc++;
+	return 2;
 }
 
-void core::ldhll( void )
+byte core::ldhll( void )
 {
 	mem[regs.w.hl] = regs.b.l;
 	regs.w.pc++;
+	return 2;
 }

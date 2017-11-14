@@ -19,23 +19,14 @@ void core::init( void )
 
 const char *core::cue( void )
 {
-	switch ( cycle )
+	if ( cycle )
 	{
-		case 0:
-			next = &decode[( byte ) mem[regs.w.pc]];
-			if ( (*next).cycles > 1 )
-			{
-				cycle = (*next).cycles - 1;
-				return nullptr;
-			}
-		case 1:
-			(*next).function();
-			cycle = 0;
-			return (*next).mnemonic;
-		default:
-			cycle--;
-			return nullptr;
+		cycle--;
+		return nullptr;
 	}
+	next = &decode[( byte ) mem[regs.w.pc]];
+	cycle = (*next).function() - 1;
+	return (*next).mnemonic;
 }
 
 word core::getpc( void )

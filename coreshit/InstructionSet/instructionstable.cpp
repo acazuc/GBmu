@@ -1013,9 +1013,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jp nz, nn",
+		4,
+		&jpnz
 	},
 	{
 		"jp nn",
@@ -1023,24 +1023,24 @@ struct core::instruction core::decode[256] =
 		&jp
 	},
 	{
-		"jp nz, nn",
-		4,
-		&jpnz
+		"__ NO INSTRUCTION __",
+		1,
+		&_blank
 	},
 	{
-		"jp z, nn",
-		4,
-		&jpz
+		"__ NO INSTRUCTION __",
+		1,
+		&_blank
 	},
 	{
-		"jp nc, nn",
-		4,
-		&jpnc
+		"__ NO INSTRUCTION __",
+		1,
+		&_blank
 	},
 	{
-		"jp c, nn",
-		4,
-		&jpc
+		"__ NO INSTRUCTION __",
+		1,
+		&_blank
 	},
 
 	// 200
@@ -1055,9 +1055,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jp z, nn",
+		4,
+		&jpz
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1097,9 +1097,9 @@ struct core::instruction core::decode[256] =
 
 	// 210
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jp nc, nn",
+		4,
+		&jpnc
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1137,9 +1137,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jp c, nn",
+		4,
+		&jpc
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1174,9 +1174,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"la (c), a",
+		2,
+		&ldrca
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1263,9 +1263,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld a, (c)",
+		2,
+		&ldarc
 	},
 	{
 		"__ NO INSTRUCTION __",

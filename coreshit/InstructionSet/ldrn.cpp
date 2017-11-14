@@ -1,44 +1,51 @@
 
 #include <jackshit.h>
 
-void core::ldan( void )
+byte core::ldan( void )
 {
 	regs.b.a = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }
 
-void core::ldbn( void )
+byte core::ldbn( void )
 {
 	regs.b.b = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }
 
-void core::ldcn( void )
+byte core::ldcn( void )
 {
 	regs.b.c = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }
 
-void core::lddn( void )
+byte core::lddn( void )
 {
 	regs.b.d = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }
 
-void core::lden( void )
+byte core::lden( void )
 {
 	regs.b.e = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }
 
-void core::ldhn( void )
+byte core::ldhn( void )
 {
 	regs.b.h = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }
 
-void core::ldln( void )
+byte core::ldln( void )
 {
 	regs.b.l = mem[regs.w.pc + 1];
 	regs.w.pc += 2;
+	return 2;
 }

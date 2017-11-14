@@ -1,8 +1,9 @@
 
 #include <jackshit.h>
 
-void core::ldade( void )
+byte core::ldade( void )
 {
 	regs.b.a = mem[regs.w.de];
 	regs.w.pc++;
+	return 2;
 }

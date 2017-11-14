@@ -1,7 +1,8 @@
 
 #include <jackshit.h>
 
-void core::ins_nop( void )
+byte core::ins_nop( void )
 {
 	regs.w.pc++;
+	return 1;
 }

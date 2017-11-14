@@ -1,8 +1,9 @@
 
 #include <jackshit.h>
 
-void core::ldabc( void )
+byte core::ldabc( void )
 {
 	regs.b.a = mem[regs.w.bc];
 	regs.w.pc++;
+	return 2;
 }

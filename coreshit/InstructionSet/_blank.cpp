@@ -1,7 +1,8 @@
 
 #include <jackshit.h>
 
-void core::_blank( void )
+byte core::_blank( void )
 {
 	regs.w.pc++;
+	return 1;
 }

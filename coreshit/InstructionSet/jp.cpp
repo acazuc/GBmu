@@ -1,7 +1,8 @@
 
 #include <jackshit.h>
 
-void core::jp( void )
+byte core::jp( void )
 {
 	regs.w.pc = mem[regs.w.pc + 1];
+	return 4;
 }

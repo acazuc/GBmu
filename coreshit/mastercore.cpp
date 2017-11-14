@@ -16,6 +16,7 @@ int main( int ac, char **av )
 	{
 		const char *s;
 		const char *s2;
+		struct timespec stime;
 
 		cout << GREY << std::hex << core::getpc() << WHITE << " : ";
 		if ( s = core::cue() )
@@ -36,5 +37,9 @@ int main( int ac, char **av )
 			}
 		}
 		cout << endl;
+
+		stime.tv_sec = 0;
+		stime.tv_nsec = PERIODE; 
+		nanosleep( &stime, NULL );
 	}
 }

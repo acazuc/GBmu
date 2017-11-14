@@ -8,10 +8,14 @@
 #include <colors.h>
 #include <cstring>
 
+#include <ctime>
+
 #define ZFLAG 0b10000000
 #define NFLAG 0b01000000
 #define HFLAG 0b00100000
 #define CYFLAG 0b00010000
+
+#define PERIODE 250000000
 
 using namespace std;
 
@@ -55,7 +59,7 @@ class core
 		{
 			const char *mnemonic;
 			byte cycles;
-			void (*function)( void );
+			byte (*function)( void );
 		};
 
 		static byte cycle;

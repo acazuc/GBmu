@@ -12,6 +12,8 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/ldhln.cpp \
 	  InstructionSet/ldabc.cpp \
 	  InstructionSet/ldade.cpp \
+	  InstructionSet/ldarc.cpp \
+	  InstructionSet/ldrca.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \

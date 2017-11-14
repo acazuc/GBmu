@@ -1,296 +1,345 @@
 
 #include <jackshit.h>
 
-void core::ldaa( void )
+byte core::ldaa( void )
 {
 	regs.b.a = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldab( void )
+byte core::ldab( void )
 {
 	regs.b.a = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldac( void )
+byte core::ldac( void )
 {
 	regs.b.a = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldad( void )
+byte core::ldad( void )
 {
 	regs.b.a = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldae( void )
+byte core::ldae( void )
 {
 	regs.b.a = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldah( void )
+byte core::ldah( void )
 {
 	regs.b.a = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldal( void )
+byte core::ldal( void )
 {
 	regs.b.a = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldba( void )
+byte core::ldba( void )
 {
 	regs.b.b = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldbb( void )
+byte core::ldbb( void )
 {
 	regs.b.b = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldbc( void )
+byte core::ldbc( void )
 {
 	regs.b.b = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldbd( void )
+byte core::ldbd( void )
 {
 	regs.b.b = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldbe( void )
+byte core::ldbe( void )
 {
 	regs.b.b = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldbh( void )
+byte core::ldbh( void )
 {
 	regs.b.b = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldbl( void )
+byte core::ldbl( void )
 {
 	regs.b.b = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldca( void )
+byte core::ldca( void )
 {
 	regs.b.c = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldcb( void )
+byte core::ldcb( void )
 {
 	regs.b.c = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldcc( void )
+byte core::ldcc( void )
 {
 	regs.b.c = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldcd( void )
+byte core::ldcd( void )
 {
 	regs.b.c = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldce( void )
+byte core::ldce( void )
 {
 	regs.b.c = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldch( void )
+byte core::ldch( void )
 {
 	regs.b.c = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldcl( void )
+byte core::ldcl( void )
 {
 	regs.b.c = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldda( void )
+byte core::ldda( void )
 {
 	regs.b.d = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::lddb( void )
+byte core::lddb( void )
 {
 	regs.b.d = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::lddc( void )
+byte core::lddc( void )
 {
 	regs.b.d = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::lddd( void )
+byte core::lddd( void )
 {
 	regs.b.d = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldde( void )
+byte core::ldde( void )
 {
 	regs.b.d = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::lddh( void )
+byte core::lddh( void )
 {
 	regs.b.d = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::lddl( void )
+byte core::lddl( void )
 {
 	regs.b.d = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldea( void )
+byte core::ldea( void )
 {
 	regs.b.e = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldeb( void )
+byte core::ldeb( void )
 {
 	regs.b.e = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldec( void )
+byte core::ldec( void )
 {
 	regs.b.e = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::lded( void )
+byte core::lded( void )
 {
 	regs.b.e = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldee( void )
+byte core::ldee( void )
 {
 	regs.b.e = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldeh( void )
+byte core::ldeh( void )
 {
 	regs.b.e = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldel( void )
+byte core::ldel( void )
 {
 	regs.b.e = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldha( void )
+byte core::ldha( void )
 {
 	regs.b.h = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldhb( void )
+byte core::ldhb( void )
 {
 	regs.b.h = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldhc( void )
+byte core::ldhc( void )
 {
 	regs.b.h = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldhd( void )
+byte core::ldhd( void )
 {
 	regs.b.h = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldhe( void )
+byte core::ldhe( void )
 {
 	regs.b.h = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldhh( void )
+byte core::ldhh( void )
 {
 	regs.b.h = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldhl( void )
+byte core::ldhl( void )
 {
 	regs.b.h = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldla( void )
+byte core::ldla( void )
 {
 	regs.b.l = regs.b.a;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldlb( void )
+byte core::ldlb( void )
 {
 	regs.b.l = regs.b.b;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldlc( void )
+byte core::ldlc( void )
 {
 	regs.b.l = regs.b.c;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldld( void )
+byte core::ldld( void )
 {
 	regs.b.l = regs.b.d;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldle( void )
+byte core::ldle( void )
 {
 	regs.b.l = regs.b.e;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldlh( void )
+byte core::ldlh( void )
 {
 	regs.b.l = regs.b.h;
 	regs.w.pc++;
+	return 1;
 }
 
-void core::ldll( void )
+byte core::ldll( void )
 {
 	regs.b.l = regs.b.l;
 	regs.w.pc++;
+	return 1;
 }
