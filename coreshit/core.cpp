@@ -9,7 +9,7 @@ union core::registers core::regs;
 void core::init( void )
 {
 	cycle = 0;
-	regs.w.pc = 0x150;
+	regs.w.pc = 0x100;
 	regs.w.sp = 0;
 	regs.w.af = 0;
 	regs.w.bc = 0;
@@ -22,7 +22,7 @@ const char *core::cue( void )
 	switch ( cycle )
 	{
 		case 0:
-			next = &decode[mem[regs.w.pc]];
+			next = &decode[( byte ) mem[regs.w.pc]];
 			if ( (*next).cycles > 1 )
 			{
 				cycle = (*next).cycles - 1;

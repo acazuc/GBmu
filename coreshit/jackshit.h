@@ -8,6 +8,11 @@
 #include <colors.h>
 #include <cstring>
 
+#define ZFLAG 0b10000000
+#define NFLAG 0b01000000
+#define HFLAG 0b00100000
+#define CYFLAG 0b00010000
+
 using namespace std;
 
 class core
@@ -17,8 +22,10 @@ class core
 		{
 			struct
 			{
-				word pc;
-				word sp;
+				byte pch;
+				byte pcl;
+				byte sph;
+				byte spl;
 				byte a;
 				byte f;
 				byte b;

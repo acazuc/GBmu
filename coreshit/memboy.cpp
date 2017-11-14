@@ -1,9 +1,15 @@
 
 #include <memboy.h>
+#include <iostream>
 
 memboy::mempassthru::operator byte( void )
 {
 	return *ptchosen;
+}
+
+memboy::mempassthru::operator word( void )
+{
+	return *( word * ) ptchosen;
 }
 
 memboy::mempassthru &memboy::mempassthru::operator =( byte b )
@@ -95,6 +101,7 @@ bool memboy::romload( const char *path )
 	in.open( path );
 	if ( !in || in.eof() )
 		return false;
+
 	for ( byte *cmap = map ; cmap < ( map + 0x10000 ) ; cmap++ )
 	{
 		*cmap = in.get();

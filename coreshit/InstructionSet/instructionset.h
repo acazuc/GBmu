@@ -83,6 +83,25 @@ static void ldhle( void );
 static void ldhlh( void );
 static void ldhll( void );
 
+// ldhln
+static void ldhln( void );
+
+// ldabc
+static void ldabc( void );
+
+// ldade
+static void ldade( void );
+
+
+// jp
+static void jp( void );
+
+// jpcc
+static void jpnz( void );
+static void jpz( void );
+static void jpnc( void );
+static void jpc( void );
+
 // nop
 static void ins_nop( void );
 

@@ -10,7 +10,7 @@ int main( int ac, char **av )
 	}
 
 	core::init();
-	core::mem.romload( *av );
+	core::mem.romload( av[1] );
 
 	for ( ; ; )
 	{

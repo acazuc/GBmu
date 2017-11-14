@@ -9,6 +9,12 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/ldrn.cpp \
 	  InstructionSet/ldrhl.cpp \
 	  InstructionSet/ldhlr.cpp \
+	  InstructionSet/ldhln.cpp \
+	  InstructionSet/ldabc.cpp \
+	  InstructionSet/ldade.cpp \
+	  \
+	  InstructionSet/jp.cpp \
+	  InstructionSet/jpcc.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp
