@@ -21,7 +21,7 @@ void LCD::render()
 
 void LCD::renderBG()
 {
-	uint32_t baseMem = memboy[LCDC] & 0x8 ? LCD_BG2_BEGIN : LCD_BG1_BEGIN;
+	uint32_t baseMem = uint8_t(memboy[LCDC]) & 0x8 ? LCD_BG2_BEGIN : LCD_BG1_BEGIN;
 	uint8_t scx = memboy[SCX];
 	uint8_t scy = memboy[SCY];
 	for (uint8_t x = 0; x < 20; ++x)
@@ -92,7 +92,7 @@ static uint8_t datas[] =
 
 void LCD::printChar(uint8_t cx, uint8_t cy, uint8_t charcode)
 {
-	uint32_t addr = memboy[LCDC] & 0x16 ? LCD_CHAR2_BEGIN : LCD_CHAR1_BEGIN;
+	uint32_t addr = uint8_t(memboy[LCDC]) & 0x16 ? LCD_CHAR2_BEGIN : LCD_CHAR1_BEGIN;
 	for (uint8_t x = 0; x < 8; ++x)
 	{
 		for (uint8_t y = 0; y < 8; ++y)

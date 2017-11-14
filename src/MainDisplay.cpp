@@ -1,8 +1,8 @@
 #include "MainDisplay.h"
-#include "Shaders.h"
 #include "Main.h"
 #include <cstring>
 #include <iostream>
+#include <fstream>
 
 static float mat[16];
 static int32_t ctx_width = 160;
@@ -31,10 +31,10 @@ static const struct vertex_info vertex_data[] =
 	{{0, 1}, {0, 1}}
 };
 
-static void initFragmentShader(GLuint &fs)
+static void initFragmentShader(GLuint &fs, std::string shader)
 {
 	fs = glCreateShader(GL_FRAGMENT_SHADER);
-	GLchar *tamer = fragShader;
+	const GLchar *tamer = shader.c_str();
 	glShaderSource(fs, 1, &tamer, NULL);
 	glCompileShader(fs);
 	GLint result = GL_FALSE;
@@ -51,10 +51,10 @@ static void initFragmentShader(GLuint &fs)
 	}
 }
 
-static void initVertexShader(GLuint &vs)
+static void initVertexShader(GLuint &vs, std::string shader)
 {
 	vs = glCreateShader(GL_VERTEX_SHADER);
-	GLchar *tamer = vertShader;
+	const GLchar *tamer = shader.c_str();
 	glShaderSource(vs, 1, &tamer, NULL);
 	glCompileShader(vs);
 	GLint result = GL_FALSE;
@@ -71,12 +71,18 @@ static void initVertexShader(GLuint &vs)
 	}
 }
 
+static std::string readfile(std::string file)
+{
+	std::ifstream ifs(file);
+	return (std::string(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>()));
+}
+
 static void initProgram()
 {
 	GLuint fs;
 	GLuint vs;
-	initFragmentShader(fs);
-	initVertexShader(vs);
+	initFragmentShader(fs, readfile("shaders/basic.fs"));
+	initVertexShader(vs, readfile("shaders/basic.vs"));
 	program = glCreateProgram();
 	glAttachShader(program, fs);
 	glAttachShader(program, vs);
