@@ -369,9 +369,9 @@ struct core::instruction core::decode[256] =
 
 	// 70
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld b, (hl)",
+		2,
+		&ldbhl
 	},
 	{
 		"ld b, a",
@@ -409,9 +409,9 @@ struct core::instruction core::decode[256] =
 		&ldcl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld c, (hl)",
+		2,
+		&ldchl
 	},
 	{
 		"ld c, a",
@@ -451,9 +451,9 @@ struct core::instruction core::decode[256] =
 		&lddl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld d, (hl)",
+		2,
+		&lddhl
 	},
 	{
 		"ld d, a",
@@ -493,9 +493,9 @@ struct core::instruction core::decode[256] =
 		&ldel
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld e, (hl)",
+		2,
+		&ldehl
 	},
 	{
 		"ld e, a",
@@ -535,9 +535,9 @@ struct core::instruction core::decode[256] =
 		&ldhl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld h, (hl)",
+		2,
+		&ldhhl
 	},
 	{
 		"ld h, a",
@@ -577,9 +577,9 @@ struct core::instruction core::decode[256] =
 
 	// 110
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld l, (hl)",
+		2,
+		&ldlhl
 	},
 	{
 		"ld l, a",
@@ -587,9 +587,34 @@ struct core::instruction core::decode[256] =
 		&ldla
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld (hl), b",
+		2,
+		&ldhlb
+	},
+	{
+		"ld (hl), c",
+		2,
+		&ldhlc
+	},
+	{
+		"ld (hl), d",
+		2,
+		&ldhld
+	},
+	{
+		"ld (hl), e",
+		2,
+		&ldhle
+	},
+	{
+		"ld (hl), h",
+		2,
+		&ldhlh
+	},
+	{
+		"ld (hl), l",
+		2,
+		&ldhll
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -597,34 +622,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld (hl), a",
+		2,
+		&ldhla
 	},
 
 	// 120
@@ -659,9 +659,9 @@ struct core::instruction core::decode[256] =
 		&ldal
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld a, (hl)",
+		2,
+		&ldahl
 	},
 	{
 		"ld a, a",

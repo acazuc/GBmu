@@ -33,17 +33,33 @@ int main( void )
 
 		out << '{' << endl;
 
-		if ( i == 6 || j == 6 )
-			out << HT << "\"__ NO INSTRUCTION __\"," << endl;
+		if ( i == 6 )
+		{
+			if ( j == 6 )
+			{
+				out << HT << "\"__ NO INSTRUCTION __\"," << endl;
+				out << HT << "1," << endl;
+				out << HT << "&_blank" << endl;
+			}
+			else
+			{
+				out << HT << "\"ld (hl), " << regs[j] << "\"," << endl;
+				out << HT << "2," << endl;
+				out << HT << "&ldhl" << regs[j] << endl;
+			}
+		}
+		else if ( j == 6 )
+		{
+			out << HT << "\"ld " << regs[i] << ", (hl)\"," << endl;
+			out << HT << "2," << endl;
+			out << HT << "&ld" << regs[i] << "hl" << endl;
+		}
 		else
+		{
 			out << HT << "\"ld " << regs[i] << ", " << regs[j] << "\"," << endl;
-
-		out << HT << "1," << endl;
-
-		if ( i == 6 || j == 6 )
-			out << HT << "&_blank" << endl;
-		else
+			out << HT << "1," << endl;
 			out << HT << "&ld" << regs[i] << regs[j] << endl;
+		}
 
 		out << "}," << endl;
 		cnt++;

@@ -65,6 +65,24 @@ static void lden( void );
 static void ldhn( void );
 static void ldln( void );
 
+// ldrhl
+static void ldahl( void );
+static void ldbhl( void );
+static void ldchl( void );
+static void lddhl( void );
+static void ldehl( void );
+static void ldhhl( void );
+static void ldlhl( void );
+
+// ldhlr
+static void ldhla( void );
+static void ldhlb( void );
+static void ldhlc( void );
+static void ldhld( void );
+static void ldhle( void );
+static void ldhlh( void );
+static void ldhll( void );
+
 // nop
 static void ins_nop( void );
 

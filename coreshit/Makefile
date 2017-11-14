@@ -7,6 +7,8 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/nop.cpp \
 	  InstructionSet/ldrr.cpp \
 	  InstructionSet/ldrn.cpp \
+	  InstructionSet/ldrhl.cpp \
+	  InstructionSet/ldhlr.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp
