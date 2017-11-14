@@ -224,18 +224,17 @@ static void cb_tool_debug(GtkWidget *osef1, gpointer osef2)
 	Main::getDebugDisplay()->show();
 }
 
-static void cb_tool_size(GtkWidget *osef1, gpointer osef2)
+static void cb_tool_size(GtkWidget *osef1, gpointer size)
 {
 	(void)osef1;
-	(void)osef2;
 	gtk_window_unmaximize(GTK_WINDOW(Main::getMainDisplay()->getWindow()));
-	gtk_window_resize(GTK_WINDOW(Main::getMainDisplay()->getWindow()), 160 * (unsigned long)osef2, 144 * (unsigned long)osef2);
+	gtk_window_resize(GTK_WINDOW(Main::getMainDisplay()->getWindow()), 160 * (unsigned long)size, 144 * (unsigned long)size);
 }
 
-static void cb_dialog_quit(GtkWidget *osef1, gpointer osef2)
+static void cb_dialog_quit(GtkWidget *dialog, gpointer osef1)
 {
-	(void)osef2;
-	gtk_widget_destroy(osef1);
+	(void)osef1;
+	gtk_widget_destroy(dialog);
 }
 
 static void cb_help_about(GtkWidget *osef1, gpointer osef2)
@@ -256,6 +255,12 @@ static void cb_help_about(GtkWidget *osef1, gpointer osef2)
 	gint result = gtk_dialog_run(GTK_DIALOG(dialog));
 	(void)result;
 	gtk_widget_destroy(dialog);
+}
+
+static void cb_tool_wave(GtkWidget *osef1, gpointer type)
+{
+	(void)osef1;
+	Main::getAudio()->getC12type() = (uint8_t)((uint64_t)type);
 }
 
 MainDisplay::MainDisplay()
@@ -301,8 +306,21 @@ MainDisplay::MainDisplay()
 		gtk_menu_shell_append(GTK_MENU_SHELL(tool_size_menu), tool_size_x);
 	}
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_size), tool_size_menu);
+	GtkWidget *tool_wave_menu = gtk_menu_new();
+	GtkWidget *tool_wave = gtk_menu_item_new_with_label("Audio Wave");
+	GtkWidget *tool_wave_square = gtk_menu_item_new_with_label("Square");
+	g_signal_connect(G_OBJECT(tool_wave_square), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SQUARE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_square);
+	GtkWidget *tool_wave_saw = gtk_menu_item_new_with_label("Saw");
+	g_signal_connect(G_OBJECT(tool_wave_saw), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_saw);
+	GtkWidget *tool_wave_sin = gtk_menu_item_new_with_label("Sin");
+	g_signal_connect(G_OBJECT(tool_wave_sin), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SIN));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_sin);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_wave), tool_wave_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_debug);
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_size);
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_wave);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool), tool_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), tool);
 	//Help
@@ -339,7 +357,6 @@ MainDisplay::~MainDisplay()
 void MainDisplay::iter()
 {
 	gtk_widget_queue_draw(this->window);
-	gtk_main_iteration_do(false);
 }
 
 void MainDisplay::putPixel(int32_t x, int32_t y, int32_t color)

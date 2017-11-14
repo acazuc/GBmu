@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/11/11 22:49:32 by acazuc           ###   ########.fr        #
+#    Updated: 2017/11/12 13:49:52 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRCS_NAME = Main.cpp \
 	    LCD.cpp \
 	    MainDisplay.cpp \
 	    DebugDisplay.cpp \
+	    Audio.cpp \
 
 SRCS = $(addprefix $(SRCS_PATH), $(SRCS_NAME))
 
@@ -33,7 +34,7 @@ OBJS_NAME = $(SRCS_NAME:.cpp=.o)
 
 OBJS = $(addprefix $(OBJS_PATH), $(OBJS_NAME))
 
-LIBRARY = `pkg-config --cflags --libs gtk+-3.0` -lGL -lepoxy
+LIBRARY = `pkg-config --cflags --libs gtk+-3.0` -lGL -lepoxy -lportaudio
 
 all: odir $(NAME)
 
