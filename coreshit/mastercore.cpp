@@ -17,10 +17,12 @@ int main( int ac, char **av )
 		const char *s;
 		const char *s2;
 		struct timespec stime;
+		word pc;
 
-		cout << GREY << std::hex << core::getpc() << WHITE << " : ";
+		pc = core::getpc();
 		if ( s = core::cue() )
 		{
+			cout << GREY << std::hex << pc << WHITE << " : ";
 			if ( *s == '_' )
 				cout << DARK << s;
 			else
@@ -35,8 +37,8 @@ int main( int ac, char **av )
 					cout << WHITE << s2;
 				}
 			}
+			cout << endl;
 		}
-		cout << endl;
 
 		stime.tv_sec = 0;
 		stime.tv_nsec = PERIODE; 

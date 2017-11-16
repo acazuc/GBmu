@@ -17,7 +17,7 @@ byte core::jpnz( void )
 
 byte core::jpz( void )
 {
-	if ( !( regs.b.f & ZFLAG ) )
+	if ( regs.b.f & ZFLAG )
 	{
 		regs.w.pc = mem[regs.w.pc + 1];
 		return 4;
@@ -32,7 +32,7 @@ byte core::jpz( void )
 
 byte core::jpnc( void )
 {
-	if ( !( regs.b.f & ZFLAG ) )
+	if ( !( regs.b.f & CYFLAG ) )
 	{
 		regs.w.pc = mem[regs.w.pc + 1];
 		return 4;
@@ -47,7 +47,7 @@ byte core::jpnc( void )
 
 byte core::jpc( void )
 {
-	if ( !( regs.b.f & ZFLAG ) )
+	if ( regs.b.f & CYFLAG )
 	{
 		regs.w.pc = mem[regs.w.pc + 1];
 		return 4;

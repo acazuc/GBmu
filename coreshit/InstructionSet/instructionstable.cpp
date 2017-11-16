@@ -7,7 +7,7 @@ struct core::instruction core::decode[256] =
 	{
 		"nop",
 		1,
-		&ins_nop
+		&nop
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1169,9 +1169,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld (n), a",
+		3,
+		&ldrna
 	},
 	{
 		"la (c), a",
@@ -1221,9 +1221,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld (nn), a",
+		4,
+		&ldnna
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1253,9 +1253,9 @@ struct core::instruction core::decode[256] =
 
 	// 240
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld a, (n)",
+		3,
+		&ldarn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1305,9 +1305,9 @@ struct core::instruction core::decode[256] =
 
 	// 250
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld a, (nn)",
+		4,
+		&ldann
 	},
 	{
 		"__ NO INSTRUCTION __",

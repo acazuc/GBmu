@@ -92,11 +92,23 @@ static byte ldabc( void );
 // ldade
 static byte ldade( void );
 
-// ldac
+// ldarc
 static byte ldarc( void );
 
-// ldca
+// ldrca
 static byte ldrca( void );
+
+// ldarn
+static byte ldarn( void );
+
+// ldrna
+static byte ldrna( void );
+
+// ldann
+static byte ldann( void );
+
+// ldnna
+static byte ldnna( void );
 
 // jp
 static byte jp( void );
@@ -108,6 +120,6 @@ static byte jpnc( void );
 static byte jpc( void );
 
 // nop
-static byte ins_nop( void );
+static byte nop( void );
 
 #endif
