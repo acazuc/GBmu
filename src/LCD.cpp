@@ -80,14 +80,14 @@ void LCD::renderOBJ()
 
 static uint8_t datas[] =
 {
-	0, 0, 0, 1, 1, 0, 0, 0,
-	0, 0, 0, 1, 1, 0, 0, 0,
-	0, 0, 1, 0, 0, 1, 0, 0,
-	0, 0, 1, 0, 0, 1, 0, 0,
-	0, 0, 1, 1, 1, 1, 0, 0,
-	0, 1, 0, 0, 0, 0, 1, 0,
-	0, 1, 0, 0, 0, 0, 1, 0,
-	0, 1, 0, 0, 0, 0, 1, 0
+	3, 3, 2, 0, 0, 2, 3, 3,
+	3, 3, 1, 0, 0, 1, 3, 3,
+	3, 3, 0, 1, 1, 0, 3, 3,
+	3, 2, 0, 2, 2, 0, 2, 3,
+	3, 1, 0, 0, 0, 0, 1, 3,
+	3, 0, 1, 2, 2, 1, 0, 3,
+	2, 0, 2, 3, 3, 2, 0, 2,
+	1, 0, 3, 3, 3, 3, 0, 1,
 };
 
 void LCD::printChar(uint8_t cx, uint8_t cy, uint8_t charcode)
@@ -99,7 +99,7 @@ void LCD::printChar(uint8_t cx, uint8_t cy, uint8_t charcode)
 		{
 			uint8_t idx = y * 8 + x;
 			//uint8_t color = memboy[addr + idx / 4] & (3 << (idx % 4));
-			uint8_t color = datas[x + y * 8] * UCHAR_MAX;
+			uint8_t color = datas[x + y * 8] / 3. * UCHAR_MAX;
 			for (uint8_t i = 0; i < 3; ++i)
 				Main::getMainDisplay()->getTexDatas()[((cy + y) * 160 + cx + x) * 3 + i] = color;
 			(void)color;

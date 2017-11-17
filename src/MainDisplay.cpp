@@ -81,8 +81,8 @@ static void initProgram()
 {
 	GLuint fs;
 	GLuint vs;
-	initFragmentShader(fs, readfile("shaders/basic.fs"));
 	initVertexShader(vs, readfile("shaders/basic.vs"));
+	initFragmentShader(fs, readfile("shaders/basic.fs"));
 	program = glCreateProgram();
 	glAttachShader(program, fs);
 	glAttachShader(program, vs);
@@ -276,15 +276,15 @@ MainDisplay::MainDisplay()
 	gtk_window_set_title(GTK_WINDOW(this->window), "GBmu");
 	gtk_window_set_resizable(GTK_WINDOW(this->window), TRUE);
 	GdkGeometry geometry;
-	geometry.min_aspect = 1.111111111111;
-	geometry.max_aspect = 1.111111111111;
+	//geometry.min_aspect = 1.111111111111;
+	//geometry.max_aspect = 1.111111111111;
 	geometry.min_width = 160;
 	geometry.min_height = 144;
-	gtk_window_set_geometry_hints(GTK_WINDOW(this->window), NULL, &geometry, (GdkWindowHints)(GDK_HINT_ASPECT | GDK_HINT_MIN_SIZE));
+	gtk_window_set_geometry_hints(GTK_WINDOW(this->window), NULL, &geometry, (GdkWindowHints)(GDK_HINT_MIN_SIZE));
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	g_object_set(box, "expand", TRUE, NULL);
-	GtkWidget *menubar = gtk_menu_bar_new();
+	this->menubar = gtk_menu_bar_new();
 
 	//File
 	GtkWidget *file = gtk_menu_item_new_with_label("File");
@@ -296,7 +296,7 @@ MainDisplay::MainDisplay()
 	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_quit);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), file_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menubar), file);
 	//Tools
 	GtkWidget *tool = gtk_menu_item_new_with_label("Tools");
 	GtkWidget *tool_menu = gtk_menu_new();
@@ -328,7 +328,7 @@ MainDisplay::MainDisplay()
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_size);
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_wave);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool), tool_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), tool);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menubar), tool);
 	//Help
 	GtkWidget *help = gtk_menu_item_new_with_label("Help");
 	GtkWidget *help_menu = gtk_menu_new();
@@ -336,10 +336,10 @@ MainDisplay::MainDisplay()
 	g_signal_connect(G_OBJECT(help_about), "activate", G_CALLBACK(cb_help_about), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(help_menu), help_about);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), help_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menubar), help);
 
-	gtk_widget_show_all(menubar);
-	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
+	gtk_widget_show_all(this->menubar);
+	gtk_box_pack_start(GTK_BOX(box), this->menubar, FALSE, FALSE, 0);
 	this->gl = gtk_gl_area_new();
 	gtk_widget_set_hexpand(this->gl, true);
 	g_signal_connect(this->gl, "realize", G_CALLBACK(gl_realize), NULL);

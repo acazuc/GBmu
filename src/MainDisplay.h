@@ -11,6 +11,7 @@ class MainDisplay
 {
 
 	private:
+		GtkWidget *menubar;
 		GtkWidget *window;
 		GtkWidget *gl;
 		uint8_t *texDatas;
