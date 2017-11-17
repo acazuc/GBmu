@@ -4,7 +4,6 @@ NAME	= Coretest
 
 SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/instructionstable.cpp \
-	  InstructionSet/nop.cpp \
 	  InstructionSet/ldrr.cpp \
 	  InstructionSet/ldrn.cpp \
 	  InstructionSet/ldrhl.cpp \
@@ -18,9 +17,16 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/ldrna.cpp \
 	  InstructionSet/ldann.cpp \
 	  InstructionSet/ldnna.cpp \
+	  InstructionSet/ldahli.cpp \
+	  InstructionSet/ldahld.cpp \
+	  InstructionSet/ldbca.cpp \
+	  InstructionSet/lddea.cpp \
+	  InstructionSet/ldhlia.cpp \
+	  InstructionSet/ldhlda.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \
+	  InstructionSet/nop.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp

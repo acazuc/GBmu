@@ -110,6 +110,26 @@ static byte ldann( void );
 // ldnna
 static byte ldnna( void );
 
+// ldahli
+static byte ldahli( void );
+
+// ldahld
+static byte ldahld( void );
+
+// ldbca
+static byte ldbca( void );
+
+// lddea
+static byte lddea( void );
+
+// ldhlia
+static byte ldhlia( void );
+
+// ldhlda
+static byte ldhlda( void );
+
+////
+
 // jp
 static byte jp( void );
 
