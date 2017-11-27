@@ -23,6 +23,10 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/lddea.cpp \
 	  InstructionSet/ldhlia.cpp \
 	  InstructionSet/ldhlda.cpp \
+	  InstructionSet/ldddnn.cpp \
+	  InstructionSet/ldsphl.cpp \
+	  InstructionSet/push.cpp \
+	  InstructionSet/pop.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \

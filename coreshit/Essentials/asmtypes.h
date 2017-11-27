@@ -1,3 +1,10 @@
+/*************************************
+**                                  **
+**    	       Asmtypes             **
+**                                  **
+**       Sweet Mare Software        **
+**                                  **
+*************************************/
 
 #ifndef ASMTYPES_H
 #define ASMTYPES_H

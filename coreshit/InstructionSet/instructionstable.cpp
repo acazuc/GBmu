@@ -10,9 +10,9 @@ struct core::instruction core::decode[256] =
 		&nop
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld bc, nn",
+		3,
+		&ldbcnn
 	},
 	{
 		"ld (bc), a",
@@ -92,9 +92,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld de, nn",
+		3,
+		&lddenn
 	},
 	{
 		"ld (de), a",
@@ -176,9 +176,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld hl, nn",
+		3,
+		&ldhlnn
 	},
 	{
 		"ld (hli), a",
@@ -258,9 +258,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld sp, nn",
+		3,
+		&ldspnn
 	},
 
 	// 50
@@ -1008,9 +1008,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"pop bc",
+		3,
+		&popbc
 	},
 	{
 		"jp nz, nn",
@@ -1028,9 +1028,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"push bc",
+		4,
+		&pushbc
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1090,9 +1090,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"pop de",
+		3,
+		&popde
 	},
 
 	// 210
@@ -1112,9 +1112,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"push de",
+		4,
+		&pushde
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1174,7 +1174,12 @@ struct core::instruction core::decode[256] =
 		&ldrna
 	},
 	{
-		"la (c), a",
+		"pop hl",
+		3,
+		&pophl
+	},
+	{
+		"ld (c), a",
 		2,
 		&ldrca
 	},
@@ -1189,14 +1194,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"push hl",
+		4,
+		&pushhl
 	},
 
 	// 230
@@ -1263,6 +1263,11 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
+		"pop af",
+		3,
+		&popaf
+	},
+	{
 		"ld a, (c)",
 		2,
 		&ldarc
@@ -1273,9 +1278,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"push af",
+		4,
+		&pushaf
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1293,14 +1298,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld sp, hl",
+		2,
+		&ldsphl
 	},
 
 	// 250

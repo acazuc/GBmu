@@ -1,3 +1,12 @@
+/*************************************
+**                                  **
+**             Capsule              **
+**             ( beta )             **
+**                                  **
+**       Sweet Mare Software        **
+**                                  **
+*************************************/
+
 #ifndef CAPSULE_H
 #define CAPSULE_H
 

@@ -1,3 +1,11 @@
+/*************************************
+**                                  **
+**      Capsule : Magic Table       **
+**         ( unfinished )           **
+**                                  **
+**       Sweet Mare Software        **
+**                                  **
+*************************************/
 
 #include <capsule.h>
 

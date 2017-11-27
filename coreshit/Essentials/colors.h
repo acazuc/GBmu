@@ -1,3 +1,10 @@
+/*************************************
+**                                  **
+**    Basic Colors Escape Strings   **
+**                                  **
+**       Sweet Mare Software        **
+**                                  **
+*************************************/
 
 #ifndef COLORS_H
 # define COLORS_H

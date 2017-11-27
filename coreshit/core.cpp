@@ -10,7 +10,7 @@ void core::init( void )
 {
 	cycle = 0;
 	regs.w.pc = 0x100;
-	regs.w.sp = 0;
+	regs.w.sp = 0xFFFE;
 	regs.w.af = 0;
 	regs.w.bc = 0;
 	regs.w.de = 0;

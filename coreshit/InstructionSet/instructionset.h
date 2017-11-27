@@ -128,6 +128,27 @@ static byte ldhlia( void );
 // ldhlda
 static byte ldhlda( void );
 
+// ldddnn
+static byte ldbcnn( void );
+static byte lddenn( void );
+static byte ldhlnn( void );
+static byte ldspnn( void );
+
+// ldsphl
+static byte ldsphl( void );
+
+// push
+static byte pushbc( void );
+static byte pushde( void );
+static byte pushhl( void );
+static byte pushaf( void );
+
+// pop
+static byte popbc( void );
+static byte popde( void );
+static byte pophl( void );
+static byte popaf( void );
+
 ////
 
 // jp

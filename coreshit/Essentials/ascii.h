@@ -1,3 +1,10 @@
+/*************************************
+**                                  **
+**    ASCII Special Chars Defines   **
+**                                  **
+**       Sweet Mare Software        **
+**                                  **
+*************************************/
 
 #ifndef ASCII_H
 # define ASCII_H
