@@ -27,6 +27,8 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/ldsphl.cpp \
 	  InstructionSet/push.cpp \
 	  InstructionSet/pop.cpp \
+	  InstructionSet/ldhlspe.cpp \
+	  InstructionSet/ldnnsp.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \

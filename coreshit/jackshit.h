@@ -15,6 +15,16 @@
 #define HFLAG 0b00100000
 #define CYFLAG 0b00010000
 
+#define CARRYUPDATE( be, af ) \
+	if ( be > af ) \
+		regs.b.f |= CYFLAG; \
+	else \
+		regs.b.f &= ~CYFLAG; \
+	if ( ( be & 0x0F ) > ( af & 0x0F ) ) \
+		regs.b.f |= HFLAG; \
+	else \
+		regs.b.f &= ~HFLAG;
+
 #define PERIODE 250000000
 
 using namespace std;

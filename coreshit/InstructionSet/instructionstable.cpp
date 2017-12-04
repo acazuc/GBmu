@@ -45,9 +45,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ld (nn), sp",
+		5,
+		&ldnnsp
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1293,9 +1293,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ldhl sp, e",
+		3,
+		&ldhlspe
 	},
 	{
 		"ld sp, hl",

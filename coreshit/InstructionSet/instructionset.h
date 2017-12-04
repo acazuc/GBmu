@@ -149,6 +149,12 @@ static byte popde( void );
 static byte pophl( void );
 static byte popaf( void );
 
+// ldhl
+static byte ldhlspe( void );
+
+// ldnnsp
+static byte ldnnsp( void );
+
 ////
 
 // jp
