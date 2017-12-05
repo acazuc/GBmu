@@ -20,6 +20,19 @@ struct reg regs[7] =
 	{ 'l', 5 }
 };
 
+char regs2[8] =
+{
+	'b',
+	'c',
+	'd',
+	'e',
+	'h',
+	'l',
+	NUL,
+	'a'
+};
+
+
 /*void ldhlr( void )
 {
 	mem[regs.w.hl] = regs.b.x;

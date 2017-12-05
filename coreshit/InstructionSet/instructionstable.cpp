@@ -669,170 +669,170 @@ struct core::instruction core::decode[256] =
 		&ldaa
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, b",
 		1,
-		&_blank
+		&addab
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, c",
 		1,
-		&_blank
+		&addac
 	},
 
 	// 130
 	{
-		"__ NO INSTRUCTION __",
+		"add a, d",
 		1,
-		&_blank
+		&addad
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, e",
 		1,
-		&_blank
+		&addae
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, h",
 		1,
-		&_blank
+		&addah
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, l",
 		1,
-		&_blank
+		&addal
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, (hl)",
 		1,
-		&_blank
+		&addahl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add a, a",
 		1,
-		&_blank
+		&addaa
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, b",
 		1,
-		&_blank
+		&adcab,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, c",
 		1,
-		&_blank
+		&adcac,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, d",
 		1,
-		&_blank
+		&adcad,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, e",
 		1,
-		&_blank
+		&adcae,
 	},
 
 	// 140
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, h",
 		1,
-		&_blank
+		&adcah,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, l",
 		1,
-		&_blank
+		&adcal,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, (hl)",
 		1,
-		&_blank
+		&adcahl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"adc a, a",
 		1,
-		&_blank
+		&adcaa,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub b",
 		1,
-		&_blank
+		&subab,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub c",
 		1,
-		&_blank
+		&subac,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub d",
 		1,
-		&_blank
+		&subad,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub e",
 		1,
-		&_blank
+		&subae,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub h",
 		1,
-		&_blank
+		&subah,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub l",
 		1,
-		&_blank
+		&subal,
 	},
 
 	// 150
 	{
-		"__ NO INSTRUCTION __",
+		"sub (hl)",
 		1,
-		&_blank
+		&subahl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sub a",
 		1,
-		&_blank
+		&subaa,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, b",
 		1,
-		&_blank
+		&sbcab,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, c",
 		1,
-		&_blank
+		&sbcac,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, d",
 		1,
-		&_blank
+		&sbcad,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, e",
 		1,
-		&_blank
+		&sbcae,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, h",
 		1,
-		&_blank
+		&sbcah,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, l",
 		1,
-		&_blank
+		&sbcal,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, (hl)",
 		1,
-		&_blank
+		&sbcahl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"sbc a, a",
 		1,
-		&_blank
+		&sbcaa,
 	},
 
 	// 160
@@ -1033,9 +1033,9 @@ struct core::instruction core::decode[256] =
 		&pushbc
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"add a, n",
+		2,
+		&addan
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1075,9 +1075,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"adc a, n",
+		2,
+		&adcan
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1117,9 +1117,9 @@ struct core::instruction core::decode[256] =
 		&pushde
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sub n",
+		2,
+		&suban
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1159,9 +1159,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sbc a, n",
+		2,
+		&sbcan
 	},
 	{
 		"__ NO INSTRUCTION __",

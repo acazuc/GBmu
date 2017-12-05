@@ -155,6 +155,66 @@ static byte ldhlspe( void );
 // ldnnsp
 static byte ldnnsp( void );
 
+// addar
+static byte addaa( void );
+static byte addab( void );
+static byte addac( void );
+static byte addad( void );
+static byte addae( void );
+static byte addah( void );
+static byte addal( void );
+
+// addan
+static byte addan( void );
+
+// addahl
+static byte addahl( void );
+
+// adcar
+static byte adcaa( void );
+static byte adcab( void );
+static byte adcac( void );
+static byte adcad( void );
+static byte adcae( void );
+static byte adcah( void );
+static byte adcal( void );
+
+// adcan
+static byte adcan( void );
+
+// adcahl
+static byte adcahl( void );
+
+// subar
+static byte subaa( void );
+static byte subab( void );
+static byte subac( void );
+static byte subad( void );
+static byte subae( void );
+static byte subah( void );
+static byte subal( void );
+
+// suban
+static byte suban( void );
+
+// subahl
+static byte subahl( void );
+
+// sbcar
+static byte sbcaa( void );
+static byte sbcab( void );
+static byte sbcac( void );
+static byte sbcad( void );
+static byte sbcae( void );
+static byte sbcah( void );
+static byte sbcal( void );
+
+// sbcan
+static byte sbcan( void );
+
+// sbcahl
+static byte sbcahl( void );
+
 ////
 
 // jp

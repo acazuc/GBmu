@@ -12,5 +12,6 @@ byte core::ldhlspe( void )
 	regs.b.f = 0;
 	CARRYUPDATE( csave, regs.w.sp );
 
+	regs.w.pc += 2;
 	return 3;
 }

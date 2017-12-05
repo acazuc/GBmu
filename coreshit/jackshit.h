@@ -25,6 +25,22 @@
 	else \
 		regs.b.f &= ~HFLAG;
 
+#define CARRYREVUPDATE( be, af ) \
+	if ( be < af ) \
+		regs.b.f |= CYFLAG; \
+	else \
+		regs.b.f &= ~CYFLAG; \
+	if ( ( be & 0x0F ) < ( af & 0x0F ) ) \
+		regs.b.f |= HFLAG; \
+	else \
+		regs.b.f &= ~HFLAG;
+
+#define ZUPDATE( n ) \
+	if ( n ) \
+		regs.b.f |= ZFLAG; \
+	else \
+		regs.b.f &= ~ZFLAG;
+
 #define PERIODE 250000000
 
 using namespace std;

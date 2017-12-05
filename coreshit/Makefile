@@ -29,6 +29,18 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/pop.cpp \
 	  InstructionSet/ldhlspe.cpp \
 	  InstructionSet/ldnnsp.cpp \
+	  InstructionSet/addar.cpp \
+	  InstructionSet/addan.cpp \
+	  InstructionSet/addahl.cpp \
+	  InstructionSet/adcar.cpp \
+	  InstructionSet/adcan.cpp \
+	  InstructionSet/adcahl.cpp \
+	  InstructionSet/subar.cpp \
+	  InstructionSet/suban.cpp \
+	  InstructionSet/subahl.cpp \
+	  InstructionSet/sbcar.cpp \
+	  InstructionSet/sbcan.cpp \
+	  InstructionSet/sbcahl.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \
