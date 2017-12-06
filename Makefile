@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/11/12 13:49:52 by acazuc           ###   ########.fr        #
+#    Updated: 2017/12/06 14:50:02 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = g++
 
 CFLAGS = -g -O2 -std=c++11
 
-INCLUDES_PATH = include/ -I coreshit -I coreshit/Essentials
+INCLUDES_PATH = include/ -I coreshit -I Essentials
 
 SRCS_PATH = src/
 

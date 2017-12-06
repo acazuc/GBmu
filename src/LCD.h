@@ -24,10 +24,10 @@ class LCD
 
 	public:
 		void render();
-		void renderBG();
-		void renderOBJ();
+		void renderBG(uint8_t y);
+		void renderOBJ(uint8_t y);
 		void renderChars();
-		void printChar(uint8_t cx, uint8_t cy, uint8_t charcode);
+		void printChar(uint8_t cx, uint8_t cy, uint8_t charcode, bool hflip, bool vflip);
 
 };
 
