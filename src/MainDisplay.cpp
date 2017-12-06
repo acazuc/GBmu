@@ -271,16 +271,16 @@ static void cb_tool_wave(GtkWidget *osef1, gpointer type)
 
 MainDisplay::MainDisplay()
 {
-	this->texDatas = new uint8_t[160 * 144 * 3];
+	this->texDatas = new uint8_t[160 * 144 * 3]();
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(this->window), "GBmu");
 	gtk_window_set_resizable(GTK_WINDOW(this->window), TRUE);
 	GdkGeometry geometry;
 	//geometry.min_aspect = 1.111111111111;
 	//geometry.max_aspect = 1.111111111111;
-	geometry.min_width = 160;
-	geometry.min_height = 144;
-	gtk_window_set_geometry_hints(GTK_WINDOW(this->window), NULL, &geometry, (GdkWindowHints)(GDK_HINT_MIN_SIZE));
+	//geometry.min_width = 160;
+	//geometry.min_height = 144;
+	//gtk_window_set_geometry_hints(GTK_WINDOW(this->window), NULL, &geometry, (GdkWindowHints)(GDK_HINT_MIN_SIZE));
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	g_object_set(box, "expand", TRUE, NULL);
@@ -365,7 +365,9 @@ void MainDisplay::iter()
 	gtk_widget_queue_draw(this->window);
 }
 
-void MainDisplay::putPixel(int32_t x, int32_t y, int32_t color)
+void MainDisplay::putPixel(uint8_t x, uint8_t y, uint32_t color)
 {
-	std::memcpy(this->texDatas + (x + y * 160) * 4, ((uint8_t*)&color) + 1, 3);
+	uint32_t idx = (x + y * 160) * 3;
+	uint8_t *data = (uint8_t*)&color;
+	std::memmove(this->texDatas + idx, data, 3);
 }

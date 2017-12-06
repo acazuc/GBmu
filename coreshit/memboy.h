@@ -12,6 +12,7 @@
 #define TIMA 0xFF05
 #define TMA 0xFF06
 #define TAC 0xFF07
+#define IF 0xFF0F
 #define NR10 0xFF10
 #define NR11 0xFF11
 #define NR12 0xFF12
@@ -34,11 +35,8 @@
 #define NR51 0xFF25
 #define NR52 0xFF26
 #define KEY1 0xFF4D
-#define RP 0xFF56
 #define VBK 0xFF4F // Switch bank 1 from 0x8000 to 0x9FFF
-#define SVBK 0xFF70 // Switch bank 1 to 7 from 0xD000 to 0xDFFF
-#define IF 0xFF0F
-#define IE 0xFFFF
+#define RP 0xFF56
 #define LCDC 0xFF40
 #define STAT 0xFF41
 #define SCY 0xFF42
@@ -60,6 +58,10 @@
 #define BCPD 0xFF69
 #define OCPS 0xFF6A
 #define OCPD 0xFF6B
+#define SVBK 0xFF70 // Switch bank 1 to 7 from 0xD000 to 0xDFFF
+#define PCM12 0xFF76
+#define PCM34 0xFF77
+#define IE 0xFFFF
 
 //#define OAM FE00~FE9F
 //#define NR 0xFF10~FF26
