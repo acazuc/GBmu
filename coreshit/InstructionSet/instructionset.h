@@ -215,6 +215,66 @@ static byte sbcan( void );
 // sbcahl
 static byte sbcahl( void );
 
+// andr
+static byte anda( void );
+static byte andb( void );
+static byte andc( void );
+static byte andd( void );
+static byte ande( void );
+static byte andh( void );
+static byte andl( void );
+
+// andn
+static byte andn( void );
+
+// andhl
+static byte andhl( void );
+
+// orr
+static byte ora( void );
+static byte orb( void );
+static byte orc( void );
+static byte ord( void );
+static byte ore( void );
+static byte orh( void );
+static byte orl( void );
+
+// orn
+static byte orn( void );
+
+// orhl
+static byte orhl( void );
+
+// xorr
+static byte xora( void );
+static byte xorb( void );
+static byte xorc( void );
+static byte xord( void );
+static byte xore( void );
+static byte xorh( void );
+static byte xorl( void );
+
+// xorn
+static byte xorn( void );
+
+// xorhl
+static byte xorhl( void );
+
+// cpr
+static byte cpa( void );
+static byte cpb( void );
+static byte cpc( void );
+static byte cpd( void );
+static byte cpe( void );
+static byte cph( void );
+static byte cpl( void );
+
+// cpn
+static byte cpn( void );
+
+// cphl
+static byte cphl( void );
+
 ////
 
 // jp

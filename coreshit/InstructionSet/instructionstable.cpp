@@ -837,170 +837,170 @@ struct core::instruction core::decode[256] =
 
 	// 160
 	{
-		"__ NO INSTRUCTION __",
+		"and b",
 		1,
-		&_blank
+		&andb,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and c",
 		1,
-		&_blank
+		&andc,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and d",
 		1,
-		&_blank
+		&andd,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and e",
 		1,
-		&_blank
+		&ande,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and h",
 		1,
-		&_blank
+		&andh,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and l",
 		1,
-		&_blank
+		&andl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and (hl)",
 		1,
-		&_blank
+		&andhl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"and a",
 		1,
-		&_blank
+		&anda,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor b",
 		1,
-		&_blank
+		&xorb,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor c",
 		1,
-		&_blank
+		&xorc,
 	},
 
 	// 170
 	{
-		"__ NO INSTRUCTION __",
+		"xor d",
 		1,
-		&_blank
+		&xord,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor e",
 		1,
-		&_blank
+		&xore,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor h",
 		1,
-		&_blank
+		&xorh,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor l",
 		1,
-		&_blank
+		&xorl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor (hl)",
 		1,
-		&_blank
+		&xorhl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"xor a",
 		1,
-		&_blank
+		&xora,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or b",
 		1,
-		&_blank
+		&orb,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or c",
 		1,
-		&_blank
+		&orc,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or d",
 		1,
-		&_blank
+		&ord,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or e",
 		1,
-		&_blank
+		&ore,
 	},
 
 	// 180
 	{
-		"__ NO INSTRUCTION __",
+		"or h",
 		1,
-		&_blank
+		&orh,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or l",
 		1,
-		&_blank
+		&orl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or (hl)",
 		1,
-		&_blank
+		&orhl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"or a",
 		1,
-		&_blank
+		&ora,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp b",
 		1,
-		&_blank
+		&cpb,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp c",
 		1,
-		&_blank
+		&cpc,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp d",
 		1,
-		&_blank
+		&cpd,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp e",
 		1,
-		&_blank
+		&cpe,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp h",
 		1,
-		&_blank
+		&cph,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp l",
 		1,
-		&_blank
+		&cpl,
 	},
 
 	// 190
 	{
-		"__ NO INSTRUCTION __",
+		"cp (hl)",
 		1,
-		&_blank
+		&cphl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp a",
 		1,
-		&_blank
+		&cpa,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1201,9 +1201,9 @@ struct core::instruction core::decode[256] =
 
 	// 230
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"and n",
+		2,
+		&andn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1241,9 +1241,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"xor n",
+		2,
+		&xorn
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1283,9 +1283,9 @@ struct core::instruction core::decode[256] =
 		&pushaf
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"or n",
+		2,
+		&orn
 	},
 	{
 		"__ NO INSTRUCTION __",

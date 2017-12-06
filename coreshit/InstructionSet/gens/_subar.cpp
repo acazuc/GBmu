@@ -12,7 +12,7 @@ byte core::subaX( void )
 	regs.b.a -= regs.b.X;
 
 	regs.b.f = 1;
-	CARRYNEGUPDATE( a, regs.b.a );
+	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
