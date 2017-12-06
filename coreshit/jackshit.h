@@ -35,13 +35,25 @@
 	else \
 		regs.b.f &= ~HFLAG;
 
+#define HUPDATE( be, af ) \
+	if ( ( be & 0x0F ) > ( af & 0x0F ) ) \
+		regs.b.f |= HFLAG; \
+	else \
+		regs.b.f &= ~HFLAG;
+
+#define HREVUPDATE( be, af ) \
+	if ( ( be & 0x0F ) < ( af & 0x0F ) ) \
+		regs.b.f |= HFLAG; \
+	else \
+		regs.b.f &= ~HFLAG
+
 #define ZUPDATE( n ) \
 	if ( n ) \
 		regs.b.f |= ZFLAG; \
 	else \
 		regs.b.f &= ~ZFLAG;
 
-#define PERIODE 25000000
+#define PERIODE 250000000
 
 using namespace std;
 

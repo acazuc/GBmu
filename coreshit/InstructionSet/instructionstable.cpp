@@ -25,9 +25,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"inc b",
 		1,
-		&_blank
+		&incb,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -67,9 +67,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"inc c",
 		1,
-		&_blank
+		&incc,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -109,9 +109,9 @@ struct core::instruction core::decode[256] =
 
 	// 20
 	{
-		"__ NO INSTRUCTION __",
+		"inc d",
 		1,
-		&_blank
+		&incd,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -149,9 +149,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"inc e",
 		1,
-		&_blank
+		&ince,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -191,9 +191,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"inc h",
 		1,
-		&_blank
+		&inch,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -233,9 +233,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"inc l",
 		1,
-		&_blank
+		&incl,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -275,9 +275,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"inc (hl)",
 		1,
-		&_blank
+		&inchl,
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -317,9 +317,9 @@ struct core::instruction core::decode[256] =
 
 	// 60
 	{
-		"__ NO INSTRUCTION __",
+		"inc a",
 		1,
-		&_blank
+		&inca,
 	},
 	{
 		"__ NO INSTRUCTION __",

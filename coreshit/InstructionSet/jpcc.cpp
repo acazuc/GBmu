@@ -10,7 +10,7 @@ byte core::jpnz( void )
 	}
 	else
 	{
-		regs.w.pc++;
+		regs.w.pc += 3;
 		return 3;
 	}
 }
@@ -24,7 +24,7 @@ byte core::jpz( void )
 	}
 	else
 	{
-		regs.w.pc++;
+		regs.w.pc += 3;
 		return 3;
 	}
 
@@ -39,7 +39,7 @@ byte core::jpnc( void )
 	}
 	else
 	{
-		regs.w.pc++;
+		regs.w.pc += 3;
 		return 3;
 	}
 
@@ -54,7 +54,7 @@ byte core::jpc( void )
 	}
 	else
 	{
-		regs.w.pc++;
+		regs.w.pc += 3;
 		return 3;
 	}
 

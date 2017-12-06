@@ -275,6 +275,18 @@ static byte cpn( void );
 // cphl
 static byte cphl( void );
 
+// incr
+static byte inca( void );
+static byte incb( void );
+static byte incc( void );
+static byte incd( void );
+static byte ince( void );
+static byte inch( void );
+static byte incl( void );
+
+// inchl
+static byte inchl( void );
+
 ////
 
 // jp
