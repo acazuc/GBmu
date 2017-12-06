@@ -19,10 +19,10 @@ static uint64_t c4env = 0;
 static uint64_t c1freq = 0;
 static uint64_t c2freq = 0;
 static uint64_t c3freq = 0;
-static uint64_t c1nextenvstepchange = 0;
-static uint64_t c1nextswpstepchange = 0;
-static uint64_t c2nextenvstepchange = 0;
-static uint64_t c4nextenvstepchange = 0;
+static uint64_t c1lastswptick = 0;
+static uint64_t c1lastenvtick = 0;
+static uint64_t c2lastenvtick = 0;
+static uint64_t c4lastenvtick = 0;
 
 static uint64_t c4nextclocktick = 0;
 static uint16_t c4stepcounter = 0;
@@ -54,6 +54,11 @@ static uint8_t NR44 = 0b10000000;
 static uint8_t NR50 = 0b00100010;
 static uint8_t NR51 = 0b00100010;
 static uint8_t NR52 = 0b00000010;
+
+static uint64_t clockCount = 0;
+static uint64_t nextClock = 0;
+static uint64_t envtick = 0;
+static uint64_t swptick = 0;
 
 static uint8_t mem[0xFFFF];
 
@@ -108,63 +113,6 @@ static int16_t getc1val()
 		c1freq = c1regtofreq(NR13, NR14);
 		NR14 &= 0b01111111;
 	}
-	if (NR14 & 0b01000000)
-	{
-		if (c1len == 0)
-		{
-			NR52 &= 0b11111110;
-			return (0);
-		}
-		else
-		{
-			c1len--;
-		}
-	}
-	if (frame >= c1nextenvstepchange)
-	{
-		uint8_t envstep = NR12 & 0b00000111;
-		if (envstep != 0)
-		{
-			c1nextenvstepchange = frame + envstep * freq / 64;
-			bool goUp = NR12 & 0b00001000;
-			if (goUp)
-			{
-				if (c1env != 0b1111)
-					c1env++;
-			}
-			else
-			{
-				if (c1env == 0)
-					NR52 &= 0b11111110;
-				else
-					c1env--;
-			}
-		}
-	}
-	if (frame >= c1nextswpstepchange)
-	{
-		uint8_t swptime = NR10 & 0b01110000;
-		if (swptime != 0)
-		{
-			c1nextswpstepchange = frame + swptime * freq / 128;
-			bool goUp = NR10 & 0b00001000;
-			uint8_t swpShift = NR12 & 0b00000111;
-			if (goUp)
-			{
-				int32_t newfreq = c1freq + c1freq / pow(2, swpShift);
-				if (c1freqtoval(newfreq) > 2047)
-					newfreq = 2047;
-				c1freq = newfreq;
-			}
-			else
-			{
-				int32_t newfreq = c1freq - c1freq / pow(2, swpShift);
-				if (newfreq < 0)
-					newfreq = 0;
-				c1freq = newfreq;
-			}
-		}
-	}
 	uint8_t duty = (NR11 & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
@@ -206,39 +154,6 @@ static int16_t getc2val()
 		NR24 &= 0b01111111;
 	}
 	c2freq = c2regtofreq(NR23, NR24);
-	if (NR24 & 0b01000000)
-	{
-		if (c2len == 0)
-		{
-			NR52 &= 0b11111101;
-			return (0);
-		}
-		else
-		{
-			c2len--;
-		}
-	}
-	if (frame >= c1nextenvstepchange)
-	{
-		uint8_t envstep = NR22 & 0b00000111;
-		if (envstep != 0)
-		{
-			c2nextenvstepchange = frame + envstep * freq / 64;
-			bool goUp = NR22 & 0b00001000;
-			if (goUp)
-			{
-				if (c2env != 0b1111)
-					c2env++;
-			}
-			else
-			{
-				if (c2env == 0)
-					NR52 &= 0b11111101;
-				else
-					c2env--;
-			}
-		}
-	}
 	uint8_t duty = (NR21 & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
@@ -284,22 +199,8 @@ static int16_t getc3val()
 		c3freq = c3regtofreq(NR33, NR34);
 		NR34 &= 0b01111111;
 	}
-	if (NR34 & 0b01000000)
-	{
-		if (c3len == 0)
-		{
-			NR52 &= 0b11111011;
-			return (0);
-		}
-		else
-		{
-			c3len--;
-		}
-	}
-	else
-	{
+	if (!(NR34 & 0b01000000))
 		c3freq = c3regtofreq(NR33, NR34);
-	}
 	uint32_t inter = freq / c3freq;
 	if (!inter)
 		return (0);
@@ -338,39 +239,6 @@ static int16_t getc4val()
 		c4env = (NR42 & 0b11110000) >> 4;
 		NR44 &= 0b01111111;
 	}
-	if (NR44 & 0b01000000)
-	{
-		if (c4len == 0)
-		{
-			NR52 &= 0b11110111;
-			return (0);
-		}
-		else
-		{
-			c4len--;
-		}
-	}
-	if (frame >= c4nextenvstepchange)
-	{
-		uint8_t envstep = NR22 & 0b00000111;
-		if (envstep != 0)
-		{
-			c4nextenvstepchange = frame + envstep * freq / 64;
-			bool goUp = NR42 & 0b00001000;
-			if (goUp)
-			{
-				if (c4env != 0b1111)
-					c4env++;
-			}
-			else
-			{
-				if (c4env == 0)
-					NR52 &= 0b11110111;
-				else
-					c4env--;
-			}
-		}
-	}
 	if (frame >= c4nextclocktick)
 	{
 		if (c4stepcounter > 32767)
@@ -392,6 +260,137 @@ static int16_t getc4val()
 	return (SHRT_MIN * envfac);
 }
 
+static void updateLengthTick()
+{
+	//Channel 1
+	if (NR14 & 0b01000000)
+	{
+		if (c1len == 0)
+			NR52 &= 0b11111110;
+		else
+			c1len--;
+	}
+	//Channel 2
+	if (NR24 & 0b01000000)
+	{
+		if (c2len == 0)
+			NR52 &= 0b11111101;
+		else
+			c2len--;
+	}
+	//Channel 3
+	if (NR34 & 0b01000000)
+	{
+		if (c3len == 0)
+			NR52 &= 0b11111011;
+		else
+			c3len--;
+	}
+	//Channel 4
+	if (NR44 & 0b01000000)
+	{
+		if (c4len == 0)
+			NR52 &= 0b11110111;
+		else
+			c4len--;
+	}
+}
+
+static void updateEnvTick()
+{
+	//Channel 1
+	{
+		uint8_t envstep = NR12 & 0b00000111;
+		if (envstep != 0 && envtick - c1lastenvtick > envstep)
+		{
+			c1lastenvtick = envtick;
+			bool direction = NR12 & 0b00001000;
+			if (direction)
+			{
+				if (c1env != 0b1111)
+					c1env++;
+			}
+			else
+			{
+				if (c1env == 0)
+					NR52 &= 0b11111110;
+				else
+					c1env--;
+			}
+		}
+	}
+	//Channel 2
+	{
+		uint8_t envstep = NR22 & 0b00000111;
+		if (envstep != 0 && envtick - c2lastenvtick > envstep)
+		{
+			c2lastenvtick = envtick;
+			bool direction = NR22 & 0b00001000;
+			if (direction)
+			{
+				if (c2env != 0b1111)
+					c2env++;
+			}
+			else
+			{
+				if (c2env == 0)
+					NR52 &= 0b11111101;
+				else
+					c2env--;
+			}
+		}
+	}
+	//Channel 4
+	{
+		uint8_t envstep = NR42 & 0b00000111;
+		if (envstep != 0 && envtick - c4lastenvtick > envstep)
+		{
+			c4lastenvtick = envtick;
+			bool direction = NR42 & 0b00001000;
+			if (direction)
+			{
+				if (c4env != 0b1111)
+					c4env++;
+			}
+			else
+			{
+				if (c4env == 0)
+					NR52 &= 0b11110111;
+				else
+					c4env--;
+			}
+		}
+	}
+}
+
+static void updateSweepTick()
+{
+	//Channel 1
+	{
+		uint8_t swptime = NR10 & 0b01110000;
+		if (swptime != 0 && swptick - c1lastswptick > swptime)
+		{
+			c1lastswptick = swptick;
+			bool direction = NR10 & 0b00001000;
+			uint8_t swpshift = NR12 & 0b00000111;
+			if (direction)
+			{
+				int32_t newfreq = c1freq + c1freq / pow(2, swpshift);
+				if (c1freqtoval(newfreq) > 2047)
+					newfreq = 2047;
+				c1freq = newfreq;
+			}
+			else
+			{
+				int32_t newfreq = c1freq - c1freq / pow(2, swpshift);
+				if (newfreq < 0)
+					newfreq = 0;
+				c1freq = newfreq;
+			}
+		}
+	}
+}
+
 static int paCallback(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo *paTimeInfo, PaStreamCallbackFlags statusFlags, void *userData)
 {
 	(void)input;
@@ -404,6 +403,23 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 	int16_t *out = (int16_t*)output;
 	for (unsigned long i = 0; i < frameCount; ++i)
 	{
+		if (frame >= nextClock)
+		{
+			if (clockCount % 2 == 0)
+				updateLengthTick();
+			if (clockCount % 8 == 7)
+			{
+				updateEnvTick();
+				envtick++;
+			}
+			if ((clockCount + 1) % 4 == 3)
+			{
+				updateSweepTick();
+				swptick++;
+			}
+			clockCount++;
+			nextClock += 4194304 / 512 * freq;
+		}
 		out[i] = 0;
 		if (NR52 & 0b10000000)
 		{
