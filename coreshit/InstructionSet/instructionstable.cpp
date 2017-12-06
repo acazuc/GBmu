@@ -129,9 +129,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jr ne",
+		3,
+		&jr
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -171,9 +171,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jr nz, ne",
+		3,
+		&jrnz
 	},
 	{
 		"ld hl, nn",
@@ -213,9 +213,9 @@ struct core::instruction core::decode[256] =
 
 	// 40
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jr z, ne",
+		3,
+		&jrz
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -253,9 +253,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jr nc, ne",
+		3,
+		&jrnc
 	},
 	{
 		"ld sp, nn",
@@ -295,9 +295,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"jr c, ne",
+		3,
+		&jrc
 	},
 	{
 		"__ NO INSTRUCTION __",

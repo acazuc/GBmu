@@ -86,6 +86,7 @@ class memboy
 			public:
 				operator byte( void );
 				operator word( void );
+				explicit operator char( void );
 				mempassthru &operator =( byte b );
 				mempassthru &operator =( mempassthru &m );
 				mempassthru &operator ++( int n );

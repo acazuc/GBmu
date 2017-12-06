@@ -298,6 +298,17 @@ static byte jpz( void );
 static byte jpnc( void );
 static byte jpc( void );
 
+// jr
+static byte jr( void );
+
+// jrcc
+static byte jrnz( void );
+static byte jrz( void );
+static byte jrnc( void );
+static byte jrc( void );
+
+////
+
 // nop
 static byte nop( void );
 

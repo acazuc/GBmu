@@ -58,6 +58,9 @@ SRC	= InstructionSet/_blank.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \
+	  InstructionSet/jr.cpp \
+	  InstructionSet/jrcc.cpp \
+	  \
 	  InstructionSet/nop.cpp \
 	  memboy.cpp \
 	  core.cpp \

@@ -12,6 +12,11 @@ memboy::mempassthru::operator word( void )
 	return *( word * ) ptchosen;
 }
 
+memboy::mempassthru::operator char( void )
+{
+	return ( char ) *ptchosen;
+}
+
 memboy::mempassthru &memboy::mempassthru::operator =( byte b )
 {
 	*ptchosen = b;
