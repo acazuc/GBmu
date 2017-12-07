@@ -1,4 +1,4 @@
-#version 150
+#version 450
 
 in vec2 UV;
 
@@ -15,15 +15,15 @@ vec4 Scale2x(vec2 texCoord)
 	// A B C
 	// D E F
 	// G H I
-	vec4 A = texture2D(image, texCoord + vec2( -o.x,  o.y));
-	vec4 B = texture2D(image, texCoord + vec2(    0,  o.y));
-	vec4 C = texture2D(image, texCoord + vec2(  o.x,  o.y));
-	vec4 D = texture2D(image, texCoord + vec2( -o.x,    0));
-	vec4 E = texture2D(image, texCoord + vec2(    0,    0));
-	vec4 F = texture2D(image, texCoord + vec2(  o.x,    0));
-	vec4 G = texture2D(image, texCoord + vec2( -o.x, -o.y));
-	vec4 H = texture2D(image, texCoord + vec2(    0, -o.y));
-	vec4 I = texture2D(image, texCoord + vec2(  o.x, -o.y));
+	vec4 A = texture(image, texCoord + vec2( -o.x,  o.y));
+	vec4 B = texture(image, texCoord + vec2(    0,  o.y));
+	vec4 C = texture(image, texCoord + vec2(  o.x,  o.y));
+	vec4 D = texture(image, texCoord + vec2( -o.x,    0));
+	vec4 E = texture(image, texCoord + vec2(    0,    0));
+	vec4 F = texture(image, texCoord + vec2(  o.x,    0));
+	vec4 G = texture(image, texCoord + vec2( -o.x, -o.y));
+	vec4 H = texture(image, texCoord + vec2(    0, -o.y));
+	vec4 I = texture(image, texCoord + vec2(  o.x, -o.y));
 	vec2 p = texCoord * textureDimensions;
 	// p = the position within a pixel [0...1]
 	p = fract(p);
@@ -43,6 +43,11 @@ vec4 Scale2x(vec2 texCoord)
 	}
 }
 
+vec4 AAScale2x(vec2 texCoord)
+{
+	return mix(texture(image, texCoord), Scale2x(texCoord), 0.5);
+}
+
 vec4 Scale4x(vec2 texCoord)
 {
 	vec2 textureDimensions = vec2(160, 144);
@@ -52,15 +57,15 @@ vec4 Scale4x(vec2 texCoord)
 	// A B C
 	// D E F
 	// G H I
-	vec4 A = Scale2x(texCoord + vec2( -o.x,  o.y));
-	vec4 B = Scale2x(texCoord + vec2(    0,  o.y));
-	vec4 C = Scale2x(texCoord + vec2(  o.x,  o.y));
-	vec4 D = Scale2x(texCoord + vec2( -o.x,    0));
-	vec4 E = Scale2x(texCoord + vec2(    0,    0));
-	vec4 F = Scale2x(texCoord + vec2(  o.x,    0));
-	vec4 G = Scale2x(texCoord + vec2( -o.x, -o.y));
-	vec4 H = Scale2x(texCoord + vec2(    0, -o.y));
-	vec4 I = Scale2x(texCoord + vec2(  o.x, -o.y));
+	vec4 A = AAScale2x(texCoord + vec2( -o.x,  o.y));
+	vec4 B = AAScale2x(texCoord + vec2(    0,  o.y));
+	vec4 C = AAScale2x(texCoord + vec2(  o.x,  o.y));
+	vec4 D = AAScale2x(texCoord + vec2( -o.x,    0));
+	vec4 E = AAScale2x(texCoord + vec2(    0,    0));
+	vec4 F = AAScale2x(texCoord + vec2(  o.x,    0));
+	vec4 G = AAScale2x(texCoord + vec2( -o.x, -o.y));
+	vec4 H = AAScale2x(texCoord + vec2(    0, -o.y));
+	vec4 I = AAScale2x(texCoord + vec2(  o.x, -o.y));
 	vec2 p = texCoord * textureDimensions * 2.;
 	// p = the position within a pixel [0...1]
 	p = fract(p);
@@ -78,6 +83,11 @@ vec4 Scale4x(vec2 texCoord)
 		else // Botton left
 			return D == H && D != B && H != F ? D : E;
 	}
+}
+
+vec4 AAScale4x(vec2 texCoord)
+{
+	return mix(texture2D(image, texCoord), Scale4x(texCoord), 0.5);
 }
 
 void main()

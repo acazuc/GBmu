@@ -1,4 +1,4 @@
-#version 150
+#version 450
 
 in vec2 UV;
 
@@ -15,15 +15,15 @@ vec4 Scale2x(vec2 texCoord)
 	// A B C
 	// D E F
 	// G H I
-	vec4 A = texture2D(image, texCoord + vec2( -o.x,  o.y));
-	vec4 B = texture2D(image, texCoord + vec2(    0,  o.y));
-	vec4 C = texture2D(image, texCoord + vec2(  o.x,  o.y));
-	vec4 D = texture2D(image, texCoord + vec2( -o.x,    0));
-	vec4 E = texture2D(image, texCoord + vec2(    0,    0));
-	vec4 F = texture2D(image, texCoord + vec2(  o.x,    0));
-	vec4 G = texture2D(image, texCoord + vec2( -o.x, -o.y));
-	vec4 H = texture2D(image, texCoord + vec2(    0, -o.y));
-	vec4 I = texture2D(image, texCoord + vec2(  o.x, -o.y));
+	vec4 A = texture(image, texCoord + vec2( -o.x,  o.y));
+	vec4 B = texture(image, texCoord + vec2(    0,  o.y));
+	vec4 C = texture(image, texCoord + vec2(  o.x,  o.y));
+	vec4 D = texture(image, texCoord + vec2( -o.x,    0));
+	vec4 E = texture(image, texCoord + vec2(    0,    0));
+	vec4 F = texture(image, texCoord + vec2(  o.x,    0));
+	vec4 G = texture(image, texCoord + vec2( -o.x, -o.y));
+	vec4 H = texture(image, texCoord + vec2(    0, -o.y));
+	vec4 I = texture(image, texCoord + vec2(  o.x, -o.y));
 	vec2 p = texCoord * textureDimensions;
 	// p = the position within a pixel [0...1]
 	p = fract(p);

@@ -1,4 +1,4 @@
-#version 150
+#version 450
 
 in vec2 texCoords;
 in vec2 vertexes;

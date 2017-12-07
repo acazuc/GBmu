@@ -29,22 +29,22 @@ vec4 SuperEagle(vec2 texCoord)
 	float dy = 1. / 144;
 	vec2 fp = fract(texCoord * vec2(160, 144));
 	// Reading the texels
-	vec3 C0 = texture(image, texCoord + vec2(-dx, -dy)).xyz; 
-	vec3 C1 = texture(image, texCoord + vec2(-dx, 0)).xyz;
-	vec3 C2 = texture(image, texCoord + vec2(dx, -dy)).xyz;
-	vec3 D3 = texture(image, texCoord + vec2(dx + dx, -dy)).xyz;
-	vec3 C3 = texture(image, texCoord + vec2(-dx, 0)).xyz;
+	vec3 C0 = texture(image, texCoord + vec2(-dx     , -dy    )).xyz; 
+	vec3 C1 = texture(image, texCoord + vec2(-dx     , 0      )).xyz;
+	vec3 C2 = texture(image, texCoord + vec2( dx     , -dy    )).xyz;
+	vec3 C3 = texture(image, texCoord + vec2(-dx     , 0      )).xyz;
 	vec3 C4 = texture(image, texCoord).xyz;
-	vec3 C5 = texture(image, texCoord + vec2(dx, 0)).xyz;
-	vec3 D4 = texture(image, texCoord + vec2(dx + dx, 0)).xyz;
-	vec3 C6 = texture(image, texCoord + vec2(-dx, dy)).xyz;
-	vec3 C7 = texture(image, texCoord + vec2(0, dy)).xyz;
-	vec3 C8 = texture(image, texCoord + vec2(dx, dy)).xyz;
-	vec3 D5 = texture(image, texCoord + vec2(dx + dx, dy)).xyz;
-	vec3 D0 = texture(image, texCoord + vec2(-dx, dy + dy)).xyz;
-	vec3 D1 = texture(image, texCoord + vec2(0, dy + dy)).xyz;
-	vec3 D2 = texture(image, texCoord + vec2(dx, dy + dy)).xyz;
-	vec3 D6 = texture(image, texCoord + vec2(dx + dx, dy + dy)).xyz;
+	vec3 C5 = texture(image, texCoord + vec2( dx     , 0      )).xyz;
+	vec3 C6 = texture(image, texCoord + vec2(-dx     , dy     )).xyz;
+	vec3 C7 = texture(image, texCoord + vec2(  0     , dy     )).xyz;
+	vec3 C8 = texture(image, texCoord + vec2( dx     , dy     )).xyz;
+	vec3 D0 = texture(image, texCoord + vec2(-dx     , dy + dy)).xyz;
+	vec3 D1 = texture(image, texCoord + vec2(  0     , dy + dy)).xyz;
+	vec3 D2 = texture(image, texCoord + vec2( dx     , dy + dy)).xyz;
+	vec3 D3 = texture(image, texCoord + vec2( dx + dx, -dy    )).xyz;
+	vec3 D4 = texture(image, texCoord + vec2( dx + dx, 0      )).xyz;
+	vec3 D5 = texture(image, texCoord + vec2( dx + dx, dy     )).xyz;
+	vec3 D6 = texture(image, texCoord + vec2( dx + dx, dy + dy)).xyz;
 	vec3 p00;
 	vec3 p10;
 	vec3 p01;
@@ -72,20 +72,20 @@ vec4 SuperEagle(vec2 texCoord)
 		{
 			p01 = p10 = C7;
 			if ((c6 == c7) || (c5 == c2))
-				p00 = 0.25*(3.0*C7+C4);
+				p00 = 0.25 * (3.0 * C7 + C4);
 			else
-				p00 = 0.5*(C4+C5);
+				p00 = 0.5 * (C4 + C5);
 			if ((c5 == d4) || (c7 == d1))
-				p11 = 0.25*(3.0*C7+C8);
+				p11 = 0.25 * (3.0 * C7 + C8);
 			else
-				p11 = 0.5*(C7+C8);
+				p11 = 0.5 * (C7 + C8);
 		}
 		else
 		{
-			p11 = 0.125*(6.0*C8+C7+C5);
-			p00 = 0.125*(6.0*C4+C7+C5);
-			p10 = 0.125*(6.0*C7+C4+C8);
-			p01 = 0.125*(6.0*C5+C4+C8);
+			p11 = 0.125 * (6.0 * C8 + C7 + C5);
+			p00 = 0.125 * (6.0 * C4 + C7 + C5);
+			p10 = 0.125 * (6.0 * C7 + C4 + C8);
+			p01 = 0.125 * (6.0 * C5 + C4 + C8);
 		}
 	}
 	else
@@ -94,29 +94,30 @@ vec4 SuperEagle(vec2 texCoord)
 		{
 			p11 = p00 = C4;
 			if ((c1 == c4) || (c8 == d5))
-				p01 = 0.25*(3.0*C4+C5);
+				p01 = 0.25 * (3.0 * C4 + C5);
 			else
-				p01 = 0.5*(C4+C5);
+				p01 = 0.5 * (C4 + C5);
 			if ((c8 == d2) || (c3 == c4))
-				p10 = 0.25*(3.0*C4+C7);
+				p10 = 0.25 * (3.0 * C4 + C7);
 			else
-				p10 = 0.5*(C7+C8);
+				p10 = 0.5 * (C7 + C8);
 		}
 		else
 		{
 			int r = 0;
-			r += GET_RESULT(c5,c4,c6,d1);
-			r += GET_RESULT(c5,c4,c3,c1);
-			r += GET_RESULT(c5,c4,d2,d5);
-			r += GET_RESULT(c5,c4,c2,d4);
+			r += GET_RESULT(c5, c4, c6, d1);
+			r += GET_RESULT(c5, c4, c3, c1);
+			r += GET_RESULT(c5, c4, d2, d5);
+			r += GET_RESULT(c5, c4, c2, d4);
 			if (r > 0)
 			{
 				p01 = p10 = C7;
-				p00 = p11 = 0.5*(C4+C5);
-			} else if (r < 0)
+				p00 = p11 = 0.5 * (C4 + C5);
+			}
+			else if (r < 0)
 			{
 				p11 = p00 = C4;
-				p01 = p10 = 0.5*(C4+C5);
+				p01 = p10 = 0.5 * (C4 + C5);
 			}
 			else
 			{
@@ -126,7 +127,7 @@ vec4 SuperEagle(vec2 texCoord)
 		}
 	}
 	// Distributing the four products
-	p10 = (fp.x < 0.50) ? (fp.y < 0.50 ? p00 : p10) : (fp.y < 0.50 ? p01: p11);
+	p10 = (fp.x < 0.50) ? (fp.y < 0.50 ? p00 : p10) : (fp.y < 0.50 ? p01 : p11);
 	return vec4(p10, 1.0);
 }
 

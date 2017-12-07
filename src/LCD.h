@@ -30,10 +30,13 @@ class LCD
 		void renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode);
 		void renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
 		void renderBG(uint8_t y);
+		void renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
+		void renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
 		void renderOBJ(uint8_t y);
 		void renderWindow(uint8_t y);
 
 	public:
+		LCD();
 		void render();
 		void CPSCallback(uint8_t addr, uint8_t value);
 		void CPDCallback(uint8_t addr, uint8_t value);

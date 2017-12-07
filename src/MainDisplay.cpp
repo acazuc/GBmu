@@ -136,7 +136,7 @@ static void initPrograms()
 {
 	std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs"};
 	for (uint8_t i = 0; i < AA_LAST; ++i)
-		initProgram(&programs[i], "shaders/basic.vs", "shaders/" + fragments[i]);
+		initProgram(&programs[i], "shaders/AA/basic.vs", "shaders/AA/" + fragments[i]);
 	currentprogram = &programs[0];
 }
 

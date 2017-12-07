@@ -1,4 +1,4 @@
-#version 150
+#version 450
 
 in vec2 UV;
 
@@ -8,7 +8,7 @@ out vec4 frag_color;
 
 vec3 rgb_to_hq_colospace(vec4 rgb)
 {
-	return vec3( 0.250 * rgb.r + 0.250 * rgb.g + 0.250 * rgb.b,
+	return vec3(0.250 * rgb.r + 0.250 * rgb.g + 0.250 * rgb.b,
 			0.250 * rgb.r - 0.000 * rgb.g - 0.250 * rgb.b,
 			-0.125 * rgb.r + 0.250 * rgb.g - 0.125 * rgb.b);
 }
@@ -40,15 +40,15 @@ vec4 OmniScale(vec2 texCoord)
 		o.y = -o.y;
 		p.y = 1.0 - p.y;
 	}
-	vec4 w0 = texture2D(image, texCoord + vec2(-o.x, -o.y));
-	vec4 w1 = texture2D(image, texCoord + vec2(0   , -o.y));
-	vec4 w2 = texture2D(image, texCoord + vec2( o.x, -o.y));
-	vec4 w3 = texture2D(image, texCoord + vec2(-o.x,    0));
-	vec4 w4 = texture2D(image, texCoord + vec2(0   ,    0));
-	vec4 w5 = texture2D(image, texCoord + vec2(o.x ,    0));
-	vec4 w6 = texture2D(image, texCoord + vec2(-o.x,  o.y));
-	vec4 w7 = texture2D(image, texCoord + vec2(0   ,  o.y));
-	vec4 w8 = texture2D(image, texCoord + vec2(o.x ,  o.y));
+	vec4 w0 = texture(image, texCoord + vec2(-o.x, -o.y));
+	vec4 w1 = texture(image, texCoord + vec2(0   , -o.y));
+	vec4 w2 = texture(image, texCoord + vec2( o.x, -o.y));
+	vec4 w3 = texture(image, texCoord + vec2(-o.x,    0));
+	vec4 w4 = texture(image, texCoord + vec2(0   ,    0));
+	vec4 w5 = texture(image, texCoord + vec2(o.x ,    0));
+	vec4 w6 = texture(image, texCoord + vec2(-o.x,  o.y));
+	vec4 w7 = texture(image, texCoord + vec2(0   ,  o.y));
+	vec4 w8 = texture(image, texCoord + vec2(o.x ,  o.y));
 	int pattern = 0;
 	if (is_different(w0, w4))
 		pattern |= 1 << 0;
@@ -184,13 +184,13 @@ vec4 OmniScale(vec2 texCoord)
 	if (dist > 0.5 + pixel_size / 2)
 		return w4;
 	/* We need more samples to "solve" this diagonal */
-	vec4 x0 = texture2D(image, texCoord + vec2( -o.x * 2.0, -o.y * 2.0));
-	vec4 x1 = texture2D(image, texCoord + vec2( -o.x      , -o.y * 2.0));
-	vec4 x2 = texture2D(image, texCoord + vec2(  0.0      , -o.y * 2.0));
-	vec4 x3 = texture2D(image, texCoord + vec2(  o.x      , -o.y * 2.0));
-	vec4 x4 = texture2D(image, texCoord + vec2( -o.x * 2.0, -o.y      ));
-	vec4 x5 = texture2D(image, texCoord + vec2( -o.x * 2.0,  0.0      ));
-	vec4 x6 = texture2D(image, texCoord + vec2( -o.x * 2.0,  o.y      ));
+	vec4 x0 = texture(image, texCoord + vec2(-o.x * 2.0, -o.y * 2.0));
+	vec4 x1 = texture(image, texCoord + vec2(-o.x      , -o.y * 2.0));
+	vec4 x2 = texture(image, texCoord + vec2( 0.0      , -o.y * 2.0));
+	vec4 x3 = texture(image, texCoord + vec2( o.x      , -o.y * 2.0));
+	vec4 x4 = texture(image, texCoord + vec2(-o.x * 2.0, -o.y      ));
+	vec4 x5 = texture(image, texCoord + vec2(-o.x * 2.0,  0.0      ));
+	vec4 x6 = texture(image, texCoord + vec2(-o.x * 2.0,  o.y      ));
 	if (is_different(x0, w4))
 		pattern |= 1 << 8;
 	if (is_different(x1, w4))
