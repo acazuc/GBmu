@@ -35,11 +35,36 @@ void LCD::render()
 	}
 }
 
+static uint8_t datas[] =
+{
+	3, 3, 3, 0, 0, 3, 3, 3,
+	3, 3, 3, 0, 0, 3, 3, 3,
+	3, 3, 0, 3, 3, 0, 3, 3,
+	3, 3, 0, 3, 3, 0, 3, 3,
+	3, 3, 0, 0, 0, 0, 3, 3,
+	3, 0, 3, 3, 3, 3, 0, 3,
+	3, 0, 3, 3, 3, 3, 0, 3,
+	3, 0, 3, 3, 3, 3, 0, 3,
+};
+/*
+static uint8_t datas[] =
+{
+	3, 3, 2, 0, 0, 2, 3, 3,
+	3, 3, 1, 0, 0, 1, 3, 3,
+	3, 3, 0, 1, 1, 0, 3, 3,
+	3, 2, 0, 2, 2, 0, 2, 3,
+	3, 1, 0, 0, 0, 0, 1, 3,
+	3, 0, 1, 2, 2, 1, 0, 3,
+	2, 0, 2, 3, 3, 2, 0, 2,
+	1, 0, 3, 3, 3, 3, 0, 1,
+};*/
+
 void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode)
 {
 	uint16_t charaddr = (uint8_t)mem[LCDC] & 0b00010000 ? LCD_BG2_CHAR_BEGIN : LCD_BG1_CHAR_BEGIN;
 	uint8_t idx = (bx + by * 8) * 2;
-	uint8_t color = ((uint8_t)mem[charaddr + idx / 8]) >> (idx % 8);
+	//uint8_t color = (((uint8_t)mem[charaddr + idx / 8]) >> (idx % 8)) / 3. * UCHAR_MAX;
+	uint8_t color = datas[idx / 2] / 3. * UCHAR_MAX;
 	uint32_t col = color | (color << 8) | (color << 16) | (color << 24);
 	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&col);
 }
@@ -173,15 +198,3 @@ void LCD::CPDCallback(uint8_t addr, uint8_t value)
 		palette[2] = red;
 	}
 }
-
-static uint8_t datas[] =
-{
-	3, 3, 2, 0, 0, 2, 3, 3,
-	3, 3, 1, 0, 0, 1, 3, 3,
-	3, 3, 0, 1, 1, 0, 3, 3,
-	3, 2, 0, 2, 2, 0, 2, 3,
-	3, 1, 0, 0, 0, 0, 1, 3,
-	3, 0, 1, 2, 2, 1, 0, 3,
-	2, 0, 2, 3, 3, 2, 0, 2,
-	1, 0, 3, 3, 3, 3, 0, 1,
-};
