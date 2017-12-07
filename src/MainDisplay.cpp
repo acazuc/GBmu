@@ -365,9 +365,8 @@ void MainDisplay::iter()
 	gtk_widget_queue_draw(this->window);
 }
 
-void MainDisplay::putPixel(uint8_t x, uint8_t y, uint32_t color)
+void MainDisplay::putPixel(uint8_t x, uint8_t y, uint8_t *color)
 {
 	uint32_t idx = (x + y * 160) * 3;
-	uint8_t *data = (uint8_t*)&color;
-	std::memmove(this->texDatas + idx, data, 3);
+	std::memmove(this->texDatas + idx, color, 3);
 }

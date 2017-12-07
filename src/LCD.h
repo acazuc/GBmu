@@ -25,12 +25,18 @@ class LCD
 {
 
 	private:
+		uint8_t objpalettes[8][4][3];
+		uint8_t bgpalettes[8][4][3];
+		void renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode);
+		void renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
+		void renderBG(uint8_t y);
+		void renderOBJ(uint8_t y);
+		void renderWindow(uint8_t y);
 
 	public:
 		void render();
-		void renderBG(uint8_t y);
-		void renderWindow(uint8_t y);
-		void renderOBJ(uint8_t y);
+		void CPSCallback(uint8_t addr, uint8_t value);
+		void CPDCallback(uint8_t addr, uint8_t value);
 
 };
 

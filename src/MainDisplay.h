@@ -20,7 +20,7 @@ class MainDisplay
 		MainDisplay();
 		~MainDisplay();
 		void iter();
-		void putPixel(uint8_t x, uint8_t y, uint32_t color);
+		void putPixel(uint8_t x, uint8_t y, uint8_t *color);
 		inline GtkWidget *getWindow() {return (this->window);};
 		inline uint8_t *getTexDatas() {return (this->texDatas);};
 

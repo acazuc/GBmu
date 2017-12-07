@@ -4,12 +4,6 @@
 
 static memboy mem;
 
-static uint32_t getColorForPalette(uint8_t palette, uint8_t color)
-{
-	uint16_t palettecolor = (uint16_t)mem[OBP0 + (OBP1 - OBP0) * palette + color * 2];
-	return ((palettecolor & 0b00011111) | ((palettecolor & 0b0000001111100000) << 3) | ((palettecolor & 0b011111000000000) << 6));
-}
-
 void LCD::render()
 {
 	for (uint8_t y = 0; y < 144; ++y)
@@ -41,15 +35,16 @@ void LCD::render()
 	}
 }
 
-static void renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode)
+void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode)
 {
 	uint16_t charaddr = (uint8_t)mem[LCDC] & 0b00010000 ? LCD_BG2_CHAR_BEGIN : LCD_BG1_CHAR_BEGIN;
 	uint8_t idx = (bx + by * 8) * 2;
 	uint8_t color = ((uint8_t)mem[charaddr + idx / 8]) >> (idx % 8);
-	Main::getMainDisplay()->putPixel(x, y, color | (color << 8) | (color << 16));
+	uint32_t col = color | (color << 8) | (color << 16) | (color << 24);
+	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&col);
 }
 
-static void renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
+void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
 {
 	uint16_t charaddr = (uint8_t)mem[LCDC] & 0b00010000 ? LCD_BG2_CHAR_BEGIN : LCD_BG1_CHAR_BEGIN;
 	uint8_t idx = (bx + by * 8) * 2;
@@ -67,8 +62,7 @@ static void renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_
 		bx = 7 - bx;
 	if (vflip)
 		by = 7 - by;
-	uint32_t color = getColorForPalette(palette, coloridx);
-	Main::getMainDisplay()->putPixel(x, y, color);
+	Main::getMainDisplay()->putPixel(x, y, bgpalettes[palette][coloridx]);
 	(void)priority;
 	//TODO priority
 }
@@ -126,6 +120,58 @@ void LCD::renderOBJ(uint8_t y)
 void LCD::renderWindow(uint8_t y)
 {
 	//
+}
+
+void LCD::CPSCallback(uint8_t addr, uint8_t value)
+{
+	uint8_t hl = value & 0b00000001;
+	uint8_t colorid = (value & 0b00000110) >> 1;
+	uint8_t paletteid = (value & 0b00111000) >> 3;
+	uint8_t *palette = addr == BCPS ? bgpalettes[paletteid][colorid] : objpalettes[paletteid][colorid];
+	uint8_t color;
+	if (hl)
+	{
+		uint8_t blue = (palette[2] & 0b00011111) << 2;
+		uint8_t green = (palette[1] & 0b00011000) >> 3;
+		color = blue | green;
+	}
+	else
+	{
+		uint8_t green = (palette[1] & 0b00000111) << 5;
+		uint8_t red = (palette[0] & 0b00011111);
+		color = green | red;
+	}
+	mem[addr = BCPS ? BCPD : OCPD] = color;
+}
+
+void LCD::CPDCallback(uint8_t addr, uint8_t value)
+{
+	uint8_t CPS = (uint8_t)mem[addr == BCPD ? BCPS : OCPS];
+	uint8_t hl = CPS & 0b00000001;
+	uint8_t colorid = (CPS & 0b00000110) >> 1;
+	uint8_t paletteid = (CPS & 0b00111000) >> 3;
+	uint8_t inc = (CPS & 0b10000000) >> 7;
+	uint8_t *palette = addr == BCPD ? bgpalettes[paletteid][colorid] : objpalettes[paletteid][colorid];
+	if (inc)
+	{
+		uint8_t val = (CPS & 0x80) | (((CPS & 0x3F) + 1) & 0x3F);
+		mem[addr = BCPD ? BCPS : OCPS] = val;
+		CPSCallback(addr = BCPD ? BCPS : OCPS, val);
+	}
+	if (hl)
+	{
+		uint8_t blue = (value & 0b01111100) >> 2;
+		uint8_t green = (value & 0b00000011);
+		palette[1] = (palette[1] & 0b00000111) | (green << 3);
+		palette[2] = blue;
+	}
+	else
+	{
+		uint8_t green = (value & 0b11100000) >> 5;
+		uint8_t red = (value & 0b00011111);
+		palette[1] = (palette[1] & 0b00011000) | green;
+		palette[2] = red;
+	}
 }
 
 static uint8_t datas[] =
