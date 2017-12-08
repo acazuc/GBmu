@@ -83,13 +83,26 @@ class memboy
 			friend class memboy;
 
 			private:
-				byte *ptchosen;
-				byte ptmode;
+				union xword
+				{
+					word w;
+					struct
+					{
+						byte l;
+						byte h;
+					}
+					b;
+				};
+
+				memboy *ref;
+				word ptchosen;
 			public:
 				operator byte( void );
 				operator word( void );
 				explicit operator char( void );
 				mempassthru &operator =( byte b );
+				mempassthru &operator =( word w );
+				//mempassthru &operator =( word w );
 				mempassthru &operator =( mempassthru &m );
 				mempassthru &operator ++( int n );
 				mempassthru &operator --( int n );
@@ -97,6 +110,8 @@ class memboy
 
 		mempassthru block[MEMBOY_MAXSTACK];
 		int blockid;
+
+		byte &deref( word addr );
 	public:
 		// Constructor
 		memboy( void );

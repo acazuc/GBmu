@@ -4,40 +4,53 @@
 
 memboy::mempassthru::operator byte( void )
 {
-	return *ptchosen;
+	return (*ref).deref( ptchosen );
 }
 
 memboy::mempassthru::operator word( void )
 {
-	return *( word * ) ptchosen;
+	union xword ret;
+
+	ret.b.l = (*ref).deref( ptchosen );
+	ret.b.h = (*ref).deref( ptchosen + 1 );
+	return ret.w;
 }
 
 memboy::mempassthru::operator char( void )
 {
-	return ( char ) *ptchosen;
+	return ( char ) (*ref).deref( ptchosen );
 }
 
 memboy::mempassthru &memboy::mempassthru::operator =( byte b )
 {
-	*ptchosen = b;
+	(*ref).deref( ptchosen ) = b;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator =( word w )
+{
+	union xword &in = *( union xword * ) &w;
+
+	(*ref).deref( ptchosen ) = in.b.l;
+	(*ref).deref( ptchosen + 1 ) = in.b.h;
 	return *this;
 }
 
 memboy::mempassthru &memboy::mempassthru::operator =( mempassthru &m )
 {
-	*ptchosen = *m.ptchosen;
+	(*ref).deref( ptchosen ) = (*ref).deref( m.ptchosen );
 	return *this;
 }
 
 memboy::mempassthru &memboy::mempassthru::operator ++( int n )
 {
-	(*ptchosen)++;
+	(*ref).deref( ptchosen )++;
 	return *this;
 }
 
 memboy::mempassthru &memboy::mempassthru::operator --( int n )
 {
-	(*ptchosen)--;
+	(*ref).deref( ptchosen )--;
 	return *this;
 }
 
@@ -47,7 +60,35 @@ memboy::memboy( void )
 	bank1chardts = new byte [0x2000];
 	svbk2to7 = new byte [0x6000];
 
+	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
+		block[i].ref = this;
+
 	blockid = 0;
+}
+
+byte &memboy::deref( word addr )
+{
+	if ( addr < 0x8000 )
+		return map[addr];
+	if ( addr < 0xA000 )
+	{
+		if ( map[VBK] & 1 )
+			return bank1chardts[addr - 0x8000];
+		else
+			return map[addr];
+	}
+	if ( addr < 0xD000 )
+		return map[addr];
+	if ( addr < 0xE000 )
+	{
+		byte bkid = map[SVBK] & 7;
+
+		if ( bkid > 1 )
+			return svbk2to7[0x1000 * ( bkid - 2 ) + ( addr - 0xD000 )];
+		else
+			return map[addr];
+	}
+	return map[addr];
 }
 
 memboy::mempassthru &memboy::operator []( word addr )
@@ -55,35 +96,7 @@ memboy::mempassthru &memboy::operator []( word addr )
 	if ( blockid == MEMBOY_MAXSTACK )
 		blockid = 0;
 
-	if ( addr < 0x8000 )
-	{
-		block[blockid].ptchosen = &map[addr];
-		return block[blockid++];
-	}
-	if ( addr < 0xA000 )
-	{
-		if ( map[VBK] & 1 )
-			block[blockid].ptchosen = &bank1chardts[addr - 0x8000];
-		else
-			block[blockid].ptchosen = &map[addr];
-		return block[blockid++];
-	}
-	if ( addr < 0xD000 )
-	{
-		block[blockid].ptchosen = &map[addr];
-		return block[blockid++];
-	}
-	if ( addr < 0xE000 )
-	{
-		byte bkid = map[SVBK] & 7;
-
-		if ( bkid > 1 )
-			block[blockid].ptchosen = &svbk2to7[0x1000 * ( bkid - 2 ) + ( addr - 0xD000 )];
-		else
-			block[blockid].ptchosen = &map[addr];
-		return block[blockid++];
-	}
-	block[blockid].ptchosen = &map[addr];
+	block[blockid].ptchosen = addr;
 	return block[blockid++];
 }
 
