@@ -14,6 +14,8 @@ void LCD::render()
 {
 	for (uint8_t y = 0; y < 144; ++y)
 	{
+		std::memset(priorities[y], 0, sizeof(priorities[y]));
+		std::memset(hasprinted[y], 0, sizeof(hasprinted[y]));
 		mem[LY] = y;
 		mem[STAT] = ((uint8_t)mem[STAT] & 0b11111011) | ((uint8_t)mem[LY] == (uint8_t)mem[LYC] ? 0x4 : 0);
 		mem[STAT] = ((uint8_t)mem[STAT] & 0b11111100) | 2;
@@ -60,6 +62,8 @@ void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 	uint8_t color = (((uint8_t)mem[charaddr + idx / 8]) >> (idx % 8)) / 3. * UCHAR_MAX;
 	uint32_t col = color | (color << 8) | (color << 16) | (color << 24);
 	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&col);
+	priorities[y][x] = priority;
+	hasprinted[y][x] = col != 0;
 }
 
 void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
@@ -81,8 +85,8 @@ void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 	if (vflip)
 		by = 7 - by;
 	Main::getMainDisplay()->putPixel(x, y, bgpalettes[palette][coloridx]);
-	(void)priority;
-	//TODO priority
+	priorities[y][x] = priority;
+	hasprinted[y][x] = bgpalettes[palette][coloridx] != 0;
 }
 
 void LCD::renderBG(uint8_t y)
@@ -120,10 +124,26 @@ void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 	uint8_t idx = (bx + by * 8) * 2;
 	uint8_t pixel = (((uint8_t)mem[charaddr + idx / 8]) >> (idx % 8)) & 0b00000111;
 	uint8_t color = (((uint8_t)mem[palette ? OBP0 : OBP1] >> (pixel * 2)) & 0b00000011) / 3. * UCHAR_MAX;
+	if (priorities[y][x])
+	{
+		if (hasprinted[y][x] || !color)
+			return;
+	}
+	else
+	{
+		if (priority)
+		{
+			if (hasprinted[y][x] || !color)
+				return;
+		}
+		else
+		{
+			if (!color)
+				return;
+		}
+	}
 	uint32_t col = color | (color << 8) | (color << 16) | (color << 24);
 	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&color);
-	//TODO priority
-	(void)priority;
 }
 
 void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
@@ -145,9 +165,26 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		pixel = (((uint8_t)mem.cbank1(charaddr + idx / 8)) >> (idx % 8)) & 0b00000111;
 	else
 		pixel = (((uint8_t)mem.cbank0(charaddr + idx / 8)) >> (idx % 8)) & 0b00000111;
-	Main::getMainDisplay()->putPixel(x, y, objpalettes[palette][pixel]);
-	//TODO priority
-	(void)priority;
+	uint32_t color = objpalettes[palette][pixel];
+	if (priorities[y][x])
+	{
+		if (hasprinted[y][x] || !color)
+			return;
+	}
+	else
+	{
+		if (priority)
+		{
+			if (hasprinted[y][x] || !color)
+				return;
+		}
+		else
+		{
+			if (!color)
+				return;
+		}
+	}
+	Main::getMainDisplay()->putPixel(x, y, color);
 }
 
 void LCD::renderOBJ(uint8_t y)
@@ -169,7 +206,7 @@ void LCD::renderOBJ(uint8_t y)
 		uint8_t attr = mem[addr + 3];
 		for (uint8_t x = 0; x < 8; ++x)
 		{
-			if (true/*DMG*/ && cx >= lowestx[cx + x])
+			if (true/*DMG*/ && cx > lowestx[cx + x])
 				continue;
 			lowestx[cx + x] = cx;
 			if (true/*DMG*/)

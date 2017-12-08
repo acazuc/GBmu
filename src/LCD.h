@@ -25,6 +25,8 @@ class LCD
 {
 
 	private:
+		uint8_t hasprinted[144][160];
+		uint8_t priorities[144][160];
 		uint8_t objpalettes[8][4][3];
 		uint8_t bgpalettes[8][4][3];
 		void renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode);
