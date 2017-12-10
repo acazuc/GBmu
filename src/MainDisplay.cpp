@@ -231,6 +231,20 @@ static void cb_file_quit(GtkWidget *osef1, gpointer osef2)
 	//
 }
 
+static void cb_edit_play(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	//
+}
+
+static void cb_edit_pause(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	//
+}
+
 static void cb_file_open(GtkWidget *osef1, gpointer osef2)
 {
 	(void)osef1;
@@ -310,14 +324,38 @@ static void build_menu_file(GtkWidget *menubar)
 {
 	GtkWidget *file = gtk_menu_item_new_with_label("File");
 	GtkWidget *file_menu = gtk_menu_new();
+
+	//Open
 	GtkWidget *file_open = gtk_menu_item_new_with_label("Open");
 	g_signal_connect(G_OBJECT(file_open), "activate", G_CALLBACK(cb_file_open), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_open);
+
+	//Quit
 	GtkWidget *file_quit = gtk_menu_item_new_with_label("Quit");
 	g_signal_connect(G_OBJECT(file_quit), "activate", G_CALLBACK(cb_file_quit), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_quit);
+
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), file_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
+}
+
+static void build_menu_edit(GtkWidget *menubar)
+{
+	GtkWidget *edit = gtk_menu_item_new_with_label("Edit");
+	GtkWidget *edit_menu = gtk_menu_new();
+
+	//Play
+	GtkWidget *edit_play = gtk_menu_item_new_with_label("Play");
+	g_signal_connect(G_OBJECT(edit_play), "activate", G_CALLBACK(cb_edit_play), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_play);
+
+	//Pause
+	GtkWidget *edit_pause = gtk_menu_item_new_with_label("Pause");
+	g_signal_connect(G_OBJECT(edit_pause), "activate", G_CALLBACK(cb_edit_pause), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_pause);
+
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(edit), edit_menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), edit);
 }
 
 static void build_menu_tools_size(GtkWidget *tool_size)
@@ -341,10 +379,12 @@ static void build_menu_tools_audio_wave(GtkWidget *tool_wave)
 	GtkWidget *tool_wave_square = gtk_menu_item_new_with_label("Square");
 	g_signal_connect(G_OBJECT(tool_wave_square), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SQUARE));
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_square);
+
 	//Saw
 	GtkWidget *tool_wave_saw = gtk_menu_item_new_with_label("Saw");
 	g_signal_connect(G_OBJECT(tool_wave_saw), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_saw);
+
 	//Sin
 	GtkWidget *tool_wave_sin = gtk_menu_item_new_with_label("Sin");
 	g_signal_connect(G_OBJECT(tool_wave_sin), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SIN));
@@ -414,18 +454,27 @@ static void build_menu_tools(GtkWidget *menubar)
 {
 	GtkWidget *tool = gtk_menu_item_new_with_label("Tools");
 	GtkWidget *tool_menu = gtk_menu_new();
-	GtkWidget *tool_debug = gtk_menu_item_new_with_label("Debugger");
-	g_signal_connect(G_OBJECT(tool_debug), "activate", G_CALLBACK(cb_tool_debug), NULL);
+
+	//Debuggee
+	GtkWidget *tool_debugger = gtk_menu_item_new_with_label("Debugger");
+	g_signal_connect(G_OBJECT(tool_debugger), "activate", G_CALLBACK(cb_tool_debug), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_debugger);
+
+	//Size
 	GtkWidget *tool_size = gtk_menu_item_new_with_label("Size");
 	build_menu_tools_size(tool_size);
-	GtkWidget *tool_audio_wave = gtk_menu_item_new_with_label("Audio Wave");
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_size);
+
+	//Audio wave
+	GtkWidget *tool_audio_wave = gtk_menu_item_new_with_label("Audio wave");
 	build_menu_tools_audio_wave(tool_audio_wave);
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_audio_wave);
+
+	//Antialiasing
 	GtkWidget *tool_aa = gtk_menu_item_new_with_label("Antialiasing");
 	build_menu_tools_aa(tool_aa);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_debug);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_size);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_audio_wave);
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_aa);
+
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool), tool_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), tool);
 }
@@ -458,9 +507,10 @@ MainDisplay::MainDisplay()
 	g_object_set(box, "expand", TRUE, NULL);
 	this->menubar = gtk_menu_bar_new();
 
-	build_menu_file(menubar);
-	build_menu_tools(menubar);
-	build_menu_help(menubar);
+	build_menu_file(this->menubar);
+	build_menu_edit(this->menubar);
+	build_menu_tools(this->menubar);
+	build_menu_help(this->menubar);
 
 	gtk_widget_show_all(this->menubar);
 	gtk_box_pack_start(GTK_BOX(box), this->menubar, FALSE, FALSE, 0);

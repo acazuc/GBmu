@@ -111,12 +111,12 @@ static int16_t getc1val()
 {
 	if ((uint8_t)mem[NR14] & 0b10000000)
 	{
-		c1len = (64 - ((uint8_t)mem[NR11] & 0b00111111)) * freq / 256;
-		c1env = ((uint8_t)mem[NR12] & 0b11110000) >> 4;
-		c1freq = c1regtofreq((uint8_t)mem[NR13], (uint8_t)mem[NR14]);
-		mem[NR14] = (uint8_t)((uint8_t)mem[NR14] & 0b01111111);
+		c1len = (64 - (mem[NR11] & 0b00111111)) * freq / 256;
+		c1env = (mem[NR12] & 0b11110000) >> 4;
+		c1freq = c1regtofreq(mem[NR13], mem[NR14]);
+		mem[NR14] = mem[NR14] & 0b01111111;
 	}
-	uint8_t duty = ((uint8_t)mem[NR11] & 0b11000000) >> 6;
+	uint8_t duty = (mem[NR11] & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
 		dutyper = .25;
@@ -150,14 +150,14 @@ static int16_t getc1val()
 
 static int16_t getc2val()
 {
-	if ((uint8_t)mem[NR24] & 0b10000000)
+	if (mem[NR24] & 0b10000000)
 	{
-		c2len = (64 - ((uint8_t)mem[NR21] & 0b00111111)) * freq / 256;
-		c2env = ((uint8_t)mem[NR22] & 0b11110000) >> 4;
-		mem[NR24] = (uint8_t)((uint8_t)mem[NR24] & 0b01111111);
+		c2len = (64 - (mem[NR21] & 0b00111111)) * freq / 256;
+		c2env = (mem[NR22] & 0b11110000) >> 4;
+		mem[NR24] = mem[NR24] & 0b01111111;
 	}
-	c2freq = c2regtofreq((uint8_t)mem[NR23], (uint8_t)mem[NR24]);
-	uint8_t duty = ((uint8_t)mem[NR21] & 0b11000000) >> 6;
+	c2freq = c2regtofreq(mem[NR23], mem[NR24]);
+	uint8_t duty = (mem[NR21] & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
 		dutyper = .25;
@@ -191,19 +191,19 @@ static int16_t getc2val()
 
 static int16_t getc3val()
 {
-	if (!((uint8_t)mem[NR30] & 0b10000000))
+	if (!(mem[NR30] & 0b10000000))
 	{
-		mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11111011);
+		mem[NR52] = mem[NR52] & 0b11111011;
 		return (0);
 	}
-	if ((uint8_t)mem[NR34] & 0b10000000)
+	if (mem[NR34] & 0b10000000)
 	{
-		c3len = (256 - (uint8_t)mem[NR31]) * freq / 256;
-		c3freq = c3regtofreq((uint8_t)mem[NR33], (uint8_t)mem[NR34]);
-		mem[NR34] = (uint8_t)((uint8_t)mem[NR34] & 0b01111111);
+		c3len = (256 - mem[NR31]) * freq / 256;
+		c3freq = c3regtofreq(mem[NR33], mem[NR34]);
+		mem[NR34] = (mem[NR34] & 0b01111111);
 	}
-	if (!((uint8_t)mem[NR34] & 0b01000000))
-		c3freq = c3regtofreq((uint8_t)mem[NR33], (uint8_t)mem[NR34]);
+	if (!(mem[NR34] & 0b01000000))
+		c3freq = c3regtofreq(mem[NR33], mem[NR34]);
 	uint32_t inter = freq / c3freq;
 	if (!inter)
 		return (0);
@@ -215,7 +215,7 @@ static int16_t getc3val()
 	float fac = tmp / 16.;
 	int16_t val = -SHRT_MIN;
 	val += (SHRT_MAX - SHRT_MIN) * fac;
-	uint8_t level = ((uint8_t)mem[NR32] & 0b01100000) >> 5;
+	uint8_t level = (mem[NR32] & 0b01100000) >> 5;
 	if (level == 0)
 		return (0);
 	if (level == 1)
@@ -227,20 +227,20 @@ static int16_t getc3val()
 
 static int16_t getc4val()
 {
-	if ((uint8_t)mem[NR44] & 0b10000000)
+	if (mem[NR44] & 0b10000000)
 	{
 		c4stepstate = 0xff;
 		c4stepcounter = 0;
-		c4len = (64 - ((uint8_t)mem[NR41] & 0b00111111)) * freq / 256;
-		uint8_t tmp = (uint8_t)mem[NR43] & 0b00000111;
+		c4len = (64 - (mem[NR41] & 0b00111111)) * freq / 256;
+		uint8_t tmp = mem[NR43] & 0b00000111;
 		if (tmp == 0b000)
 			c4divider = .5;
 		else
 			c4divider = tmp;
-		c4divider *= pow(2, (((uint8_t)mem[NR43] & 0b11110000) >> 4) + 1);
+		c4divider *= pow(2, ((mem[NR43] & 0b11110000) >> 4) + 1);
 		c4nextclocktick = frame + freq / (524288 / c4divider);
-		c4env = ((uint8_t)mem[NR42] & 0b11110000) >> 4;
-		mem[NR44] = (uint8_t)((uint8_t)mem[NR44] & 0b01111111);
+		c4env = (mem[NR42] & 0b11110000) >> 4;
+		mem[NR44] = mem[NR44] & 0b01111111;
 	}
 	if (frame >= c4nextclocktick)
 	{
@@ -252,7 +252,7 @@ static int16_t getc4val()
 		uint8_t xored = (c4stepstate & 0x1) ^ ((c4stepstate & 0x2) >> 1);
 		c4stepstate = c4stepstate >> 1;
 		c4stepstate = (c4stepstate & 0b011111111111111) | (xored << 14);
-		if ((uint8_t)mem[NR43] & 0b00001000)
+		if (mem[NR43] & 0b00001000)
 			c4stepstate = (c4stepstate & 0b0111111) | (xored << 6);
 		c4nextclocktick = frame + freq / (524288 / c4divider);
 		++c4stepcounter;
@@ -266,34 +266,34 @@ static int16_t getc4val()
 static void updateLengthTick()
 {
 	//Channel 1
-	if ((uint8_t)mem[NR14] & 0b01000000)
+	if (mem[NR14] & 0b01000000)
 	{
 		if (c1len == 0)
-			mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11111110);
+			mem[NR52] = mem[NR52] & 0b11111110;
 		else
 			c1len--;
 	}
 	//Channel 2
-	if ((uint8_t)mem[NR24] & 0b01000000)
+	if (mem[NR24] & 0b01000000)
 	{
 		if (c2len == 0)
-			mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11111101);
+			mem[NR52] = mem[NR52] & 0b11111101;
 		else
 			c2len--;
 	}
 	//Channel 3
-	if ((uint8_t)mem[NR34] & 0b01000000)
+	if (mem[NR34] & 0b01000000)
 	{
 		if (c3len == 0)
-			mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11111011);
+			mem[NR52] = mem[NR52] & 0b11111011;
 		else
 			c3len--;
 	}
 	//Channel 4
-	if ((uint8_t)mem[NR44] & 0b01000000)
+	if (mem[NR44] & 0b01000000)
 	{
 		if (c4len == 0)
-			mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11110111);
+			mem[NR52] = mem[NR52] & 0b11110111;
 		else
 			c4len--;
 	}
@@ -303,11 +303,11 @@ static void updateEnvTick()
 {
 	//Channel 1
 	{
-		uint8_t envstep = (uint8_t)mem[NR12] & 0b00000111;
+		uint8_t envstep = mem[NR12] & 0b00000111;
 		if (envstep != 0 && envtick - c1lastenvtick > envstep)
 		{
 			c1lastenvtick = envtick;
-			bool direction = (uint8_t)((uint8_t)mem[NR12] & 0b00001000);
+			bool direction = mem[NR12] & 0b00001000;
 			if (direction)
 			{
 				if (c1env != 0b1111)
@@ -316,7 +316,7 @@ static void updateEnvTick()
 			else
 			{
 				if (c1env == 0)
-					mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11111110);
+					mem[NR52] = mem[NR52] & 0b11111110;
 				else
 					c1env--;
 			}
@@ -324,11 +324,11 @@ static void updateEnvTick()
 	}
 	//Channel 2
 	{
-		uint8_t envstep = (uint8_t)mem[NR22] & 0b00000111;
+		uint8_t envstep = mem[NR22] & 0b00000111;
 		if (envstep != 0 && envtick - c2lastenvtick > envstep)
 		{
 			c2lastenvtick = envtick;
-			bool direction = (uint8_t)mem[NR22] & 0b00001000;
+			bool direction = mem[NR22] & 0b00001000;
 			if (direction)
 			{
 				if (c2env != 0b1111)
@@ -337,7 +337,7 @@ static void updateEnvTick()
 			else
 			{
 				if (c2env == 0)
-					mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11111101);
+					mem[NR52] = mem[NR52] & 0b11111101;
 				else
 					c2env--;
 			}
@@ -345,11 +345,11 @@ static void updateEnvTick()
 	}
 	//Channel 4
 	{
-		uint8_t envstep = (uint8_t)mem[NR42] & 0b00000111;
+		uint8_t envstep = mem[NR42] & 0b00000111;
 		if (envstep != 0 && envtick - c4lastenvtick > envstep)
 		{
 			c4lastenvtick = envtick;
-			bool direction = (uint8_t)mem[NR42] & 0b00001000;
+			bool direction = mem[NR42] & 0b00001000;
 			if (direction)
 			{
 				if (c4env != 0b1111)
@@ -358,7 +358,7 @@ static void updateEnvTick()
 			else
 			{
 				if (c4env == 0)
-					mem[NR52] = (uint8_t)((uint8_t)mem[NR52] & 0b11110111);
+					mem[NR52] = mem[NR52] & 0b11110111;
 				else
 					c4env--;
 			}
@@ -370,12 +370,12 @@ static void updateSweepTick()
 {
 	//Channel 1
 	{
-		uint8_t swptime = (uint8_t)mem[NR10] & 0b01110000;
+		uint8_t swptime = mem[NR10] & 0b01110000;
 		if (swptime != 0 && swptick - c1lastswptick > swptime)
 		{
 			c1lastswptick = swptick;
-			bool direction = (uint8_t)mem[NR10] & 0b00001000;
-			uint8_t swpshift = (uint8_t)mem[NR12] & 0b00000111;
+			bool direction = mem[NR10] & 0b00001000;
+			uint8_t swpshift = mem[NR12] & 0b00000111;
 			if (direction)
 			{
 				int32_t newfreq = c1freq + c1freq / pow(2, swpshift);
@@ -426,10 +426,10 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 		out[i] = 0;
 		if ((uint8_t)mem[NR52] & 0b10000000)
 		{
-			bool c1on = ((uint8_t)mem[NR51] & 0b00010001) && ((uint8_t)mem[NR52] & 0b00000001);
-			bool c2on = ((uint8_t)mem[NR51] & 0b00100010) && ((uint8_t)mem[NR52] & 0b00000010);
-			bool c3on = ((uint8_t)mem[NR51] & 0b01000100) && ((uint8_t)mem[NR52] & 0b00000100);
-			bool c4on = ((uint8_t)mem[NR51] & 0b10001000) && ((uint8_t)mem[NR52] & 0b00001000);
+			bool c1on = (mem[NR51] & 0b00010001) && (mem[NR52] & 0b00000001);
+			bool c2on = (mem[NR51] & 0b00100010) && (mem[NR52] & 0b00000010);
+			bool c3on = (mem[NR51] & 0b01000100) && (mem[NR52] & 0b00000100);
+			bool c4on = (mem[NR51] & 0b10001000) && (mem[NR52] & 0b00001000);
 			int16_t c1 = 0;
 			int16_t c2 = 0;
 			int16_t c3 = 0;
@@ -444,10 +444,10 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				c4 = getc4val();
 			if (i & 0x1)
 			{
-				bool lc1on = c1on && ((uint8_t)mem[NR51] & 0b00000001);
-				bool lc2on = c2on && ((uint8_t)mem[NR51] & 0b00000010);
-				bool lc3on = c3on && ((uint8_t)mem[NR51] & 0b00000100);
-				bool lc4on = c4on && ((uint8_t)mem[NR51] & 0b00001000);
+				bool lc1on = c1on && (mem[NR51] & 0b00000001);
+				bool lc2on = c2on && (mem[NR51] & 0b00000010);
+				bool lc3on = c3on && (mem[NR51] & 0b00000100);
+				bool lc4on = c4on && (mem[NR51] & 0b00001000);
 				if (lc1on)
 					out[i] += c1 / 4;
 				if (lc2on)
@@ -456,14 +456,14 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 					out[i] += c3 / 4;
 				if (lc4on)
 					out[i] += c4 / 4;
-				out[i] *= (((uint8_t)mem[NR50] & 0b00000111) >> 0) / 7.;
+				out[i] *= ((mem[NR50] & 0b00000111) >> 0) / 7.;
 			}
 			else
 			{
-				bool lc1on = c1on && ((uint8_t)mem[NR51] & 0b00010000);
-				bool lc2on = c2on && ((uint8_t)mem[NR51] & 0b00100000);
-				bool lc3on = c3on && ((uint8_t)mem[NR51] & 0b01000000);
-				bool lc4on = c4on && ((uint8_t)mem[NR51] & 0b10000000);
+				bool lc1on = c1on && (mem[NR51] & 0b00010000);
+				bool lc2on = c2on && (mem[NR51] & 0b00100000);
+				bool lc3on = c3on && (mem[NR51] & 0b01000000);
+				bool lc4on = c4on && (mem[NR51] & 0b10000000);
 				if (lc1on)
 					out[i] += c1 / 4;
 				if (lc2on)
@@ -472,7 +472,7 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 					out[i] += c3 / 4;
 				if (lc4on)
 					out[i] += c4 / 4;
-				out[i] *= (((uint8_t)mem[NR50] & 0b01110000) >> 4) / 7.;
+				out[i] *= ((mem[NR50] & 0b01110000) >> 4) / 7.;
 			}
 		}
 		if (i & 0x1)
