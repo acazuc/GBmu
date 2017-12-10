@@ -505,15 +505,15 @@ MainDisplay::MainDisplay()
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	g_object_set(box, "expand", TRUE, NULL);
-	this->menubar = gtk_menu_bar_new();
+	GtkWidget *menubar = gtk_menu_bar_new();
 
-	build_menu_file(this->menubar);
-	build_menu_edit(this->menubar);
-	build_menu_tools(this->menubar);
-	build_menu_help(this->menubar);
+	build_menu_file(menubar);
+	build_menu_edit(menubar);
+	build_menu_tools(menubar);
+	build_menu_help(menubar);
 
-	gtk_widget_show_all(this->menubar);
-	gtk_box_pack_start(GTK_BOX(box), this->menubar, FALSE, FALSE, 0);
+	gtk_widget_show_all(menubar);
+	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	this->gl = gtk_gl_area_new();
 	gtk_widget_set_hexpand(this->gl, true);
 	g_signal_connect(this->gl, "realize", G_CALLBACK(gl_realize), NULL);

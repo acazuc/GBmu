@@ -231,7 +231,7 @@ void LCD::renderWindow(uint8_t y)
 	}
 }
 
-void LCD::CPSCallback(uint8_t addr, uint8_t value)
+void LCD::CPSCallback(uint16_t addr, uint8_t value)
 {
 	uint8_t hl = value & 0b00000001;
 	uint8_t colorid = (value & 0b00000110) >> 1;
@@ -250,10 +250,10 @@ void LCD::CPSCallback(uint8_t addr, uint8_t value)
 		uint8_t red = (palette[0] & 0b00011111);
 		color = green | red;
 	}
-	mem[addr = BCPS ? BCPD : OCPD] = color;
+	mem[addr == BCPS ? BCPD : OCPD] = color;
 }
 
-void LCD::CPDCallback(uint8_t addr, uint8_t value)
+void LCD::CPDCallback(uint16_t addr, uint8_t value)
 {
 	uint8_t CPS = mem[addr == BCPD ? BCPS : OCPS];
 	uint8_t hl = CPS & 0b00000001;
@@ -264,8 +264,8 @@ void LCD::CPDCallback(uint8_t addr, uint8_t value)
 	if (inc)
 	{
 		uint8_t val = (CPS & 0x80) | (((CPS & 0x3F) + 1) & 0x3F);
-		mem[addr = BCPD ? BCPS : OCPS] = val;
-		CPSCallback(addr = BCPD ? BCPS : OCPS, val);
+		mem[addr == BCPD ? BCPS : OCPS] = val;
+		CPSCallback(addr == BCPD ? BCPS : OCPS, val);
 	}
 	if (hl)
 	{

@@ -40,8 +40,8 @@ class LCD
 	public:
 		LCD();
 		void render();
-		void CPSCallback(uint8_t addr, uint8_t value);
-		void CPDCallback(uint8_t addr, uint8_t value);
+		void CPSCallback(uint16_t addr, uint8_t value);
+		void CPDCallback(uint16_t addr, uint8_t value);
 
 };
 

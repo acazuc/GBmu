@@ -36,20 +36,11 @@ void DebugDisplay::iter()
 {
 	if (!this->displayed)
 		return;
-	static int i = 0;
-	++i;
-	if (i % 2)
-	{
-		std::string instText = "xdbcp" + std::to_string(i);
-		std::string regsText = "mdrhi" + std::to_string(i);
-		setInstructionsText(instText);
-		setRegistersText(regsText);
-		gint width;
-		gint height;
-		gtk_window_get_size(GTK_WINDOW(Main::getDebugDisplay()->getWindow()), &width, &height);
-		gtk_widget_set_size_request(Main::getDebugDisplay()->getScrolledinst(), width / 2, height);
-		gtk_widget_set_size_request(Main::getDebugDisplay()->getScrolledregs(), width / 2, height);
-	}
+	gint width;
+	gint height;
+	gtk_window_get_size(GTK_WINDOW(Main::getDebugDisplay()->getWindow()), &width, &height);
+	gtk_widget_set_size_request(Main::getDebugDisplay()->getScrolledinst(), width / 2, height);
+	gtk_widget_set_size_request(Main::getDebugDisplay()->getScrolledregs(), width / 2, height);
 }
 
 void DebugDisplay::show()
