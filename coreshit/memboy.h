@@ -99,10 +99,11 @@ class memboy
 			public:
 				operator byte( void );
 				operator word( void );
+				operator int( void );
 				explicit operator char( void );
 				mempassthru &operator =( byte b );
 				mempassthru &operator =( word w );
-				//mempassthru &operator =( word w );
+				mempassthru &operator =( int n );
 				mempassthru &operator =( mempassthru &m );
 				mempassthru &operator ++( int n );
 				mempassthru &operator --( int n );

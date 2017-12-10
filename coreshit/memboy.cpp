@@ -16,6 +16,11 @@ memboy::mempassthru::operator word( void )
 	return ret.w;
 }
 
+memboy::mempassthru::operator int( void )
+{
+	return (*ref).deref( ptchosen );
+}
+
 memboy::mempassthru::operator char( void )
 {
 	return ( char ) (*ref).deref( ptchosen );
@@ -33,6 +38,12 @@ memboy::mempassthru &memboy::mempassthru::operator =( word w )
 
 	(*ref).deref( ptchosen ) = in.b.l;
 	(*ref).deref( ptchosen + 1 ) = in.b.h;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator =( int b )
+{
+	(*ref).deref( ptchosen ) = b;
 	return *this;
 }
 

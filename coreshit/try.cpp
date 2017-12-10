@@ -9,9 +9,9 @@ int main( int ac, char **av )
 	memboy yay;
 
 	yay[VBK] = 0;
-	yay[0x8004] = 1;
+	yay[0x8004] = 0xFE;
 	yay[VBK] = 1;
-	yay[0x8004] = 2;
+	yay[0x8004] = 0xFF;
 
 	yay[VBK] = 0;
 	cout << ( int ) yay[0x8004] << endl;
