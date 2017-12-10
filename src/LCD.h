@@ -35,6 +35,8 @@ class LCD
 		void renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
 		void renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
 		void renderOBJ(uint8_t y);
+		void renderWindowCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode);
+		void renderWindowCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode);
 		void renderWindow(uint8_t y);
 
 	public:
