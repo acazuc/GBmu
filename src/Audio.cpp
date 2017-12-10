@@ -89,18 +89,6 @@ static uint32_t c2regtofreq(uint8_t nr23, uint8_t nr24)
 	return (CLOCK_FREQ / (32 * (2048 - reg)));
 }
 
-static uint16_t c2freqtoval(uint32_t freq)
-{
-	return (2048 - CLOCK_FREQ / (32 * freq));
-}
-
-static void c2freqtoreg(uint32_t freq, uint8_t *nr23, uint8_t *nr24)
-{
-	uint16_t reg = c2freqtoval(freq);
-	*nr23 = reg & 0xff;
-	*nr24 = (*nr24 & 0b11111000) | (reg >> 8);
-}
-
 static uint32_t c3regtofreq(uint8_t nr33, uint8_t nr34)
 {
 	uint16_t reg = (uint16_t)nr33 | (((uint16_t)(nr34 & 0x7)) << 8);
@@ -109,9 +97,9 @@ static uint32_t c3regtofreq(uint8_t nr33, uint8_t nr34)
 
 static int16_t getc1val()
 {
-	if ((uint8_t)mem[NR14] & 0b10000000)
+	if (mem[NR14] & 0b10000000)
 	{
-		c1len = (64 - (mem[NR11] & 0b00111111)) * freq / 256;
+		c1len = 64 - (mem[NR11] & 0b00111111);
 		c1env = (mem[NR12] & 0b11110000) >> 4;
 		c1freq = c1regtofreq(mem[NR13], mem[NR14]);
 		mem[NR14] = mem[NR14] & 0b01111111;
@@ -152,7 +140,7 @@ static int16_t getc2val()
 {
 	if (mem[NR24] & 0b10000000)
 	{
-		c2len = (64 - (mem[NR21] & 0b00111111)) * freq / 256;
+		c2len = 64 - (mem[NR21] & 0b00111111);
 		c2env = (mem[NR22] & 0b11110000) >> 4;
 		mem[NR24] = mem[NR24] & 0b01111111;
 	}
@@ -184,8 +172,8 @@ static int16_t getc2val()
 	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SQUARE)
 	{
 		if (curr / (float)inter > dutyper)
-			return (SHRT_MAX * envfac);
 		return (SHRT_MIN * envfac);
+			return (SHRT_MAX * envfac);
 	}
 }
 
@@ -198,7 +186,7 @@ static int16_t getc3val()
 	}
 	if (mem[NR34] & 0b10000000)
 	{
-		c3len = (256 - mem[NR31]) * freq / 256;
+		c3len = 256 - mem[NR31];
 		c3freq = c3regtofreq(mem[NR33], mem[NR34]);
 		mem[NR34] = (mem[NR34] & 0b01111111);
 	}
@@ -237,7 +225,7 @@ static int16_t getc4val()
 	{
 		c4stepstate = 0xff;
 		c4stepcounter = 0;
-		c4len = (64 - (mem[NR41] & 0b00111111)) * freq / 256;
+		c4len = 64 - (mem[NR41] & 0b00111111);
 		uint8_t tmp = mem[NR43] & 0b00000111;
 		if (tmp == 0b000)
 			c4divider = .5;
@@ -381,11 +369,11 @@ static void updateSweepTick()
 		{
 			c1lastswptick = swptick;
 			bool direction = mem[NR10] & 0b00001000;
-			uint8_t swpshift = mem[NR12] & 0b00000111;
+			uint8_t swpshift = mem[NR10] & 0b00000111;
 			if (direction)
 			{
 				int32_t newfreq = c1freq + c1freq / pow(2, swpshift);
-				if (c1freqtoval(newfreq) > 2047)
+				if (newfreq && c1freqtoval(newfreq) > 2047)
 					newfreq = 2047;
 				c1freq = newfreq;
 			}
@@ -403,8 +391,6 @@ static void updateSweepTick()
 static int paCallback(const void *input, void *output, unsigned long frameCount, const PaStreamCallbackTimeInfo *paTimeInfo, PaStreamCallbackFlags statusFlags, void *userData)
 {
 	(void)input;
-	(void)output;
-	(void)frameCount;
 	(void)paTimeInfo;
 	(void)statusFlags;
 	(void)userData;
@@ -412,23 +398,6 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 	int16_t *out = (int16_t*)output;
 	for (unsigned long i = 0; i < frameCount; ++i)
 	{
-		if (frame >= nextClock)
-		{
-			if (clockCount % 2 == 0)
-				updateLengthTick();
-			if (clockCount % 8 == 7)
-			{
-				updateEnvTick();
-				envtick++;
-			}
-			if ((clockCount + 1) % 4 == 3)
-			{
-				updateSweepTick();
-				swptick++;
-			}
-			clockCount++;
-			nextClock += 4194304 / 512 * freq;
-		}
 		out[i] = 0;
 		if (mem[NR52] & 0b10000000)
 		{
@@ -436,18 +405,10 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			bool c2on = (mem[NR51] & 0b00100010) && (mem[NR52] & 0b00000010);
 			bool c3on = (mem[NR51] & 0b01000100) && (mem[NR52] & 0b00000100);
 			bool c4on = (mem[NR51] & 0b10001000) && (mem[NR52] & 0b00001000);
-			int16_t c1 = 0;
-			int16_t c2 = 0;
-			int16_t c3 = 0;
-			int16_t c4 = 0;
-			if (c1on)
-				c1 = getc1val();
-			if (c2on)
-				c2 = getc2val();
-			if (c3on)
-				c3 = getc3val();
-			if (c4on)
-				c4 = getc4val();
+			int16_t c1 = c1on ? getc1val() : 0;
+			int16_t c2 = c2on ? getc2val() : 0;
+			int16_t c3 = c3on ? getc3val() : 0;
+			int16_t c4 = c4on ? getc4val() : 0;
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (mem[NR51] & 0b00000001);
@@ -480,6 +441,23 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 					out[i] += c4 / 4;
 				out[i] *= ((mem[NR50] & 0b01110000) >> 4) / 7.;
 			}
+		}
+		if (frame >= nextClock)
+		{
+			if (clockCount % 2 == 0)
+				updateLengthTick();
+			if (clockCount % 8 == 7)
+			{
+				updateEnvTick();
+				envtick++;
+			}
+			if ((clockCount + 1) % 4 == 3)
+			{
+				updateSweepTick();
+				swptick++;
+			}
+			clockCount++;
+			nextClock += freq / 512;
 		}
 		if (i & 0x1)
 			++frame;
@@ -514,9 +492,9 @@ Audio::Audio()
 	mem[NR13] = 0b10101100;
 	mem[NR14] = 0b10100011;
 
-	mem[NR21] = 0b10111111;
-	mem[NR22] = 0b11111111;
-	mem[NR23] = 0b10101101;
+	mem[NR21] = 0b10101010;
+	mem[NR22] = 0b10011011;
+	mem[NR23] = 0b10101001;
 	mem[NR24] = 0b10100011;
 
 	mem[NR30] = 0b10000000;
@@ -525,14 +503,15 @@ Audio::Audio()
 	mem[NR33] = 0b11011111;
 	mem[NR34] = 0b10000001;
 
-	mem[NR41] = 0b00000000;
-	mem[NR42] = 0b11110111;
+	mem[NR41] = 0b00001111;
+	mem[NR42] = 0b11111111;
 	mem[NR43] = 0b01100000;
-	mem[NR44] = 0b10000000;
+	mem[NR44] = 0b11000000;
 
-	mem[NR50] = 0b00100010;
-	mem[NR51] = 0b01000100;
-	mem[NR52] = 0b10000100;
+	mem[NR50] = 0b00010001;
+	mem[NR51] = 0b10001000;
+	mem[NR52] = 0b10001000;
+
 	PaStreamParameters parameters;
 	parameters.device = Pa_GetDefaultOutputDevice();
 	parameters.channelCount = 2;
