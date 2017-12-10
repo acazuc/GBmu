@@ -25,6 +25,7 @@ class Audio
 	public:
 		Audio();
 		~Audio();
+		void start();
 		inline uint8_t &getC12type() {return (c12type);};
 
 };
