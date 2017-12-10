@@ -30,9 +30,9 @@ struct core::instruction core::decode[256] =
 		&incb,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec b",
 		1,
-		&_blank
+		&decb,
 	},
 	{
 		"ld b, n",
@@ -50,9 +50,9 @@ struct core::instruction core::decode[256] =
 		&ldnnsp
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"add hl, bc",
+		2,
+		&addhlbc
 	},
 
 	// 10
@@ -72,9 +72,9 @@ struct core::instruction core::decode[256] =
 		&incc,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec c",
 		1,
-		&_blank
+		&decc,
 	},
 	{
 		"ld c, n",
@@ -114,9 +114,9 @@ struct core::instruction core::decode[256] =
 		&incd,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec d",
 		1,
-		&_blank
+		&decd,
 	},
 	{
 		"ld d, n",
@@ -134,9 +134,9 @@ struct core::instruction core::decode[256] =
 		&jr
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"add hl, de",
+		2,
+		&addhlde
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -154,9 +154,9 @@ struct core::instruction core::decode[256] =
 		&ince,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec e",
 		1,
-		&_blank
+		&dece,
 	},
 
 	// 30
@@ -196,9 +196,9 @@ struct core::instruction core::decode[256] =
 		&inch,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec h",
 		1,
-		&_blank
+		&dech,
 	},
 	{
 		"ld h, n",
@@ -218,9 +218,9 @@ struct core::instruction core::decode[256] =
 		&jrz
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"add hl, hl",
+		2,
+		&addhlhl
 	},
 	{
 		"ld a, (hli)",
@@ -238,9 +238,9 @@ struct core::instruction core::decode[256] =
 		&incl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec l",
 		1,
-		&_blank
+		&decl,
 	},
 	{
 		"ld l, n",
@@ -280,9 +280,9 @@ struct core::instruction core::decode[256] =
 		&inchl,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec (hl)",
 		1,
-		&_blank
+		&dechl,
 	},
 	{
 		"ld (hl), n",
@@ -300,9 +300,9 @@ struct core::instruction core::decode[256] =
 		&jrc
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"add hl, sp",
+		2,
+		&addhlsp
 	},
 	{
 		"ld a, (hld)",
@@ -322,9 +322,9 @@ struct core::instruction core::decode[256] =
 		&inca,
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"dec a",
 		1,
-		&_blank
+		&deca,
 	},
 	{
 		"ld a, n",
@@ -1211,7 +1211,7 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"add sp, ne",
 		1,
 		&_blank
 	},

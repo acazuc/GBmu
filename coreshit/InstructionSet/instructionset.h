@@ -287,6 +287,27 @@ static byte incl( void );
 // inchl
 static byte inchl( void );
 
+// decr
+static byte deca( void );
+static byte decb( void );
+static byte decc( void );
+static byte decd( void );
+static byte dece( void );
+static byte dech( void );
+static byte decl( void );
+
+// dechl
+static byte dechl( void );
+
+// addhlss
+static byte addhlbc( void );
+static byte addhlde( void );
+static byte addhlhl( void );
+static byte addhlsp( void );
+
+// addspe
+static byte addspe( void );
+
 ////
 
 // jp

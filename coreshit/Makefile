@@ -55,6 +55,10 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/cphl.cpp \
 	  InstructionSet/incr.cpp \
 	  InstructionSet/inchl.cpp \
+	  InstructionSet/decr.cpp \
+	  InstructionSet/dechl.cpp \
+	  InstructionSet/addhlss.cpp \
+	  InstructionSet/addspe.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \
