@@ -7,8 +7,9 @@
 #include <iostream>
 #include <colors.h>
 #include <cstring>
-
 #include <ctime>
+#include <iomanip>
+#include <ascii.h>
 
 #define ZFLAG 0b10000000
 #define NFLAG 0b01000000
@@ -114,8 +115,19 @@ class core
 		// Control
 		static const char *cue( void );
 
-		// Getters
+		// 8 bits Getters
+		static byte geta( void );
+		static byte getb( void );
+		static byte getc( void );
+		static byte getd( void );
+		static byte gete( void );
+		static byte geth( void );
+		static byte getl( void );
+		static byte getflags( void );
+
+		// 16 bits Getters
 		static word getpc( void );
+		static word getsp( void );
 };
 
 #endif

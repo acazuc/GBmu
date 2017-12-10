@@ -29,7 +29,47 @@ const char *core::cue( void )
 	return (*next).mnemonic;
 }
 
+byte core::geta( void )
+{
+	return regs.b.a;
+}
+
+byte core::getb( void )
+{
+	return regs.b.b;
+}
+
+byte core::getc( void )
+{
+	return regs.b.c;
+}
+
+byte core::getd( void )
+{
+	return regs.b.d;
+}
+
+byte core::gete( void )
+{
+	return regs.b.e;
+}
+
+byte core::geth( void )
+{
+	return regs.b.h;
+}
+
+byte core::getl( void )
+{
+	return regs.b.l;
+}
+
 word core::getpc( void )
 {
 	return regs.w.pc;
+}
+
+word core::getsp( void )
+{
+	return regs.w.sp;
 }
