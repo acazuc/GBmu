@@ -64,6 +64,11 @@ byte core::getl( void )
 	return regs.b.l;
 }
 
+byte core::getflags( void )
+{
+	return regs.b.f;
+}
+
 word core::getpc( void )
 {
 	return regs.w.pc;

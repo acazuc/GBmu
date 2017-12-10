@@ -69,6 +69,12 @@ int main( int ac, char **av )
 	cout << GREY << 'L' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::getl() << WHITE << ", ";
 	cout << GREY << "SP" << WHITE << '=' << FOAM << setw( 4 ) << ( int ) core::getsp() << WHITE << ", ";
 
+	cout << GREY << "FLAGS" << WHITE << ":[";
+		cout << ( core::getflags() & ZFLAG ? FOAM : DARK ) << 'Z' << WHITE << '/';
+		cout << ( core::getflags() & NFLAG ? FOAM : DARK ) << 'N' << WHITE << '/';
+		cout << ( core::getflags() & HFLAG ? FOAM : DARK ) << 'H' << WHITE << '/';
+		cout << ( core::getflags() & CYFLAG ? FOAM : DARK ) << "CY" << WHITE << ']';
+
 			}
 			cout << endl;
 		}

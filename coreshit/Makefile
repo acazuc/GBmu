@@ -72,7 +72,7 @@ SRC	= InstructionSet/_blank.cpp \
 
 OBJ	= $(SRC:.cpp=.o)
 
-CFLAGS	= -I . -I InstructionSet -I ../Essentials -std=gnu++11
+CFLAGS	= -I . -I InstructionSet -I ../Essentials -std=gnu++11 -Ofast
 
 RM	= rm -f
 
