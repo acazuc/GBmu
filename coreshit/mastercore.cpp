@@ -16,17 +16,19 @@ int main( int ac, char **av )
 	{
 		const char *s;
 		const char *s2;
+		size_t len;
 		struct timespec stime;
 		word pc;
 
 		pc = core::getpc();
 		if ( s = core::cue() )
 		{
-			cout << GREY << "0x" << setfill( '0' ) << setw( 4 ) << std::hex << pc << WHITE << " : ";
+			cout << GREY << "0x" << setfill( '0' ) << setw( 4 ) << hex << pc << WHITE << " : ";
 			if ( *s == '_' )
 				cout << DARK << s;
 			else
 			{
+				len = strlen( s );
 				s2 = strchr( s, ' ' );
 				cout << BLUE;
 				if ( !s2 )
@@ -47,6 +49,7 @@ int main( int ac, char **av )
 								cout.write( s2, s - s2 );
 								cout << FOAM << setfill( '0' ) << setw( 4 ) << ( word ) core::mem[pc + 1] << WHITE;
 								cout << s + 2;
+								len += 2;
 								break;
 							case 'z':
 							case 'c':
@@ -56,10 +59,12 @@ int main( int ac, char **av )
 								cout.write( s2, s - s2 );
 								cout << FOAM << setfill( '0' ) << setw( 2 ) << ( int ) core::mem[pc + 1] << WHITE;
 								cout << s + 1;
+								len++;
 						}
 					}
 				}
-				cout << HT << HT;
+				for ( int i = 20 - len ; i != 0 ; i-- )
+					cout << ' ';
 	cout << GREY << 'A' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::geta() << WHITE << ", ";
 	cout << GREY << 'B' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::getb() << WHITE << ", ";
 	cout << GREY << 'C' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::getc() << WHITE << ", ";
@@ -67,7 +72,7 @@ int main( int ac, char **av )
 	cout << GREY << 'E' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::gete() << WHITE << ", ";
 	cout << GREY << 'H' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::geth() << WHITE << ", ";
 	cout << GREY << 'L' << WHITE << '=' << FOAM << setw( 2 ) << ( int ) core::getl() << WHITE << ", ";
-	cout << GREY << "SP" << WHITE << '=' << FOAM << setw( 4 ) << ( int ) core::getsp() << WHITE << ", ";
+	cout << GREY << "SP" << WHITE << '=' << FOAM << setw( 4 ) << ( int ) core::getsp() << WHITE << ' ';
 
 	cout << GREY << "FLAGS" << WHITE << ":[";
 		cout << ( core::getflags() & ZFLAG ? FOAM : DARK ) << 'Z' << WHITE << '/';

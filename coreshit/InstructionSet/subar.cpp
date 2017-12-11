@@ -8,7 +8,7 @@ byte core::subaa( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.a;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
@@ -23,7 +23,7 @@ byte core::subab( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.b;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
@@ -38,7 +38,7 @@ byte core::subac( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.c;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
@@ -53,7 +53,7 @@ byte core::subad( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.d;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
@@ -68,7 +68,7 @@ byte core::subae( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.e;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
@@ -83,7 +83,7 @@ byte core::subah( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.h;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
@@ -98,7 +98,7 @@ byte core::subal( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.l;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 

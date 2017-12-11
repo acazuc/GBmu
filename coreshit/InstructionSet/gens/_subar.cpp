@@ -11,7 +11,7 @@ byte core::subaX( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.X;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 

@@ -49,7 +49,7 @@
 		regs.b.f &= ~HFLAG
 
 #define ZUPDATE( n ) \
-	if ( n ) \
+	if ( !n ) \
 		regs.b.f |= ZFLAG; \
 	else \
 		regs.b.f &= ~ZFLAG;
@@ -65,18 +65,18 @@ class core
 		{
 			struct
 			{
-				byte pch;
 				byte pcl;
-				byte sph;
+				byte pch;
 				byte spl;
-				byte a;
+				byte sph;
 				byte f;
-				byte b;
+				byte a;
 				byte c;
-				byte d;
+				byte b;
 				byte e;
-				byte h;
+				byte d;
 				byte l;
+				byte h;
 			}
 			b;
 			struct

@@ -13,7 +13,7 @@ byte core::subaX( void )
 	if ( regs.b.f & CYFLAG )
 		regs.b.f--;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 

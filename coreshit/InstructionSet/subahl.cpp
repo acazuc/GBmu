@@ -8,7 +8,7 @@ byte core::subahl( void )
 	a = regs.b.a;
 	regs.b.a -= ( byte ) mem[regs.w.hl];
 
-	regs.b.f = 0;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
