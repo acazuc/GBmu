@@ -9,7 +9,7 @@ union core::registers core::regs;
 void core::init( void )
 {
 	cycle = 0;
-	regs.w.pc = 0x100;
+	regs.w.pc = 0x00;
 	regs.w.sp = 0xFFFE;
 	regs.w.af = 0;
 	regs.w.bc = 0;
@@ -25,6 +25,8 @@ const char *core::cue( void )
 		return nullptr;
 	}
 	next = &decode[( byte ) mem[regs.w.pc]];
+	if ( !(*next).function )	
+		next = &extdec[( byte ) mem[++regs.w.pc]];
 	cycle = (*next).function() - 1;
 	return (*next).mnemonic;
 }

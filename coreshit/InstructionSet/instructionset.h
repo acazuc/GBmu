@@ -310,6 +310,76 @@ static byte addspe( void );
 
 ////
 
+// bitbr
+static byte bit0a( void );
+static byte bit0b( void );
+static byte bit0c( void );
+static byte bit0d( void );
+static byte bit0e( void );
+static byte bit0h( void );
+static byte bit0l( void );
+static byte bit1a( void );
+static byte bit1b( void );
+static byte bit1c( void );
+static byte bit1d( void );
+static byte bit1e( void );
+static byte bit1h( void );
+static byte bit1l( void );
+static byte bit2a( void );
+static byte bit2b( void );
+static byte bit2c( void );
+static byte bit2d( void );
+static byte bit2e( void );
+static byte bit2h( void );
+static byte bit2l( void );
+static byte bit3a( void );
+static byte bit3b( void );
+static byte bit3c( void );
+static byte bit3d( void );
+static byte bit3e( void );
+static byte bit3h( void );
+static byte bit3l( void );
+static byte bit4a( void );
+static byte bit4b( void );
+static byte bit4c( void );
+static byte bit4d( void );
+static byte bit4e( void );
+static byte bit4h( void );
+static byte bit4l( void );
+static byte bit5a( void );
+static byte bit5b( void );
+static byte bit5c( void );
+static byte bit5d( void );
+static byte bit5e( void );
+static byte bit5h( void );
+static byte bit5l( void );
+static byte bit6a( void );
+static byte bit6b( void );
+static byte bit6c( void );
+static byte bit6d( void );
+static byte bit6e( void );
+static byte bit6h( void );
+static byte bit6l( void );
+static byte bit7a( void );
+static byte bit7b( void );
+static byte bit7c( void );
+static byte bit7d( void );
+static byte bit7e( void );
+static byte bit7h( void );
+static byte bit7l( void );
+
+// bitbhl
+static byte bit0hl( void );
+static byte bit1hl( void );
+static byte bit2hl( void );
+static byte bit3hl( void );
+static byte bit4hl( void );
+static byte bit5hl( void );
+static byte bit6hl( void );
+static byte bit7hl( void );
+
+////
+
 // jp
 static byte jp( void );
 

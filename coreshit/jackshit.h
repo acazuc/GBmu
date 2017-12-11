@@ -108,6 +108,7 @@ class core
 	public:
 		static memboy mem;
 		static struct instruction decode[256];
+		static struct instruction extdec[256];
 
 		// Initialiser
 		static void init( void );

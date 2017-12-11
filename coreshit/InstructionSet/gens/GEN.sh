@@ -1,2 +1,2 @@
-g++ -I ../../Essentials $1
+g++ -I ../../../Essentials $1
 ./a.out

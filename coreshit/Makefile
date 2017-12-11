@@ -4,6 +4,7 @@ NAME	= Coretest
 
 SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/instructionstable.cpp \
+	  InstructionSet/extendedtable.cpp \
 	  InstructionSet/ldrr.cpp \
 	  InstructionSet/ldrn.cpp \
 	  InstructionSet/ldrhl.cpp \
@@ -59,6 +60,8 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/dechl.cpp \
 	  InstructionSet/addhlss.cpp \
 	  InstructionSet/addspe.cpp \
+	  InstructionSet/bitbr.cpp \
+	  InstructionSet/bitbhl.cpp \
 	  \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \

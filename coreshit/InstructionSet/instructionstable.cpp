@@ -1060,9 +1060,9 @@ struct core::instruction core::decode[256] =
 		&jpz
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"__ EXTENDED TABLE OPCODE __",
+		0,
+		NULL
 	},
 	{
 		"__ NO INSTRUCTION __",
