@@ -2,9 +2,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cstring>
 
 DebugDisplay *Main::debugDisplay;
 MainDisplay *Main::mainDisplay;
+BindDisplay *Main::bindDisplay;
 Audio *Main::audio;
 LCD *Main::lcd;
 
@@ -14,6 +16,7 @@ void Main::run(int ac, char **av)
 	(void)av;
 	debugDisplay = new DebugDisplay();
 	mainDisplay = new MainDisplay();
+	bindDisplay = new BindDisplay();
 	audio = new Audio();
 	audio->start();
 	lcd = new LCD();

@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/12/06 14:50:02 by acazuc           ###   ########.fr        #
+#    Updated: 2017/12/11 13:26:37 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,7 @@ SRCS_NAME = Main.cpp \
 	    MainDisplay.cpp \
 	    DebugDisplay.cpp \
 	    Audio.cpp \
+	    BindDisplay.cpp \
 
 SRCS = $(addprefix $(SRCS_PATH), $(SRCS_NAME))
 

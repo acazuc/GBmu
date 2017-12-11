@@ -393,7 +393,6 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 	(void)input;
 	(void)paTimeInfo;
 	(void)statusFlags;
-	(void)userData;
 	frameCount *= 2;
 	int16_t *out = (int16_t*)output;
 	for (unsigned long i = 0; i < frameCount; ++i)
@@ -409,6 +408,8 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			int16_t c2 = c2on ? getc2val() : 0;
 			int16_t c3 = c3on ? getc3val() : 0;
 			int16_t c4 = c4on ? getc4val() : 0;
+			mem[PCM12] = ((uint8_t)(c1 / 0xff / 2 + CHAR_MIN) + (uint8_t)(c2 / 0xff / 2 + CHAR_MIN));
+			mem[PCM34] = ((uint8_t)(c3 / 0xff / 2 + CHAR_MIN) + (uint8_t)(c4 / 0xff / 2 + CHAR_MIN));
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (mem[NR51] & 0b00000001);
@@ -444,9 +445,9 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 		}
 		if (frame >= nextClock)
 		{
-			if (clockCount % 2 == 0)
+			if (clockCount & 0x1)
 				updateLengthTick();
-			if (clockCount % 8 == 7)
+			if (clockCount & 0x7 == 0)
 			{
 				updateEnvTick();
 				envtick++;
@@ -515,8 +516,8 @@ Audio::Audio()
 	PaStreamParameters parameters;
 	parameters.device = Pa_GetDefaultOutputDevice();
 	parameters.channelCount = 2;
+	parameters.suggestedLatency = 2;
 	parameters.sampleFormat = paInt16;
-	parameters.suggestedLatency = 0.2;
 	parameters.hostApiSpecificStreamInfo = 0;
 	PaError error = Pa_OpenStream(&this->stream, 0, &parameters, freq, 1000, paNoFlag, paCallback, this);
 	if (error)

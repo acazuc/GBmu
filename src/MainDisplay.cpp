@@ -224,6 +224,26 @@ static void cb_quit(GtkWidget *osef1, gpointer osef2)
 	Main::windowClosed();
 }
 
+static void cb_key_press_event(GtkWidget *osef1, GdkEventKey *event)
+{
+	(void)osef1;
+	std::cout << "Pressed" << std::endl;
+	std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
+	std::cout << "state: " << event->state << std::endl;
+	std::cout << "type: " << event->type << std::endl;
+	std::cout << std::endl;
+}
+
+static void cb_key_release_event(GtkWidget *osef1, GdkEventKey *event)
+{
+	(void)osef1;
+	std::cout << "Released" << std::endl;
+	std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
+	std::cout << "state: " << event->state << std::endl;
+	std::cout << "type: " << event->type << std::endl;
+	std::cout << std::endl;
+}
+
 static void cb_file_quit(GtkWidget *osef1, gpointer osef2)
 {
 	(void)osef1;
@@ -270,6 +290,13 @@ static void cb_tool_debug(GtkWidget *osef1, gpointer osef2)
 	(void)osef1;
 	(void)osef2;
 	Main::getDebugDisplay()->show();
+}
+
+static void cb_tool_binds(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	Main::getBindDisplay()->show();
 }
 
 static void cb_tool_size(GtkWidget *osef1, gpointer size)
@@ -455,10 +482,15 @@ static void build_menu_tools(GtkWidget *menubar)
 	GtkWidget *tool = gtk_menu_item_new_with_label("Tools");
 	GtkWidget *tool_menu = gtk_menu_new();
 
-	//Debuggee
+	//Debugger
 	GtkWidget *tool_debugger = gtk_menu_item_new_with_label("Debugger");
 	g_signal_connect(G_OBJECT(tool_debugger), "activate", G_CALLBACK(cb_tool_debug), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_debugger);
+
+	//Binds
+	GtkWidget *tool_binds = gtk_menu_item_new_with_label("Binds");
+	g_signal_connect(G_OBJECT(tool_binds), "activate", G_CALLBACK(cb_tool_binds), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_binds);
 
 	//Size
 	GtkWidget *tool_size = gtk_menu_item_new_with_label("Size");
@@ -503,6 +535,8 @@ MainDisplay::MainDisplay()
 	//geometry.min_height = 144;
 	//gtk_window_set_geometry_hints(GTK_WINDOW(this->window), NULL, &geometry, (GdkWindowHints)(GDK_HINT_MIN_SIZE));
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
+	g_signal_connect(G_OBJECT(this->window), "key-release-event", G_CALLBACK(cb_key_release_event), NULL);
+	g_signal_connect(G_OBJECT(this->window), "key-press-event", G_CALLBACK(cb_key_press_event), NULL);
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	g_object_set(box, "expand", TRUE, NULL);
 	GtkWidget *menubar = gtk_menu_bar_new();
