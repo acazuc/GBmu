@@ -60,6 +60,7 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/dechl.cpp \
 	  InstructionSet/addhlss.cpp \
 	  InstructionSet/addspe.cpp \
+	  \
 	  InstructionSet/bitbr.cpp \
 	  InstructionSet/bitbhl.cpp \
 	  \
@@ -67,6 +68,11 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/jpcc.cpp \
 	  InstructionSet/jr.cpp \
 	  InstructionSet/jrcc.cpp \
+	  InstructionSet/jphl.cpp \
+	  InstructionSet/call.cpp \
+	  InstructionSet/callcc.cpp \
+	  InstructionSet/ret.cpp \
+	  InstructionSet/retcc.cpp \
 	  \
 	  InstructionSet/nop.cpp \
 	  memboy.cpp \

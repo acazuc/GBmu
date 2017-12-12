@@ -1003,9 +1003,9 @@ struct core::instruction core::decode[256] =
 		&cpa,
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ret nz",
+		5,
+		&retnz
 	},
 	{
 		"pop bc",
@@ -1023,9 +1023,9 @@ struct core::instruction core::decode[256] =
 		&jp
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"call nz",
+		6,
+		&callnz
 	},
 	{
 		"push bc",
@@ -1045,14 +1045,14 @@ struct core::instruction core::decode[256] =
 
 	// 200
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ret z",
+		5,
+		&retz
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ret",
+		4,
+		&ret
 	},
 	{
 		"jp z, nn",
@@ -1065,14 +1065,14 @@ struct core::instruction core::decode[256] =
 		NULL
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"call z",
+		6,
+		&callz
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"call nn",
+		6,
+		&call
 	},
 	{
 		"adc a, n",
@@ -1085,9 +1085,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ret nc",
+		5,
+		&retnc
 	},
 	{
 		"pop de",
@@ -1107,9 +1107,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"call nc",
+		6,
+		&callnc
 	},
 	{
 		"push de",
@@ -1127,9 +1127,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"ret c",
+		5,
+		&retc
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1149,9 +1149,9 @@ struct core::instruction core::decode[256] =
 
 	// 220
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"call c",
+		6,
+		&callc
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1216,9 +1216,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"jp (hl)",
 		1,
-		&_blank
+		&jphl
 	},
 	{
 		"ld (nn), a",

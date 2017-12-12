@@ -398,6 +398,30 @@ static byte jrz( void );
 static byte jrnc( void );
 static byte jrc( void );
 
+// jphl
+static byte jphl( void );
+
+// call
+static byte call( void );
+
+// callcc
+static byte callnz( void );
+static byte callz( void );
+static byte callnc( void );
+static byte callc( void );
+
+// ret
+static byte ret( void );
+
+// reti
+//static byte reti( void );
+
+// retcc
+static byte retnz( void );
+static byte retz( void );
+static byte retnc( void );
+static byte retc( void );
+
 ////
 
 // nop
