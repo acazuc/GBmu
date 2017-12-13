@@ -40,9 +40,9 @@ struct core::instruction core::decode[256] =
 		&ldbn
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlca",
 		1,
-		&_blank
+		&rlca
 	},
 	{
 		"ld (nn), sp",
@@ -82,9 +82,9 @@ struct core::instruction core::decode[256] =
 		&ldcn
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrca",
 		1,
-		&_blank
+		&rrca
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -124,9 +124,9 @@ struct core::instruction core::decode[256] =
 		&lddn
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rla",
 		1,
-		&_blank
+		&rla
 	},
 	{
 		"jr ne",
@@ -166,9 +166,9 @@ struct core::instruction core::decode[256] =
 		&lden
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rra",
 		1,
-		&_blank
+		&rra
 	},
 	{
 		"jr nz, ne",

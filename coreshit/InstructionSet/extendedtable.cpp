@@ -5,171 +5,172 @@ struct core::instruction core::extdec[256] =
 {
 	// 0
 	{
-		"__ NO INSTRUCTION __",
+		"rlc b",
 		1,
-		&_blank
+		&rlcrb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc c",
 		1,
-		&_blank
+		&rlcrc
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc d",
 		1,
-		&_blank
+		&rlcrd
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc e",
 		1,
-		&_blank
+		&rlcre
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc h",
 		1,
-		&_blank
+		&rlcrh
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc l",
 		1,
-		&_blank
+		&rlcrl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc (hl)",
 		1,
-		&_blank
+		&rlchl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rlc a",
 		1,
-		&_blank
+		&rlcra
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc b",
 		1,
-		&_blank
+		&rrcrb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc c",
 		1,
-		&_blank
+		&rrcrc
 	},
 
 	// 10
 	{
-		"__ NO INSTRUCTION __",
+		"rrc d",
 		1,
-		&_blank
+		&rrcrd
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc e",
 		1,
-		&_blank
+		&rrcre
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc h",
 		1,
-		&_blank
+		&rrcrh
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc l",
 		1,
-		&_blank
+		&rrcrl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc (hl)",
 		1,
-		&_blank
+		&rrchl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rrc a",
 		1,
-		&_blank
+		&rrcra
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl b",
 		1,
-		&_blank
+		&rlrb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl c",
 		1,
-		&_blank
+		&rlrc
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl d",
 		1,
-		&_blank
+		&rlrd
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl e",
 		1,
-		&_blank
+		&rlre
 	},
 
 	// 20
 	{
-		"__ NO INSTRUCTION __",
+		"rl h",
 		1,
-		&_blank
+		&rlrh
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl l",
 		1,
-		&_blank
+		&rlrl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl (hl)",
 		1,
-		&_blank
+		&rlhl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rl a",
 		1,
-		&_blank
+		&rlra
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr b",
 		1,
-		&_blank
+		&rrrb
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr c",
 		1,
-		&_blank
+		&rrrc
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr d",
 		1,
-		&_blank
+		&rrrd
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr e",
 		1,
-		&_blank
+		&rrre
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr h",
 		1,
-		&_blank
+		&rrrh
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr l",
 		1,
-		&_blank
+		&rrrl
 	},
 
 	// 30
 	{
-		"__ NO INSTRUCTION __",
+		"rr (hl)",
 		1,
-		&_blank
+		&rrhl
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"rr a",
 		1,
-		&_blank
+		&rrra
 	},
+
 	{
 		"__ NO INSTRUCTION __",
 		1,

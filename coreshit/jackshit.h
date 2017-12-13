@@ -55,7 +55,7 @@
 	else \
 		regs.b.f &= ~ZFLAG;
 
-#define PERIODE 0//250000000
+#define PERIODE 250000000
 
 using namespace std;
 

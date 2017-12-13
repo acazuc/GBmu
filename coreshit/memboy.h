@@ -71,6 +71,17 @@
 
 using namespace std;
 
+union xword
+{
+	word w;
+	struct
+	{
+		byte l;
+		byte h;
+	}
+	b;
+};
+
 class memboy
 {
 	private:
@@ -83,17 +94,6 @@ class memboy
 			friend class memboy;
 
 			private:
-				union xword
-				{
-					word w;
-					struct
-					{
-						byte l;
-						byte h;
-					}
-					b;
-				};
-
 				memboy *ref;
 				word ptchosen;
 			public:

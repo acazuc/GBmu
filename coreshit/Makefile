@@ -62,6 +62,18 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/addspe.cpp \
 	  InstructionSet/incss.cpp \
 	  InstructionSet/decss.cpp \
+	  InstructionSet/rlca.cpp \
+	  InstructionSet/rla.cpp \
+	  InstructionSet/rrca.cpp \
+	  InstructionSet/rra.cpp \
+	  InstructionSet/rlcr.cpp \
+	  InstructionSet/rlchl.cpp \
+	  InstructionSet/rlr.cpp \
+	  InstructionSet/rlhl.cpp \
+	  InstructionSet/rrcr.cpp \
+	  InstructionSet/rrchl.cpp \
+	  InstructionSet/rrr.cpp \
+	  InstructionSet/rrhl.cpp \
 	  \
 	  InstructionSet/bitbr.cpp \
 	  InstructionSet/bitbhl.cpp \

@@ -320,6 +320,66 @@ static byte decde( void );
 static byte dechl( void );
 static byte decsp( void );
 
+// rlca
+static byte rlca( void );
+
+// rla
+static byte rla( void );
+
+// rrca
+static byte rrca( void );
+
+// rra
+static byte rra( void );
+
+// rlcr
+static byte rlcra( void );
+static byte rlcrb( void );
+static byte rlcrc( void );
+static byte rlcrd( void );
+static byte rlcre( void );
+static byte rlcrh( void );
+static byte rlcrl( void );
+
+// rlchl
+static byte rlchl( void );
+
+// rlr
+static byte rlra( void );
+static byte rlrb( void );
+static byte rlrc( void );
+static byte rlrd( void );
+static byte rlre( void );
+static byte rlrh( void );
+static byte rlrl( void );
+
+// rlhl
+static byte rlhl( void );
+
+// rrcr
+static byte rrcra( void );
+static byte rrcrb( void );
+static byte rrcrc( void );
+static byte rrcrd( void );
+static byte rrcre( void );
+static byte rrcrh( void );
+static byte rrcrl( void );
+
+// rrchl
+static byte rrchl( void );
+
+// rrr
+static byte rrra( void );
+static byte rrrb( void );
+static byte rrrc( void );
+static byte rrrd( void );
+static byte rrre( void );
+static byte rrrh( void );
+static byte rrrl( void );
+
+// rrhl
+static byte rrhl( void );
+
 ////
 
 // bitbr
