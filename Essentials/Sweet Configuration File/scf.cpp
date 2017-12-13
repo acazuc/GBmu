@@ -210,6 +210,15 @@ int scf::test( const char *key )
 	return (*entry).type;
 }
 
+bool scf::test( const char *key, int type )
+{
+	struct entry *entry;
+
+	if ( !table.get( key, &entry ) )
+		return false;
+	return (*entry).type == type ? true : false;
+}
+
 scf::~scf( void )
 {
 }
