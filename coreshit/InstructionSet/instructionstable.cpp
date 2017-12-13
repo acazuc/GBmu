@@ -20,9 +20,9 @@ struct core::instruction core::decode[256] =
 		&ldbca
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"inc bc",
+		2,
+		&incbc
 	},
 	{
 		"inc b",
@@ -62,9 +62,9 @@ struct core::instruction core::decode[256] =
 		&ldabc
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"dec bc",
+		2,
+		&decbc
 	},
 	{
 		"inc c",
@@ -102,9 +102,9 @@ struct core::instruction core::decode[256] =
 		&lddea
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"inc de",
+		2,
+		&incde
 	},
 
 	// 20
@@ -144,9 +144,9 @@ struct core::instruction core::decode[256] =
 		&ldade
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"dec de",
+		2,
+		&decde
 	},
 	{
 		"inc e",
@@ -186,9 +186,9 @@ struct core::instruction core::decode[256] =
 		&ldhlia
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"inc hl",
+		2,
+		&inchl
 	},
 	{
 		"inc h",
@@ -228,9 +228,9 @@ struct core::instruction core::decode[256] =
 		&ldahli
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"dec hl",
+		2,
+		&dechl
 	},
 	{
 		"inc l",
@@ -270,19 +270,19 @@ struct core::instruction core::decode[256] =
 		&ldhlda
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"inc sp",
+		2,
+		&incsp
 	},
 	{
 		"inc (hl)",
 		1,
-		&inchl,
+		&incrhl,
 	},
 	{
 		"dec (hl)",
 		1,
-		&dechl,
+		&decrhl,
 	},
 	{
 		"ld (hl), n",
@@ -310,9 +310,9 @@ struct core::instruction core::decode[256] =
 		&ldahld
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"dec sp",
+		2,
+		&decsp
 	},
 
 	// 60
@@ -1325,9 +1325,9 @@ struct core::instruction core::decode[256] =
 		&_blank
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cp n",
 		1,
-		&_blank
+		&cpn
 	},
 	{
 		"__ NO INSTRUCTION __",

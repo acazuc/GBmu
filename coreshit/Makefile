@@ -55,11 +55,13 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/cpn.cpp \
 	  InstructionSet/cphl.cpp \
 	  InstructionSet/incr.cpp \
-	  InstructionSet/inchl.cpp \
+	  InstructionSet/incrhl.cpp \
 	  InstructionSet/decr.cpp \
-	  InstructionSet/dechl.cpp \
+	  InstructionSet/decrhl.cpp \
 	  InstructionSet/addhlss.cpp \
 	  InstructionSet/addspe.cpp \
+	  InstructionSet/incss.cpp \
+	  InstructionSet/decss.cpp \
 	  \
 	  InstructionSet/bitbr.cpp \
 	  InstructionSet/bitbhl.cpp \
@@ -81,7 +83,7 @@ SRC	= InstructionSet/_blank.cpp \
 
 OBJ	= $(SRC:.cpp=.o)
 
-CFLAGS	= -I . -I InstructionSet -I ../Essentials -std=gnu++11 -Ofast
+CFLAGS	= -I . -I InstructionSet -I ../Essentials -std=gnu++11 -Ofast -flto
 
 RM	= rm -f
 

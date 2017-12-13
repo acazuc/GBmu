@@ -285,7 +285,7 @@ static byte inch( void );
 static byte incl( void );
 
 // inchl
-static byte inchl( void );
+static byte incrhl( void );
 
 // decr
 static byte deca( void );
@@ -297,7 +297,7 @@ static byte dech( void );
 static byte decl( void );
 
 // dechl
-static byte dechl( void );
+static byte decrhl( void );
 
 // addhlss
 static byte addhlbc( void );
@@ -307,6 +307,18 @@ static byte addhlsp( void );
 
 // addspe
 static byte addspe( void );
+
+// incss
+static byte incbc( void );
+static byte incde( void );
+static byte inchl( void );
+static byte incsp( void );
+
+// decss
+static byte decbc( void );
+static byte decde( void );
+static byte dechl( void );
+static byte decsp( void );
 
 ////
 

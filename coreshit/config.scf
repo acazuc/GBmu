@@ -2,4 +2,4 @@
 periode=100000000
 
 # Initial PC value
-startat=0x0000
+startat=0x000c
