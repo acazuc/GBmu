@@ -10,6 +10,7 @@
 #include <ctime>
 #include <iomanip>
 #include <ascii.h>
+#include <scf.h>
 
 #define ZFLAG 0b10000000
 #define NFLAG 0b01000000
@@ -129,6 +130,19 @@ class core
 		// 16 bits Getters
 		static word getpc( void );
 		static word getsp( void );
+};
+
+class ref
+{
+	private:
+		static scf file;
+		static long defperiode;
+		static long defstart;
+	public:
+		static long periode;
+		static long start;
+
+		static void init( void );
 };
 
 #endif

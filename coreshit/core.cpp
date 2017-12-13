@@ -9,7 +9,7 @@ union core::registers core::regs;
 void core::init( void )
 {
 	cycle = 0;
-	regs.w.pc = 0x00;
+	regs.w.pc = ref::start;
 	regs.w.sp = 0xFFFE;
 	regs.w.af = 0;
 	regs.w.bc = 0;
