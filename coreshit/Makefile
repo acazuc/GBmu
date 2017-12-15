@@ -1,6 +1,6 @@
 
 CC	= g++
-NAME	= Coretest
+NAME	= Build/Coretest
 
 SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/instructionstable.cpp \
@@ -74,6 +74,12 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/rrchl.cpp \
 	  InstructionSet/rrr.cpp \
 	  InstructionSet/rrhl.cpp \
+	  InstructionSet/slar.cpp \
+	  InstructionSet/slahl.cpp \
+	  InstructionSet/srar.cpp \
+	  InstructionSet/srahl.cpp \
+	  InstructionSet/srlr.cpp \
+	  InstructionSet/srlhl.cpp \
 	  \
 	  InstructionSet/bitbr.cpp \
 	  InstructionSet/bitbhl.cpp \

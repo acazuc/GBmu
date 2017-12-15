@@ -170,130 +170,129 @@ struct core::instruction core::extdec[256] =
 		1,
 		&rrra
 	},
-
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla b",
+		2,
+		&slab
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla c",
+		2,
+		&slac
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla d",
+		2,
+		&slad
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla e",
+		2,
+		&slae
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla h",
+		2,
+		&slah
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla l",
+		2,
+		&slal
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla (hl)",
+		4,
+		&slahl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sla a",
+		2,
+		&slaa
 	},
 
 	// 40
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra b",
+		2,
+		&srab
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra c",
+		2,
+		&srac
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra d",
+		2,
+		&srad
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra e",
+		2,
+		&srae
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra h",
+		2,
+		&srah
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra l",
+		2,
+		&sral
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra (hl)",
+		4,
+		&srahl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"sra a",
+		2,
+		&sraa
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl b",
+		2,
+		&srlb
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl c",
+		2,
+		&srlc
 	},
 
 	// 50
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl d",
+		2,
+		&srld
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl e",
+		2,
+		&srle
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl h",
+		2,
+		&srlh
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl l",
+		2,
+		&srll
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl (hl)",
+		4,
+		&srlhl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"srl a",
+		2,
+		&srla
 	},
 	{
 		"__ NO INSTRUCTION __",

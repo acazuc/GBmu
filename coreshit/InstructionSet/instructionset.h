@@ -380,6 +380,42 @@ static byte rrrl( void );
 // rrhl
 static byte rrhl( void );
 
+// sla
+static byte slaa( void );
+static byte slab( void );
+static byte slac( void );
+static byte slad( void );
+static byte slae( void );
+static byte slah( void );
+static byte slal( void );
+
+// slahl
+static byte slahl( void );
+
+// sra
+static byte sraa( void );
+static byte srab( void );
+static byte srac( void );
+static byte srad( void );
+static byte srae( void );
+static byte srah( void );
+static byte sral( void );
+
+// srahl
+static byte srahl( void );
+
+// srl
+static byte srla( void );
+static byte srlb( void );
+static byte srlc( void );
+static byte srld( void );
+static byte srle( void );
+static byte srlh( void );
+static byte srll( void );
+
+// srlhl
+static byte srlhl( void );
+
 ////
 
 // bitbr
