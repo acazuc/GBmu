@@ -253,6 +253,48 @@ struct core::instruction core::extdec[256] =
 		&sraa
 	},
 	{
+		"swap b",
+		2,
+		swapb
+	},
+	{
+		"swap c",
+		2,
+		swapc
+	},
+
+	// 50
+	{
+		"swap d",
+		2,
+		swapd
+	},
+	{
+		"swap e",
+		2,
+		swape
+	},
+	{
+		"swap h",
+		2,
+		swaph
+	},
+	{
+		"swap l",
+		2,
+		swapl
+	},
+	{
+		"swap (hl)",
+		4,
+		swaphl
+	},
+	{
+		"swap a",
+		2,
+		swapa
+	},
+	{
 		"srl b",
 		2,
 		&srlb
@@ -262,8 +304,6 @@ struct core::instruction core::extdec[256] =
 		2,
 		&srlc
 	},
-
-	// 50
 	{
 		"srl d",
 		2,
@@ -274,6 +314,8 @@ struct core::instruction core::extdec[256] =
 		2,
 		&srle
 	},
+
+	// 60
 	{
 		"srl h",
 		2,
@@ -293,48 +335,6 @@ struct core::instruction core::extdec[256] =
 		"srl a",
 		2,
 		&srla
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-
-	// 60
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
 	},
 	{
 		"bit 0, b",

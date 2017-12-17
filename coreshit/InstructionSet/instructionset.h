@@ -380,7 +380,7 @@ static byte rrrl( void );
 // rrhl
 static byte rrhl( void );
 
-// sla
+// slar
 static byte slaa( void );
 static byte slab( void );
 static byte slac( void );
@@ -392,7 +392,7 @@ static byte slal( void );
 // slahl
 static byte slahl( void );
 
-// sra
+// srar
 static byte sraa( void );
 static byte srab( void );
 static byte srac( void );
@@ -404,7 +404,7 @@ static byte sral( void );
 // srahl
 static byte srahl( void );
 
-// srl
+// srlr
 static byte srla( void );
 static byte srlb( void );
 static byte srlc( void );
@@ -416,7 +416,17 @@ static byte srll( void );
 // srlhl
 static byte srlhl( void );
 
-////
+// swapr
+static byte swapa( void );
+static byte swapb( void );
+static byte swapc( void );
+static byte swapd( void );
+static byte swape( void );
+static byte swaph( void );
+static byte swapl( void );
+
+// swaphl
+static byte swaphl( void );
 
 // bitbr
 static byte bit0a( void );
