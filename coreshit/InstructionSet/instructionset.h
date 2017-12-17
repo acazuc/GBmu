@@ -679,4 +679,16 @@ static byte retc( void );
 // nop
 static byte nop( void );
 
+// ccf
+static byte ccf( void );
+
+// scf
+static byte scf( void );
+
+// di
+static byte di( void );
+
+// ei
+static byte ei( void );
+
 #endif

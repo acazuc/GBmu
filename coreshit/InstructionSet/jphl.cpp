@@ -3,6 +3,6 @@
 
 byte core::jphl( void )
 {
-	regs.w.pc = mem[regs.w.hl];
+	regs.w.pc = regs.w.hl;
 	return 1;
 }

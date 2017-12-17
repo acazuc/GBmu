@@ -99,6 +99,11 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/retcc.cpp \
 	  \
 	  InstructionSet/nop.cpp \
+	  \
+	  InstructionSet/ccf.cpp \
+	  InstructionSet/scf.cpp \
+	  InstructionSet/di.cpp \
+	  InstructionSet/ei.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp
