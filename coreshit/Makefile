@@ -84,7 +84,10 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/swaphl.cpp \
 	  InstructionSet/bitbr.cpp \
 	  InstructionSet/bitbhl.cpp \
-	  \
+	  InstructionSet/setbr.cpp \
+	  InstructionSet/setbhl.cpp \
+	  InstructionSet/resbr.cpp \
+	  InstructionSet/resbhl.cpp \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \
 	  InstructionSet/jr.cpp \

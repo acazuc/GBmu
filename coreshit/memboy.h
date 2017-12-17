@@ -105,6 +105,9 @@ class memboy
 				mempassthru &operator =( word w );
 				mempassthru &operator =( int n );
 				mempassthru &operator =( mempassthru &m );
+				mempassthru &operator |=( byte n );
+				mempassthru &operator |=( int n );
+
 				mempassthru &operator ++( int n );
 				mempassthru &operator --( int n );
 		};

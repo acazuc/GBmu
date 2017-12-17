@@ -53,6 +53,18 @@ memboy::mempassthru &memboy::mempassthru::operator =( mempassthru &m )
 	return *this;
 }
 
+memboy::mempassthru &memboy::mempassthru::operator |=( byte b )
+{
+	(*ref).deref( ptchosen ) |= b;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator |=( int n )
+{
+	(*ref).deref( ptchosen ) |= n;
+	return *this;
+}
+
 memboy::mempassthru &memboy::mempassthru::operator ++( int n )
 {
 	(*ref).deref( ptchosen )++;
