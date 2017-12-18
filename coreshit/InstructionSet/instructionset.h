@@ -666,13 +666,23 @@ static byte callc( void );
 static byte ret( void );
 
 // reti
-//static byte reti( void );
+static byte reti( void );
 
 // retcc
 static byte retnz( void );
 static byte retz( void );
 static byte retnc( void );
 static byte retc( void );
+
+// rstb
+static byte rst0( void );
+static byte rst1( void );
+static byte rst2( void );
+static byte rst3( void );
+static byte rst4( void );
+static byte rst5( void );
+static byte rst6( void );
+static byte rst7( void );
 
 ////
 

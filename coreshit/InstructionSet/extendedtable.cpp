@@ -669,338 +669,338 @@ struct core::instruction core::extdec[256] =
 		&bit7a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, b",
+		2,
+		&res0b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, c",
+		2,
+		&res0c
 	},
 
 	// 130
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, d",
+		2,
+		&res0d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, e",
+		2,
+		&res0e
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, h",
+		2,
+		&res0h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, l",
+		2,
+		&res0l
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, (hl)",
+		4,
+		&res0hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 0, a",
+		2,
+		&res0a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, b",
+		2,
+		&res1b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, c",
+		2,
+		&res1c
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, d",
+		2,
+		&res1d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, e",
+		2,
+		&res1e
 	},
 
 	// 140
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, h",
+		2,
+		&res1h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, l",
+		2,
+		&res1l
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, (hl)",
+		4,
+		&res1hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 1, a",
+		2,
+		&res1a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, b",
+		2,
+		&res2b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, c",
+		2,
+		&res2c
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, d",
+		2,
+		&res2d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, e",
+		2,
+		&res2e
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, h",
+		2,
+		&res2h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, l",
+		2,
+		&res2l
 	},
 
 	// 150
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, (hl)",
+		4,
+		&res2hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 2, a",
+		2,
+		&res2a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, b",
+		2,
+		&res3b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, c",
+		2,
+		&res3c
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, d",
+		2,
+		&res3d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, e",
+		2,
+		&res3e
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, h",
+		2,
+		&res3h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, l",
+		2,
+		&res3l
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, (hl)",
+		4,
+		&res3hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 3, a",
+		2,
+		&res3a
 	},
 
 	// 160
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, b",
+		2,
+		&res4b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, c",
+		2,
+		&res4c
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, d",
+		2,
+		&res4d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, e",
+		2,
+		&res4e
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, h",
+		2,
+		&res4h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, l",
+		2,
+		&res4l
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, (hl)",
+		4,
+		&res4hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 4, a",
+		2,
+		&res4a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, b",
+		2,
+		&res5b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, c",
+		2,
+		&res5c
 	},
 
 	// 170
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, d",
+		2,
+		&res5d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, e",
+		2,
+		&res5e
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, h",
+		2,
+		&res5h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, l",
+		2,
+		&res5l
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, (hl)",
+		4,
+		&res5hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 5, a",
+		2,
+		&res5a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, b",
+		2,
+		&res6b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, c",
+		2,
+		&res6c
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, d",
+		2,
+		&res6d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, e",
+		2,
+		&res6e
 	},
 
 	// 180
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, h",
+		2,
+		&res6h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, l",
+		2,
+		&res6l
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, (hl)",
+		4,
+		&res6hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 6, a",
+		2,
+		&res6a
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, b",
+		2,
+		&res7b
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, c",
+		2,
+		&res7c
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, d",
+		2,
+		&res7d
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, e",
+		2,
+		&res7e
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, h",
+		2,
+		&res7h
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, l",
+		2,
+		&res7l
 	},
 
 	// 190
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, (hl)",
+		4,
+		&res7hl
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"res 7, a",
+		2,
+		&res7a
 	},
 	{
 		"set 0, b",

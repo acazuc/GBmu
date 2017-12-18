@@ -96,10 +96,11 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/call.cpp \
 	  InstructionSet/callcc.cpp \
 	  InstructionSet/ret.cpp \
+	  InstructionSet/reti.cpp \
 	  InstructionSet/retcc.cpp \
+	  InstructionSet/rstb.cpp \
 	  \
 	  InstructionSet/nop.cpp \
-	  \
 	  InstructionSet/ccf.cpp \
 	  InstructionSet/scf.cpp \
 	  InstructionSet/di.cpp \
