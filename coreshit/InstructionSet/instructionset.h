@@ -686,6 +686,9 @@ static byte rst7( void );
 
 ////
 
+// cpla
+static byte cpla( void );
+
 // nop
 static byte nop( void );
 

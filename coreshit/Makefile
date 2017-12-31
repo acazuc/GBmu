@@ -100,6 +100,7 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/retcc.cpp \
 	  InstructionSet/rstb.cpp \
 	  \
+	  InstructionSet/cpla.cpp \
 	  InstructionSet/nop.cpp \
 	  InstructionSet/ccf.cpp \
 	  InstructionSet/scf.cpp \

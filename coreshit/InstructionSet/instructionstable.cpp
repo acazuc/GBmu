@@ -248,9 +248,9 @@ struct core::instruction core::decode[256] =
 		&ldln
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cpl",
 		1,
-		&_blank
+		&cpla
 	},
 	{
 		"jr nc, ne",
