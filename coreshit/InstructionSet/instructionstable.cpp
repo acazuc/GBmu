@@ -248,9 +248,9 @@ struct core::instruction core::decode[256] =
 		&ldln
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"cpl",
 		1,
-		&_blank
+		&cpla
 	},
 	{
 		"jr nc, ne",
@@ -290,9 +290,9 @@ struct core::instruction core::decode[256] =
 		&ldhln
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"scf",
 		1,
-		&_blank
+		&scf
 	},
 	{
 		"jr c, ne",
@@ -332,9 +332,9 @@ struct core::instruction core::decode[256] =
 		&ldan
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ccf",
 		1,
-		&_blank
+		&ccf
 	},
 	{
 		"ld b, b",
@@ -1038,9 +1038,9 @@ struct core::instruction core::decode[256] =
 		&addan
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 0",
+		4,
+		&rst0
 	},
 
 	// 200
@@ -1080,9 +1080,9 @@ struct core::instruction core::decode[256] =
 		&adcan
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 1",
+		4,
+		&rst1
 	},
 	{
 		"ret nc",
@@ -1122,9 +1122,9 @@ struct core::instruction core::decode[256] =
 		&suban
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 2",
+		4,
+		&rst2
 	},
 	{
 		"ret c",
@@ -1132,9 +1132,9 @@ struct core::instruction core::decode[256] =
 		&retc
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"reti",
+		4,
+		&reti
 	},
 	{
 		"jp c, nn",
@@ -1164,9 +1164,9 @@ struct core::instruction core::decode[256] =
 		&sbcan
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 3",
+		4,
+		&rst3
 	},
 	{
 		"ld (n), a",
@@ -1206,9 +1206,9 @@ struct core::instruction core::decode[256] =
 		&andn
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 4",
+		4,
+		&rst4
 	},
 	{
 		"add sp, ne",
@@ -1246,9 +1246,9 @@ struct core::instruction core::decode[256] =
 		&xorn
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 5",
+		4,
+		&rst5
 	},
 
 	// 240
@@ -1256,11 +1256,6 @@ struct core::instruction core::decode[256] =
 		"ld a, (n)",
 		3,
 		&ldarn
-	},
-	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
 	},
 	{
 		"pop af",
@@ -1271,6 +1266,11 @@ struct core::instruction core::decode[256] =
 		"ld a, (c)",
 		2,
 		&ldarc
+	},
+	{
+		"di",
+		1,
+		&di
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1288,9 +1288,9 @@ struct core::instruction core::decode[256] =
 		&orn
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 6",
+		4,
+		&rst6
 	},
 	{
 		"ldhl sp, e",
@@ -1310,9 +1310,9 @@ struct core::instruction core::decode[256] =
 		&ldann
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"ei",
 		1,
-		&_blank
+		&ei
 	},
 	{
 		"__ NO INSTRUCTION __",
@@ -1330,8 +1330,8 @@ struct core::instruction core::decode[256] =
 		&cpn
 	},
 	{
-		"__ NO INSTRUCTION __",
-		1,
-		&_blank
+		"rst 7",
+		4,
+		&rst7
 	}
 };

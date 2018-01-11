@@ -80,10 +80,14 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/srahl.cpp \
 	  InstructionSet/srlr.cpp \
 	  InstructionSet/srlhl.cpp \
-	  \
+	  InstructionSet/swapr.cpp \
+	  InstructionSet/swaphl.cpp \
 	  InstructionSet/bitbr.cpp \
 	  InstructionSet/bitbhl.cpp \
-	  \
+	  InstructionSet/setbr.cpp \
+	  InstructionSet/setbhl.cpp \
+	  InstructionSet/resbr.cpp \
+	  InstructionSet/resbhl.cpp \
 	  InstructionSet/jp.cpp \
 	  InstructionSet/jpcc.cpp \
 	  InstructionSet/jr.cpp \
@@ -92,9 +96,16 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/call.cpp \
 	  InstructionSet/callcc.cpp \
 	  InstructionSet/ret.cpp \
+	  InstructionSet/reti.cpp \
 	  InstructionSet/retcc.cpp \
+	  InstructionSet/rstb.cpp \
 	  \
+	  InstructionSet/cpla.cpp \
 	  InstructionSet/nop.cpp \
+	  InstructionSet/ccf.cpp \
+	  InstructionSet/scf.cpp \
+	  InstructionSet/di.cpp \
+	  InstructionSet/ei.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp

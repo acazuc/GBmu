@@ -24,6 +24,7 @@ void statedisplay( const char *s, word pc )
 {
 	const char *s2;
 	size_t len;
+	int tmp;
 
 	cout << GREY << "0x" << setfill( '0' ) << setw( 4 ) << hex << pc << WHITE << " : ";
 	if ( *s == '_' )
@@ -39,7 +40,7 @@ void statedisplay( const char *s, word pc )
 		{
 			cout.write( s, s2 - s );
 
-			s = strchr( s2, 'n' );
+oncemore:		s = strchr( s2, 'n' );
 			cout << WHITE;
 			if ( !s )
 				cout << s2;
@@ -53,10 +54,23 @@ void statedisplay( const char *s, word pc )
 						cout << s + 2;
 						len += 2;
 						break;
+					case 'e':
+						tmp = ( char ) core::mem[pc + 1] + 2;
+						cout.write( s2, s - s2 );
+						if ( tmp < 0 )
+						{
+							cout << '-' << FOAM << setfill( '0' ) << setw( 2 ) << -tmp << WHITE;
+							len++;
+						}
+						else
+							cout << FOAM << setfill( '0' ) << setw( 2 ) << tmp << WHITE;
+						cout << s + 2;
+						break;
 					case 'z':
 					case 'c':
-						cout << s2;
-						break;
+						cout.write( s2, s - s2 + 2 );
+						s2 = s + 2;
+						goto oncemore;
 					default:
 						cout.write( s2, s - s2 );
 						cout << FOAM << setfill( '0' ) << setw( 2 ) << ( int ) core::mem[pc + 1] << WHITE;

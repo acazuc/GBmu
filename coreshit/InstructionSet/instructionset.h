@@ -380,7 +380,7 @@ static byte rrrl( void );
 // rrhl
 static byte rrhl( void );
 
-// sla
+// slar
 static byte slaa( void );
 static byte slab( void );
 static byte slac( void );
@@ -392,7 +392,7 @@ static byte slal( void );
 // slahl
 static byte slahl( void );
 
-// sra
+// srar
 static byte sraa( void );
 static byte srab( void );
 static byte srac( void );
@@ -404,7 +404,7 @@ static byte sral( void );
 // srahl
 static byte srahl( void );
 
-// srl
+// srlr
 static byte srla( void );
 static byte srlb( void );
 static byte srlc( void );
@@ -416,7 +416,17 @@ static byte srll( void );
 // srlhl
 static byte srlhl( void );
 
-////
+// swapr
+static byte swapa( void );
+static byte swapb( void );
+static byte swapc( void );
+static byte swapd( void );
+static byte swape( void );
+static byte swaph( void );
+static byte swapl( void );
+
+// swaphl
+static byte swaphl( void );
 
 // bitbr
 static byte bit0a( void );
@@ -486,7 +496,141 @@ static byte bit5hl( void );
 static byte bit6hl( void );
 static byte bit7hl( void );
 
-////
+// setbr
+static byte set0a( void );
+static byte set0b( void );
+static byte set0c( void );
+static byte set0d( void );
+static byte set0e( void );
+static byte set0h( void );
+static byte set0l( void );
+static byte set1a( void );
+static byte set1b( void );
+static byte set1c( void );
+static byte set1d( void );
+static byte set1e( void );
+static byte set1h( void );
+static byte set1l( void );
+static byte set2a( void );
+static byte set2b( void );
+static byte set2c( void );
+static byte set2d( void );
+static byte set2e( void );
+static byte set2h( void );
+static byte set2l( void );
+static byte set3a( void );
+static byte set3b( void );
+static byte set3c( void );
+static byte set3d( void );
+static byte set3e( void );
+static byte set3h( void );
+static byte set3l( void );
+static byte set4a( void );
+static byte set4b( void );
+static byte set4c( void );
+static byte set4d( void );
+static byte set4e( void );
+static byte set4h( void );
+static byte set4l( void );
+static byte set5a( void );
+static byte set5b( void );
+static byte set5c( void );
+static byte set5d( void );
+static byte set5e( void );
+static byte set5h( void );
+static byte set5l( void );
+static byte set6a( void );
+static byte set6b( void );
+static byte set6c( void );
+static byte set6d( void );
+static byte set6e( void );
+static byte set6h( void );
+static byte set6l( void );
+static byte set7a( void );
+static byte set7b( void );
+static byte set7c( void );
+static byte set7d( void );
+static byte set7e( void );
+static byte set7h( void );
+static byte set7l( void );
+
+// setbhl
+static byte set0hl( void );
+static byte set1hl( void );
+static byte set2hl( void );
+static byte set3hl( void );
+static byte set4hl( void );
+static byte set5hl( void );
+static byte set6hl( void );
+static byte set7hl( void );
+
+// resbr
+static byte res0a( void );
+static byte res0b( void );
+static byte res0c( void );
+static byte res0d( void );
+static byte res0e( void );
+static byte res0h( void );
+static byte res0l( void );
+static byte res1a( void );
+static byte res1b( void );
+static byte res1c( void );
+static byte res1d( void );
+static byte res1e( void );
+static byte res1h( void );
+static byte res1l( void );
+static byte res2a( void );
+static byte res2b( void );
+static byte res2c( void );
+static byte res2d( void );
+static byte res2e( void );
+static byte res2h( void );
+static byte res2l( void );
+static byte res3a( void );
+static byte res3b( void );
+static byte res3c( void );
+static byte res3d( void );
+static byte res3e( void );
+static byte res3h( void );
+static byte res3l( void );
+static byte res4a( void );
+static byte res4b( void );
+static byte res4c( void );
+static byte res4d( void );
+static byte res4e( void );
+static byte res4h( void );
+static byte res4l( void );
+static byte res5a( void );
+static byte res5b( void );
+static byte res5c( void );
+static byte res5d( void );
+static byte res5e( void );
+static byte res5h( void );
+static byte res5l( void );
+static byte res6a( void );
+static byte res6b( void );
+static byte res6c( void );
+static byte res6d( void );
+static byte res6e( void );
+static byte res6h( void );
+static byte res6l( void );
+static byte res7a( void );
+static byte res7b( void );
+static byte res7c( void );
+static byte res7d( void );
+static byte res7e( void );
+static byte res7h( void );
+static byte res7l( void );
+
+// resbhl
+static byte res0hl( void );
+static byte res1hl( void );
+static byte res2hl( void );
+static byte res3hl( void );
+static byte res4hl( void );
+static byte res5hl( void );
+static byte res6hl( void );
+static byte res7hl( void );
 
 // jp
 static byte jp( void );
@@ -522,7 +666,7 @@ static byte callc( void );
 static byte ret( void );
 
 // reti
-//static byte reti( void );
+static byte reti( void );
 
 // retcc
 static byte retnz( void );
@@ -530,9 +674,34 @@ static byte retz( void );
 static byte retnc( void );
 static byte retc( void );
 
+// rstb
+static byte rst0( void );
+static byte rst1( void );
+static byte rst2( void );
+static byte rst3( void );
+static byte rst4( void );
+static byte rst5( void );
+static byte rst6( void );
+static byte rst7( void );
+
 ////
+
+// cpla
+static byte cpla( void );
 
 // nop
 static byte nop( void );
+
+// ccf
+static byte ccf( void );
+
+// scf
+static byte scf( void );
+
+// di
+static byte di( void );
+
+// ei
+static byte ei( void );
 
 #endif
