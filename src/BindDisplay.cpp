@@ -3,11 +3,11 @@
 #include <iostream>
 #include <cstring>
 
-gint bposx[] = {65, 135, 100, 100, 205, 275, 345, 380};
-gint bposy[] = {85, 85, 55, 115, 200, 200, 90, 60};
+gint bposx[] = {100, 200, 150, 150, 300, 400, 500, 600};
+gint bposy[] = {85, 85, 55, 115, 250, 250, 90, 60};
 
-gint lposx[] = {0, 210, 105, 105, 210, 280, 280, 455};
-gint lposy[] = {85, 85, 20, 150, 235, 235, 90, 60};
+gint lposx[] = {0, 300, 150, 150, 300, 400, 400, 700};
+gint lposy[] = {85, 85, 20, 150, 280, 280, 90, 60};
 gfloat lxalign[] = {1, 0, .5, .5, .5, .5, 1, 0};
 gfloat lyalign[] = {.5, .5, 1, 0, 0, 0, .5, .5};
 std::string labels[] = {"Left", "Right", "Up", "Down", "Select", "Start", "B", "A"};
@@ -137,16 +137,16 @@ void BindDisplay::show()
 	for (uint8_t i = 0; i < 8; ++i)
 	{
 		this->buttons[i] = gtk_button_new_with_label(gdk_keyval_name(binds[i]));
-		gtk_widget_set_size_request(this->buttons[i], 70, 30);
+		gtk_widget_set_size_request(this->buttons[i], 100, 30);
 		g_signal_connect(G_OBJECT(this->buttons[i]), "clicked", G_CALLBACK(cb_bind_press), (gpointer)((int64_t)i));
 		gtk_fixed_put(GTK_FIXED(fixed), this->buttons[i], bposx[i], bposy[i]);
 		glabels[i] = gtk_label_new(labels[i].c_str());
 		gtk_label_set_xalign(GTK_LABEL(glabels[i]), lxalign[i]);
 		gtk_label_set_yalign(GTK_LABEL(glabels[i]), lyalign[i]);
-		gtk_widget_set_size_request(glabels[i], 60, 30);
+		gtk_widget_set_size_request(glabels[i], 100, 30);
 		gtk_fixed_put(GTK_FIXED(fixed), glabels[i], lposx[i], lposy[i]);
 	}
-	gtk_widget_set_size_request(fixed, 530, 300);
+	gtk_widget_set_size_request(fixed, 750, 400);
 	gtk_container_add(GTK_CONTAINER(this->window), fixed);
 	gtk_widget_show_all(this->window);
 }

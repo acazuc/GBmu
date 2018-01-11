@@ -1,5 +1,5 @@
 # Time elapsed between 2 instruction
-periode=100000000
+periode=1000000
 
 # Initial PC value
 startat=0x000c

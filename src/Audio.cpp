@@ -487,15 +487,15 @@ Audio::Audio()
 	mem[0xFF3E] = 0x32;
 	mem[0xFF3F] = 0x10;
 
-	mem[NR10] = 0b10111111;
-	mem[NR11] = 0b10101010;
-	mem[NR12] = 0b10011011;
+	mem[NR10] = 0b10100111;
+	mem[NR11] = 0b10000000;
+	mem[NR12] = 0b11110011;
 	mem[NR13] = 0b10101100;
-	mem[NR14] = 0b10100011;
+	mem[NR14] = 0b10000011;
 
 	mem[NR21] = 0b10101010;
-	mem[NR22] = 0b10011011;
-	mem[NR23] = 0b10101001;
+	mem[NR22] = 0b10000000;
+	mem[NR23] = 0b11110011;
 	mem[NR24] = 0b10100011;
 
 	mem[NR30] = 0b10000000;
@@ -510,8 +510,8 @@ Audio::Audio()
 	mem[NR44] = 0b11000000;
 
 	mem[NR50] = 0b00010001;
-	mem[NR51] = 0b10001000;
-	mem[NR52] = 0b10001000;
+	mem[NR51] = 0b11110011;
+	mem[NR52] = 0b00000001;
 
 	PaStreamParameters parameters;
 	parameters.device = Pa_GetDefaultOutputDevice();

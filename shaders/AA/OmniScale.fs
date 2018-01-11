@@ -1,4 +1,4 @@
-#version 450
+#version 330
 
 in vec2 UV;
 
@@ -99,7 +99,7 @@ vec4 OmniScale(vec2 texCoord)
 	if (P(0xbf,0x37) || P(0xdb,0x13))
 	{
 		float dist = p.x - 2.0 * p.y;
-		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * sqrt(5);
+		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * 2.2360679775;
 		if (dist > pixel_size / 2) {
 			return w1;
 		}
@@ -111,7 +111,7 @@ vec4 OmniScale(vec2 texCoord)
 	if (P(0xdb,0x49) || P(0xef,0x6d))
 	{
 		float dist = p.y - 2.0 * p.x;
-		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * sqrt(5);
+		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * 2.2360679775;
 		if (p.y - 2.0 * p.x > pixel_size / 2) {
 			return w3;
 		}
@@ -124,7 +124,7 @@ vec4 OmniScale(vec2 texCoord)
 	if (P(0xbf,0x8f) || P(0x7e,0x0e))
 	{
 		float dist = p.x + 2.0 * p.y;
-		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * sqrt(5);
+		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * 2.2360679775;
 		if (dist > 1.0 + pixel_size / 2)
 			return w4;
 		vec4 r;
@@ -139,7 +139,7 @@ vec4 OmniScale(vec2 texCoord)
 	if (P(0x7e,0x2a) || P(0xef,0xab))
 	{
 		float dist = p.y + 2.0 * p.x;
-		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * sqrt(5);
+		float pixel_size = length(1.0 / (uResolution / textureDimensions)) * 2.2360679775;
 		if (p.y + 2.0 * p.x > 1.0 + pixel_size / 2)
 			return w4;
 		vec4 r;
