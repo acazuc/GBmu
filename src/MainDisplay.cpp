@@ -22,7 +22,6 @@ static int32_t ctx_height = 144;
 static GLuint texture;
 static GLuint vao;
 
-
 struct glprogram
 {
 	GLint texCoordsLocation;

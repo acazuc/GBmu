@@ -1,6 +1,7 @@
 
 #include <memboy.h>
 #include <iostream>
+#include <cstring>
 
 memboy::mempassthru::operator byte( void )
 {
@@ -85,7 +86,9 @@ memboy::memboy( void )
 
 	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
 		block[i].ref = this;
-
+	std::memset(map, 0, 0x10000);
+	std::memset(bank1chardts, 0, 0x2000);
+	std::memset(svbk2to7, 0, 0x6000);
 	blockid = 0;
 }
 

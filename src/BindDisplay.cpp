@@ -10,6 +10,7 @@ gint lposx[] = {0, 300, 150, 150, 300, 400, 400, 700};
 gint lposy[] = {85, 85, 20, 150, 280, 280, 90, 60};
 gfloat lxalign[] = {1, 0, .5, .5, .5, .5, 1, 0};
 gfloat lyalign[] = {.5, .5, 1, 0, 0, 0, .5, .5};
+
 std::string labels[] = {"Left", "Right", "Up", "Down", "Select", "Start", "B", "A"};
 
 //               Left    Right  Up     Down  rctrl  rshift num0   num3

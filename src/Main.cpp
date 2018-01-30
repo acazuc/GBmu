@@ -10,6 +10,8 @@ BindDisplay *Main::bindDisplay;
 Audio *Main::audio;
 LCD *Main::lcd;
 
+memboy mem;
+
 void Main::run(int ac, char **av)
 {
 	(void)ac;

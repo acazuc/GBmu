@@ -2,7 +2,7 @@
 #include "Main.h"
 #include <cstring>
 
-static memboy mem;
+extern memboy mem;
 
 LCD::LCD()
 {

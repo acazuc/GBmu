@@ -19,9 +19,9 @@ static uint64_t c1env = 0;
 static uint64_t c2env = 0;
 static uint64_t c3env = 0;
 static uint64_t c4env = 0;
-static uint64_t c1freq = 0;
-static uint64_t c2freq = 0;
-static uint64_t c3freq = 0;
+static uint64_t c1freq = 1;
+static uint64_t c2freq = 1;
+static uint64_t c3freq = 1;
 static uint64_t c1lastswptick = 0;
 static uint64_t c1lastenvtick = 0;
 static uint64_t c2lastenvtick = 0;
@@ -63,7 +63,7 @@ static uint64_t nextClock = 0;
 static uint64_t envtick = 0;
 static uint64_t swptick = 0;
 
-static memboy mem;
+extern memboy mem;
 
 static uint32_t c1regtofreq(uint8_t nr13, uint8_t nr14)
 {
@@ -104,16 +104,25 @@ static int16_t getc1val()
 		c1freq = c1regtofreq(mem[NR13], mem[NR14]);
 		mem[NR14] = mem[NR14] & 0b01111111;
 	}
+	if (!c1freq)
+		return;
 	uint8_t duty = (mem[NR11] & 0b11000000) >> 6;
 	float dutyper = 0;
-	if (duty == 0b11)
-		dutyper = .25;
-	else if (duty == 0b10)
-		dutyper = .5;
-	else if (duty == 0b01)
-		dutyper = .75;
-	else if (duty == 0b00)
-		dutyper = .875;
+	switch (duty)
+	{
+		case 0b11:
+			dutyper = .25;
+			break;
+		case 0b10:
+			dutyper = .5;
+			break;
+		case 0b01:
+			dutyper = .75;
+			break;
+		case 0b00:
+			dutyper = .875;
+			break;
+	}
 	uint32_t inter = freq / c1freq;
 	uint32_t curr = frame % inter;
 	float envfac = c1env / 15.;
@@ -142,9 +151,11 @@ static int16_t getc2val()
 	{
 		c2len = 64 - (mem[NR21] & 0b00111111);
 		c2env = (mem[NR22] & 0b11110000) >> 4;
+		c2freq = c2regtofreq(mem[NR23], mem[NR24]);
 		mem[NR24] = mem[NR24] & 0b01111111;
 	}
-	c2freq = c2regtofreq(mem[NR23], mem[NR24]);
+	if (!c2freq)
+		return;
 	uint8_t duty = (mem[NR21] & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
@@ -192,6 +203,8 @@ static int16_t getc3val()
 	}
 	if (!(mem[NR34] & 0b01000000))
 		c3freq = c3regtofreq(mem[NR33], mem[NR34]);
+	if (!c3freq)
+		return;
 	uint32_t inter = freq / c3freq;
 	if (!inter)
 		return (0);
@@ -452,7 +465,7 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				updateEnvTick();
 				envtick++;
 			}
-			if ((clockCount + 1) % 4 == 3)
+			if ((clockCount + 1) % 4 != 30)
 			{
 				updateSweepTick();
 				swptick++;
