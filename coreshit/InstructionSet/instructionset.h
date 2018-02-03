@@ -704,4 +704,10 @@ static byte di( void );
 // ei
 static byte ei( void );
 
+// halt
+static byte halt( void );
+
+// stop
+static byte stop( void );
+
 #endif

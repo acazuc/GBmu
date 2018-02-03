@@ -7,6 +7,9 @@ scf ref::file;
 
 long ref::periode = PERIODE;
 long ref::start = 0x100;
+long ref::debugstart = 0x0000;
+long ref::debugend = 0xffff;
+char *ref::biospath = "./dmgbios.gb";
 
 void ref::init( void )
 {
@@ -18,6 +21,15 @@ void ref::init( void )
 
 	if ( file.test( "startat", SCF_INT ) )
 		start = file.getint( "startat" );
+
+	if ( file.test( "debugstart", SCF_INT ) )
+		debugstart = file.getint( "debugstart" );
+
+	if ( file.test( "debugend", SCF_INT ) )
+		debugend = file.getint( "debugend" );
+
+	if ( file.test( "biospath", SCF_STRING ) )
+		biospath = file.getstring( "biospath" );
 }
 
 void statedisplay( const char *s, word pc )
@@ -95,24 +107,16 @@ oncemore:		s = strchr( s2, 'n' );
 		cout << ( core::getflags() & NFLAG ? FOAM : DARK ) << 'N' << WHITE << '/';
 		cout << ( core::getflags() & HFLAG ? FOAM : DARK ) << 'H' << WHITE << '/';
 		cout << ( core::getflags() & CYFLAG ? FOAM : DARK ) << "CY" << WHITE << ']';
-
 	}
+	//cout << ' ' << PEACHY << core::getime() << ' ' << ( int ) core::mem[IF] << WHITE;
 	cout << endl;
 }
 
-int main( int ac, char **av )
+void corerun( dword cycle )
 {
-	if ( ac < 2 )
-	{
-		cout << RED << "Give me a rom, you shit !" << DEFAULT << endl;
-		return EXIT_FAILURE;
-	}
+	static bool display = false;
 
-	ref::init();
-	core::init();
-	core::mem.romload( av[1] );
-
-	for ( ; ; )
+	while ( cycle-- )
 	{
 		const char *s;
 		struct timespec stime;
@@ -121,11 +125,47 @@ int main( int ac, char **av )
 		pc = core::getpc();
 		if ( s = core::cue() )
 		{
-			statedisplay( s, pc );
+			if ( display )
+			{
+				statedisplay( s, pc );
+				stime.tv_sec = 0;
+				stime.tv_nsec = ref::periode; 
+				nanosleep( &stime, NULL );
+				if ( pc == ref::debugend )
+					display = false;
+			}
+			else if ( pc == ref::debugstart )
+			{
+				display = true;
+				statedisplay( s, pc );
+			}
 		}
 
-		stime.tv_sec = 0;
-		stime.tv_nsec = ref::periode; 
-		nanosleep( &stime, NULL );
+		//	cout << PEACHY << cycle << WHITE << endl;
+		//stime.tv_sec = 0;
+		//stime.tv_nsec = ref::periode; 
+		//nanosleep( &stime, NULL );
 	}
+}
+
+
+void corereset( void )
+{
+	core::init();
+	core::mem.ramclear();
+}
+
+void corereset( char *rom )
+{
+	core::init();
+	core::mem.ramclear();
+	core::mem.romload( rom );
+}
+
+void coremaster( char *rom )
+{
+	ref::init();
+	core::init();
+	core::mem.biosload( ref::biospath );
+	core::mem.romload( rom );
 }

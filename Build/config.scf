@@ -1,0 +1,14 @@
+# Time elapsed between 2 instruction
+periode=100000000
+
+# Initial PC value
+startat=0x0000
+
+# Debug display start point
+debugstart=0xf1b1
+
+# Debug display end point
+debugend=0xf051
+
+# Bios file path
+biospath="./dmgbios.gb"

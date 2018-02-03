@@ -28,5 +28,9 @@ int main( int ac, char **av )
 		cout << ( int ) yay[0xD000] << ' ' << ( int ) yay[SVBK] << endl;
 	}
 
+	yay[VBK] = 0;
+	yay[0x8000] = 45;
+	cout << ( int ) yay.cbank0( 0x8000 ) << endl;
+
 	return 0;
 }

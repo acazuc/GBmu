@@ -10,11 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = gbmu
+NAME = Build/gbmu
 
 CC = g++
 
-CFLAGS = -g -O2 -std=c++11 -flto
+CFLAGS = -g -Ofast -std=c++11 -flto
 
 INCLUDES_PATH = include/ -I coreshit -I Essentials
 
@@ -35,26 +35,31 @@ OBJS_NAME = $(SRCS_NAME:.cpp=.o)
 
 OBJS = $(addprefix $(OBJS_PATH), $(OBJS_NAME))
 
-LIBRARY = `pkg-config --cflags --libs gtk+-3.0` -lGL -lepoxy -lportaudio
+LIBRARY = `pkg-config --cflags --libs gtk+-3.0` -lGL -lepoxy -lportaudio -L coreshit -L Essentials -lcore -lessentials
 
 all: odir $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) coreshit/libcore.a
 	@echo " - Making $(NAME)"
-	@$(CC) $(CFLAGS) -o $(NAME) $^ coreshit/memboy.o $(LIBRARY)
+	@$(CC) $(CFLAGS) -o $(NAME) $^ $(LIBRARY)
 
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp
 	@echo " - Compiling $<"
 	@$(CC) $(CFLAGS) -o $@ -c $< -I$(INCLUDES_PATH) $(LIBRARY)
 
+coreshit/libcore.a:
+
 odir:
+	make -C coreshit
 	@mkdir -p $(OBJS_PATH)
 
 clean:
+	make -C coreshit clean
 	@echo " - Cleaning objs"
 	@rm -f $(OBJS)
 
 fclean: clean
+	make -C coreshit fclean
 	@echo " - Cleaning executable"
 	@rm -f $(NAME)
 

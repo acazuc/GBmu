@@ -1,5 +1,6 @@
+Build/roms
+Build/gbmu
 obj
-gbmu
 *.swp
 *.o
 *.a

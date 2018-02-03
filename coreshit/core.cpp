@@ -5,10 +5,16 @@ memboy core::mem;
 byte core::cycle;
 struct core::instruction *core::next;
 union core::registers core::regs;
+bool core::ime;
+byte core::state;
+bool core::x2speed;
 
 void core::init( void )
 {
 	cycle = 0;
+	ime = false;
+	state = CPU_RUN;
+	x2speed = false;
 	regs.w.pc = ref::start;
 	regs.w.sp = 0xFFFE;
 	regs.w.af = 0;
@@ -17,14 +23,67 @@ void core::init( void )
 	regs.w.hl = 0;
 }
 
+void core::timer( void )
+{
+	static word divider = 256;
+	static dword timer = 0;
+
+	const dword clockselect[4] = { 4096, 262144, 65536, 16384 };
+
+	if ( !--divider )
+	{
+		divider = 256;
+		mem[DIV]++;
+	}
+
+	if ( mem[TAC] & 0b00000100 )
+	{
+		if ( ++timer > clockselect[TAC & 3] )
+		{
+			timer = 0;
+			if ( mem[TIMA] == 0xff )
+			{
+				mem[TIMA] = mem[TMA];
+				mem[IF] |= 0b00000100;
+			}
+			else
+				mem[TIMA]++;
+		}
+	}
+}
+
 const char *core::cue( void )
 {
+	timer();
+
 	if ( cycle )
 	{
 		cycle--;
 		return nullptr;
 	}
-	next = &decode[( byte ) mem[regs.w.pc]];
+
+	if ( mem[IF] && ime )
+	{
+		byte req = mem[IF] & mem[IE];
+
+		for ( byte i = 1, off = 0 ; i != 32 ; i <<= 1, off += 8 )
+		{
+			if ( req & i )
+			{
+				mem[regs.w.sp -= 2] = ( word ) regs.w.pc;
+				regs.w.pc = 0x40 + off;
+				state = CPU_RUN;
+				mem[IF] &= ~i;
+				ime = false;
+				goto decode;
+			}
+		}
+	}
+
+	if ( state != CPU_RUN )
+		return nullptr;
+
+decode:	next = &decode[( byte ) mem[regs.w.pc]];
 	if ( !(*next).function )	
 		next = &extdec[( byte ) mem[++regs.w.pc]];
 	cycle = (*next).function() - 1;
@@ -80,3 +139,20 @@ word core::getsp( void )
 {
 	return regs.w.sp;
 }
+
+byte core::getstate( void )
+{
+	return state;
+}
+
+bool core::is2xspeed( void )
+{
+	return x2speed;
+}
+
+bool core::getime( void )
+{
+	return ime;
+}
+
+

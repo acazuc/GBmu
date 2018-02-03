@@ -1,4 +1,5 @@
 #include "MainDisplay.h"
+#include "jackshit.h"
 #include "Main.h"
 #include <cstring>
 #include <iostream>
@@ -179,8 +180,7 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	(void)context;
 	gdk_gl_context_make_current(context);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
-	//std::cout << (const char*)glGetString(GL_RENDERER) << std::endl;
-	//glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(currentprogram->program);
 	glUniformMatrix4fv(currentprogram->mvpLocation, 1, GL_FALSE, &(mat[0]));
 	glBindVertexArray(vao);
@@ -223,45 +223,40 @@ static void cb_quit(GtkWidget *osef1, gpointer osef2)
 	Main::windowClosed();
 }
 
+static int get_key_bit(int key)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		if (key == Main::getBindDisplay()->getBinds()[i])
+			return (i);
+	}
+	return (-1);
+}
+
 static void cb_key_press_event(GtkWidget *osef1, GdkEventKey *event)
 {
 	(void)osef1;
-	std::cout << "Pressed" << std::endl;
-	std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
-	std::cout << "state: " << event->state << std::endl;
-	std::cout << "type: " << event->type << std::endl;
-	std::cout << std::endl;
+	int bit = get_key_bit(event->keyval);
+	if (bit != -1)
+		Main::getMainDisplay()->setKeys(Main::getMainDisplay()->getKeys() | (1 << bit));
+	//std::cout << "Pressed" << std::endl;
+	//std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
+	//std::cout << "state: " << event->state << std::endl;
+	//std::cout << "type: " << event->type << std::endl;
+	//std::cout << std::endl;
 }
 
 static void cb_key_release_event(GtkWidget *osef1, GdkEventKey *event)
 {
 	(void)osef1;
-	std::cout << "Released" << std::endl;
-	std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
-	std::cout << "state: " << event->state << std::endl;
-	std::cout << "type: " << event->type << std::endl;
-	std::cout << std::endl;
-}
-
-static void cb_file_quit(GtkWidget *osef1, gpointer osef2)
-{
-	(void)osef1;
-	(void)osef2;
-	//
-}
-
-static void cb_edit_play(GtkWidget *osef1, gpointer osef2)
-{
-	(void)osef1;
-	(void)osef2;
-	//
-}
-
-static void cb_edit_pause(GtkWidget *osef1, gpointer osef2)
-{
-	(void)osef1;
-	(void)osef2;
-	//
+	int bit = get_key_bit(event->keyval);
+	if (bit != -1)
+		Main::getMainDisplay()->setKeys(Main::getMainDisplay()->getKeys() & (~(1 << bit)));
+	//std::cout << "Released" << std::endl;
+	//std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
+	//std::cout << "state: " << event->state << std::endl;
+	//std::cout << "type: " << event->type << std::endl;
+	//std::cout << std::endl;
 }
 
 static void cb_file_open(GtkWidget *osef1, gpointer osef2)
@@ -278,10 +273,38 @@ static void cb_file_open(GtkWidget *osef1, gpointer osef2)
 		char *filename;
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
 		filename = gtk_file_chooser_get_filename(chooser);
-		std::cout << "Opened file " << filename << std::endl;
+		corereset(filename);
 		g_free(filename);
 	}
 	gtk_widget_destroy (dialog);
+}
+
+static void cb_file_quit(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	exit(EXIT_SUCCESS);
+}
+
+static void cb_edit_play(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	Main::setPaused(false);
+}
+
+static void cb_edit_pause(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	Main::setPaused(true);
+}
+
+static void cb_edit_restart(GtkWidget *osef1, gpointer osef2)
+{
+	(void)osef1;
+	(void)osef2;
+	corereset();
 }
 
 static void cb_tool_debug(GtkWidget *osef1, gpointer osef2)
@@ -379,6 +402,11 @@ static void build_menu_edit(GtkWidget *menubar)
 	GtkWidget *edit_pause = gtk_menu_item_new_with_label("Pause");
 	g_signal_connect(G_OBJECT(edit_pause), "activate", G_CALLBACK(cb_edit_pause), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_pause);
+
+	//Restart
+	GtkWidget *edit_restart = gtk_menu_item_new_with_label("Restart");
+	g_signal_connect(G_OBJECT(edit_restart), "activate", G_CALLBACK(cb_edit_restart), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_restart);
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(edit), edit_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), edit);
@@ -523,6 +551,7 @@ static void build_menu_help(GtkWidget *menubar)
 
 MainDisplay::MainDisplay()
 {
+	this->keys = 0;
 	this->texDatas = new uint8_t[160 * 144 * 3]();
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(this->window), "GBmu");

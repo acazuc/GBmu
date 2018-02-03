@@ -3,7 +3,7 @@
 
 byte core::di( void )
 {
-	mem[IE] = 0x00;
+	ime = false;
 
 	regs.w.pc++;
 	return 1;

@@ -45,7 +45,7 @@ void scf::createvar( void )
 				(*entry).type = SCF_STRING;
 				(*entry).data.str = new char [centry.length() - 1];
 				memcpy( (*entry).data.str, s, centry.length() - 2 );
-				(*entry).data.str[centry.length() - 1] = NUL;
+				(*entry).data.str[centry.length() - 2] = NUL;
 				table.add( ckey.c_str(), &entry );
 			}
 		}

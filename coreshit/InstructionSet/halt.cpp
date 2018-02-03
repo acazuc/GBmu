@@ -1,9 +1,9 @@
 
 #include <jackshit.h>
 
-byte core::ei( void )
+byte core::halt( void )
 {
-	ime = true;
+	state = CPU_HALT;
 
 	regs.w.pc++;
 	return 1;

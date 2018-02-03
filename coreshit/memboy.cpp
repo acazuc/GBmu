@@ -27,6 +27,13 @@ memboy::mempassthru::operator char( void )
 	return ( char ) (*ref).deref( ptchosen );
 }
 
+memboy::mempassthru::operator bool( void )
+{
+	if ( (*ref).deref( ptchosen ) )
+		return true;
+	return false;
+}
+
 memboy::mempassthru &memboy::mempassthru::operator =( byte b )
 {
 	(*ref).deref( ptchosen ) = b;
@@ -66,6 +73,18 @@ memboy::mempassthru &memboy::mempassthru::operator |=( int n )
 	return *this;
 }
 
+memboy::mempassthru &memboy::mempassthru::operator &=( byte b )
+{
+	(*ref).deref( ptchosen ) &= b;
+	return *this;
+}
+
+memboy::mempassthru &memboy::mempassthru::operator &=( int n )
+{
+	(*ref).deref( ptchosen ) &= n;
+	return *this;
+}
+
 memboy::mempassthru &memboy::mempassthru::operator ++( int n )
 {
 	(*ref).deref( ptchosen )++;
@@ -83,17 +102,25 @@ memboy::memboy( void )
 	map = new byte [0x10000];
 	bank1chardts = new byte [0x2000];
 	svbk2to7 = new byte [0x6000];
+	rombank = new byte [0x100];
 
 	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
 		block[i].ref = this;
-	std::memset(map, 0, 0x10000);
-	std::memset(bank1chardts, 0, 0x2000);
-	std::memset(svbk2to7, 0, 0x6000);
+
 	blockid = 0;
+
+	map[RBK] = 0;
 }
 
 byte &memboy::deref( word addr )
 {
+	if ( addr < 0x100 )
+	{
+		if ( map[RBK] & 1 )
+			return map[addr];
+		else
+			return rombank[addr];
+	}
 	if ( addr < 0x8000 )
 		return map[addr];
 	if ( addr < 0xA000 )
@@ -131,11 +158,33 @@ byte &memboy::cbank0( word addr )
 	return map[addr];
 }
 
+byte &memboy::sysregs( word addr )
+{
+	return map[addr];
+}
+
 byte &memboy::cbank1( word addr )
 {
 	if ( addr < 0x8000 || addr > 0x9fff )
 		return map[addr];
 	return bank1chardts[addr - 0x8000];
+}
+
+bool memboy::biosload( const char *path )
+{
+	ifstream in;
+
+	in.open( path );
+	if ( !in || in.eof() )
+		return false;
+
+	for ( byte *cmap = rombank ; cmap < ( rombank + 0x100 ) ; cmap++ )
+	{
+		*cmap = in.get();
+		if ( in.eof() )
+			return true;
+	}
+	return false;
 }
 
 bool memboy::romload( const char *path )
@@ -155,9 +204,17 @@ bool memboy::romload( const char *path )
 	return false;
 }
 
+void memboy::ramclear( void )
+{
+	memset( &map[0x8000], 0, 0x8000 );
+	memset( bank1chardts, 0, 0x2000 );
+	memset( svbk2to7, 0, 0x6000 );
+}
+
 memboy::~memboy( void )
 {
 	delete [] map;
 	delete [] bank1chardts;
 	delete [] svbk2to7;
+	delete [] rombank;
 }

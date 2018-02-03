@@ -1,6 +1,6 @@
 
 CC	= g++
-NAME	= Build/Coretest
+NAME	= libcore.a
 
 SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/instructionstable.cpp \
@@ -106,6 +106,8 @@ SRC	= InstructionSet/_blank.cpp \
 	  InstructionSet/scf.cpp \
 	  InstructionSet/di.cpp \
 	  InstructionSet/ei.cpp \
+	  InstructionSet/halt.cpp \
+	  InstructionSet/stop.cpp \
 	  memboy.cpp \
 	  core.cpp \
 	  mastercore.cpp
@@ -119,7 +121,7 @@ RM	= rm -f
 all:		$(NAME)
 
 $(NAME):	$(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) ../Essentials/essentials.a -o $(NAME)
+	gcc-ar rc $(NAME) $(OBJ)
 
 clean:
 	$(RM) $(OBJ)

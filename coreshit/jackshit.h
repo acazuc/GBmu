@@ -57,6 +57,10 @@
 
 #define PERIODE 250000000
 
+#define CPU_RUN 0
+#define CPU_HALT 1
+#define CPU_STOP 2
+
 using namespace std;
 
 class core
@@ -103,9 +107,14 @@ class core
 		};
 
 		static byte cycle;
+		static bool ime;
+		static byte state;
+		static bool x2speed;
 		static struct instruction *next;
 
 		#include <InstructionSet/instructionset.h>
+
+		static void timer( void );
 	public:
 		static memboy mem;
 		static struct instruction decode[256];
@@ -130,6 +139,11 @@ class core
 		// 16 bits Getters
 		static word getpc( void );
 		static word getsp( void );
+
+		// System Getters
+		static byte getstate( void );
+		static bool is2xspeed( void );
+		static bool getime( void );
 };
 
 class ref
@@ -141,8 +155,16 @@ class ref
 	public:
 		static long periode;
 		static long start;
+		static long debugstart;
+		static long debugend;
+		static char *biospath;
 
 		static void init( void );
 };
+
+void corereset( char *rom );
+void corereset( void );
+void corerun( dword cycle );
+void coremaster( char *rom );
 
 #endif

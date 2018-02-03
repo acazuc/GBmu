@@ -17,6 +17,7 @@ class Main
 		static BindDisplay *bindDisplay;
 		static Audio *audio;
 		static LCD *lcd;
+		static bool paused;
 
 	public:
 		static void run(int ac, char **av);
@@ -27,6 +28,8 @@ class Main
 		static BindDisplay *getBindDisplay() {return (bindDisplay);};
 		static Audio *getAudio() {return (audio);};
 		static LCD *getLcd() {return (lcd);};
+		static void setPaused(bool paused) {Main::paused = paused;};
+		static bool isPaused() {return (paused);};
 
 };
 

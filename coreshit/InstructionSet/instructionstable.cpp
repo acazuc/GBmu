@@ -87,9 +87,9 @@ struct core::instruction core::decode[256] =
 		&rrca
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"stop",
 		1,
-		&_blank
+		&stop
 	},
 	{
 		"ld de, nn",
@@ -617,9 +617,9 @@ struct core::instruction core::decode[256] =
 		&ldhll
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"halt",
 		1,
-		&_blank
+		&halt
 	},
 	{
 		"ld (hl), a",
