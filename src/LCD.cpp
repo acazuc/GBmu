@@ -32,7 +32,7 @@ void LCD::render()
 		if (Main::getMainDisplay()->getKeys() & 0b00001000)
 			keys &= ~0b00001000;
 	}
-	if (!(core::mem[JOYP] & 0b00010000))
+	if (!(core::mem[JOYP] & 0b00100000))
 	{
 		if (Main::getMainDisplay()->getKeys() & 0b00010000)
 			keys &= ~0b00000100;
