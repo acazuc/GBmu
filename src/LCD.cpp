@@ -21,6 +21,7 @@ void LCD::render()
 		memset(Main::getMainDisplay()->getTexDatas(), 0xff, 160 * 144 * 3);
 	bool paused = Main::isPaused();
 	uint8_t keys = 0xF;
+	uint8_t keys_org = core::mem[JOYP] & 0xf;
 	if (!(core::mem[JOYP] & 0b00010000))
 	{
 		if (Main::getMainDisplay()->getKeys() & 0b00000001)
@@ -44,7 +45,7 @@ void LCD::render()
 			keys &= ~0b00000001;
 	}
 	core::mem[JOYP] = (core::mem[JOYP] & (0b00110000)) | keys;
-	if (keys != 0xf)
+	if (keys != keys_org)
 		core::mem[IF] |= 1 << 4;
 	uint8_t div = core::is2xspeed() ? 2 : 4;
 	for (uint8_t y = 0; y < 144; ++y)

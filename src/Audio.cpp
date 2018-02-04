@@ -8,7 +8,7 @@
 
 #define CLOCK_FREQ 4194304
 
-static uint64_t freq = 50000;
+static uint64_t freq = CLOCK_FREQ / 64;
 static uint64_t frame = 0;
 
 static uint64_t c1len = 0;
@@ -19,6 +19,15 @@ static uint64_t c1env = 0;
 static uint64_t c2env = 0;
 static uint64_t c3env = 0;
 static uint64_t c4env = 0;
+static uint8_t c1envstep = 0;
+static uint8_t c2envstep = 0;
+static uint8_t c4envstep = 0;
+static bool c1envdir = false;
+static bool c2envdir = false;
+static bool c4envdir = false;
+static uint8_t c1swptime = 0;
+static bool c1swpdir = false;
+static uint8_t c1swpshift = 0;
 static uint64_t c1freq = 1;
 static uint64_t c2freq = 1;
 static uint64_t c3freq = 1;
@@ -31,32 +40,6 @@ static uint64_t c4nextclocktick = 0;
 static uint16_t c4stepcounter = 0;
 static uint16_t c4stepstate = 0xffff;
 static float c4divider = 1;
-
-/*static uint8_t NR10 = 0b00001001;
-static uint8_t NR11 = 0b10101010;
-static uint8_t NR12 = 0b10011011;
-static uint8_t NR13 = 0b00000000;
-static uint8_t NR14 = 0b00100000;
-
-static uint8_t NR21 = 0b10101010;
-static uint8_t NR22 = 0b10011011;
-static uint8_t NR23 = 0b10101101;
-static uint8_t NR24 = 0b10100011;
-
-static uint8_t NR30 = 0b10000000;
-static uint8_t NR31 = 0b00000000;
-static uint8_t NR32 = 0b00100000;
-static uint8_t NR33 = 0b11011111;
-static uint8_t NR34 = 0b10000111;
-
-static uint8_t NR41 = 0b00000000;
-static uint8_t NR42 = 0b11110111;
-static uint8_t NR43 = 0b01100000;
-static uint8_t NR44 = 0b10000000;
-
-static uint8_t NR50 = 0b00100010;
-static uint8_t NR51 = 0b00100010;
-static uint8_t NR52 = 0b00000010;*/
 
 static uint64_t clockCount = 0;
 static uint64_t nextClock = 0;
@@ -100,7 +83,12 @@ static int16_t getc1val()
 		c1len = 64 - (core::mem.sysregs(NR11) & 0b00111111);
 		c1env = (core::mem.sysregs(NR12) & 0b11110000) >> 4;
 		c1freq = c1regtofreq(core::mem.sysregs(NR13), core::mem.sysregs(NR14));
-		core::mem.sysregs(NR14) = core::mem.sysregs(NR14) & 0b01111111;
+		c1envdir = core::mem.sysregs(NR12) & 0b00001000;
+		c1envstep = core::mem.sysregs(NR12) & 0b00000111;
+		c1swptime = core::mem.sysregs(NR10) & 0b01110000;
+		c1swpdir = core::mem.sysregs(NR10) & 0b00001000;
+		c1swpshift = core::mem.sysregs(NR10) & 0b00000111;
+		core::mem.sysregs(NR14) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000001;
 	}
 	if (!c1freq)
@@ -153,7 +141,9 @@ static int16_t getc2val()
 		c2len = 64 - (core::mem.sysregs(NR21) & 0b00111111);
 		c2env = (core::mem.sysregs(NR22) & 0b11110000) >> 4;
 		c2freq = c2regtofreq(core::mem.sysregs(NR23), core::mem.sysregs(NR24));
-		core::mem.sysregs(NR24) = core::mem.sysregs(NR24) & 0b01111111;
+		c2envdir = core::mem.sysregs(NR22) & 0b00001000;
+		c2envstep = core::mem.sysregs(NR22) & 0b00000111;
+		core::mem.sysregs(NR24) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000010;
 	}
 	if (!c2freq)
@@ -196,14 +186,14 @@ static int16_t getc3val()
 {
 	if (!(core::mem.sysregs(NR30) & 0b10000000))
 	{
-		core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11111011;
+		core::mem.sysregs(NR52) &= 0b11111011;
 		return (0);
 	}
 	if (core::mem.sysregs(NR34) & 0b10000000)
 	{
 		c3len = 256 - core::mem.sysregs(NR31);
 		c3freq = c3regtofreq(core::mem.sysregs(NR33), core::mem.sysregs(NR34));
-		core::mem.sysregs(NR34) = (core::mem.sysregs(NR34) & 0b01111111);
+		core::mem.sysregs(NR34) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000100;
 	}
 	if (!(core::mem.sysregs(NR34) & 0b01000000))
@@ -252,7 +242,9 @@ static int16_t getc4val()
 		c4divider *= pow(2, ((core::mem.sysregs(NR43) & 0b11110000) >> 4) + 1);
 		c4nextclocktick = frame + freq / (524288 / c4divider);
 		c4env = (core::mem.sysregs(NR42) & 0b11110000) >> 4;
-		core::mem.sysregs(NR44) = core::mem.sysregs(NR44) & 0b01111111;
+		c4envdir = core::mem.sysregs(NR42) & 0b00001000;
+		c4envstep = core::mem.sysregs(NR42) & 0b00000111;
+		core::mem.sysregs(NR44) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00001000;
 	}
 	if (frame >= c4nextclocktick)
@@ -282,7 +274,7 @@ static void updateLengthTick()
 	if (core::mem.sysregs(NR14) & 0b01000000)
 	{
 		if (c1len == 0)
-			core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11111110;
+			core::mem.sysregs(NR52) &= 0b11111110;
 		else
 			c1len--;
 	}
@@ -290,7 +282,7 @@ static void updateLengthTick()
 	if (core::mem.sysregs(NR24) & 0b01000000)
 	{
 		if (c2len == 0)
-			core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11111101;
+			core::mem.sysregs(NR52) &= 0b11111101;
 		else
 			c2len--;
 	}
@@ -298,7 +290,7 @@ static void updateLengthTick()
 	if (core::mem.sysregs(NR34) & 0b01000000)
 	{
 		if (c3len == 0)
-			core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11111011;
+			core::mem.sysregs(NR52) &= 0b11111011;
 		else
 			c3len--;
 	}
@@ -306,7 +298,7 @@ static void updateLengthTick()
 	if (core::mem.sysregs(NR44) & 0b01000000)
 	{
 		if (c4len == 0)
-			core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11110111;
+			core::mem.sysregs(NR52) &= 0b11110111;
 		else
 			c4len--;
 	}
@@ -316,12 +308,10 @@ static void updateEnvTick()
 {
 	//Channel 1
 	{
-		uint8_t envstep = core::mem.sysregs(NR12) & 0b00000111;
-		if (envstep != 0 && envtick - c1lastenvtick > envstep)
+		if (c1envstep && envtick - c1lastenvtick > c1envstep)
 		{
 			c1lastenvtick = envtick;
-			bool direction = core::mem.sysregs(NR12) & 0b00001000;
-			if (direction)
+			if (c1envdir)
 			{
 				if (c1env != 0b1111)
 					c1env++;
@@ -329,7 +319,7 @@ static void updateEnvTick()
 			else
 			{
 				if (c1env == 0)
-					core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11111110;
+					core::mem.sysregs(NR52) &= 0b11111110;
 				else
 					c1env--;
 			}
@@ -337,12 +327,10 @@ static void updateEnvTick()
 	}
 	//Channel 2
 	{
-		uint8_t envstep = core::mem.sysregs(NR22) & 0b00000111;
-		if (envstep != 0 && envtick - c2lastenvtick > envstep)
+		if (c2envstep && envtick - c2lastenvtick > c2envstep)
 		{
 			c2lastenvtick = envtick;
-			bool direction = core::mem.sysregs(NR22) & 0b00001000;
-			if (direction)
+			if (c2envdir)
 			{
 				if (c2env != 0b1111)
 					c2env++;
@@ -350,7 +338,7 @@ static void updateEnvTick()
 			else
 			{
 				if (c2env == 0)
-					core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11111101;
+					core::mem.sysregs(NR52) &= 0b11111101;
 				else
 					c2env--;
 			}
@@ -358,12 +346,10 @@ static void updateEnvTick()
 	}
 	//Channel 4
 	{
-		uint8_t envstep = core::mem.sysregs(NR42) & 0b00000111;
-		if (envstep != 0 && envtick - c4lastenvtick > envstep)
+		if (c4envstep && envtick - c4lastenvtick > c4envstep)
 		{
 			c4lastenvtick = envtick;
-			bool direction = core::mem.sysregs(NR42) & 0b00001000;
-			if (direction)
+			if (c4envdir)
 			{
 				if (c4env != 0b1111)
 					c4env++;
@@ -371,7 +357,7 @@ static void updateEnvTick()
 			else
 			{
 				if (c4env == 0)
-					core::mem.sysregs(NR52) = core::mem.sysregs(NR52) & 0b11110111;
+					core::mem.sysregs(NR52) &= 0b11110111;
 				else
 					c4env--;
 			}
@@ -383,22 +369,19 @@ static void updateSweepTick()
 {
 	//Channel 1
 	{
-		uint8_t swptime = core::mem.sysregs(NR10) & 0b01110000;
-		if (swptime != 0 && swptick - c1lastswptick > swptime)
+		if (c1swptime && c1swpshift && swptick - c1lastswptick > c1swptime)
 		{
 			c1lastswptick = swptick;
-			bool direction = core::mem.sysregs(NR10) & 0b00001000;
-			uint8_t swpshift = core::mem.sysregs(NR10) & 0b00000111;
-			if (direction)
+			if (c1swpdir)
 			{
-				int32_t newfreq = c1freq + c1freq / pow(2, swpshift);
+				int32_t newfreq = c1freq + c1freq / pow(2, c1swpshift);
 				if (newfreq && c1freqtoval(newfreq) > 2047)
 					newfreq = 2047;
 				c1freq = newfreq;
 			}
 			else
 			{
-				int32_t newfreq = c1freq - c1freq / pow(2, swpshift);
+				int32_t newfreq = c1freq - c1freq / pow(2, c1swpshift);
 				if (newfreq < 0)
 					newfreq = 0;
 				c1freq = newfreq;
@@ -419,16 +402,24 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 		out[i] = 0;
 		if (core::mem.sysregs(NR52) & 0b10000000)
 		{
-			bool c1on = (core::mem.sysregs(NR51) & 0b00010001) && (core::mem.sysregs(NR52) & 0b00000001);
-			bool c2on = (core::mem.sysregs(NR51) & 0b00100010) && (core::mem.sysregs(NR52) & 0b00000010);
-			bool c3on = (core::mem.sysregs(NR51) & 0b01000100) && (core::mem.sysregs(NR52) & 0b00000100);
-			bool c4on = (core::mem.sysregs(NR51) & 0b10001000) && (core::mem.sysregs(NR52) & 0b00001000);
-			int16_t c1 = getc1val();
-			int16_t c2 = getc2val();
-			int16_t c3 = getc3val();
-			int16_t c4 = getc4val();
-			core::mem.sysregs(PCM12) = ((uint8_t)(c1 / 0xff / 2 + CHAR_MIN) + (uint8_t)(c2 / 0xff / 2 + CHAR_MIN));
-			core::mem.sysregs(PCM34) = ((uint8_t)(c3 / 0xff / 2 + CHAR_MIN) + (uint8_t)(c4 / 0xff / 2 + CHAR_MIN));
+			bool c1on = core::mem.sysregs(NR52) & 0b00000001;
+			bool c2on = core::mem.sysregs(NR52) & 0b00000010;
+			bool c3on = core::mem.sysregs(NR52) & 0b00000100;
+			bool c4on = core::mem.sysregs(NR52) & 0b00001000;
+			int16_t c1 = getc1val() / 0xfff * 0xfff;
+			int16_t c2 = getc2val() / 0xfff * 0xfff;
+			int16_t c3 = getc3val() / 0xfff * 0xfff;
+			int16_t c4 = getc4val() / 0xfff * 0xfff;
+			core::mem.sysregs(PCM12) = 0;
+			if (c1on)
+				core::mem.sysregs(PCM12) += (c1 / 0xfff + CHAR_MIN);
+			if (c2on)
+				core::mem.sysregs(PCM12) += (c2 / 0xfff + CHAR_MIN) * 0xf;
+			core::mem.sysregs(PCM34) = 0;
+			if (c3on)
+				core::mem.sysregs(PCM34) += (c3 / 0xfff + CHAR_MIN);
+			if (c4on)
+				core::mem.sysregs(PCM34) += (c4 / 0xfff + CHAR_MIN) * 0xf;
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (core::mem.sysregs(NR51) & 0b00000001);
@@ -436,13 +427,13 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				bool lc3on = c3on && (core::mem.sysregs(NR51) & 0b00000100);
 				bool lc4on = c4on && (core::mem.sysregs(NR51) & 0b00001000);
 				if (lc1on)
-					out[i] += c1 / 4;
+					out[i] += c1 / 4.;
 				if (lc2on)
-					out[i] += c2 / 4;
+					out[i] += c2 / 4.;
 				if (lc3on)
-					out[i] += c3 / 4;
+					out[i] += c3 / 4.;
 				if (lc4on)
-					out[i] += c4 / 4;
+					out[i] += c4 / 4.;
 				out[i] *= ((core::mem.sysregs(NR50) & 0b00000111) >> 0) / 7.;
 			}
 			else
@@ -452,27 +443,28 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				bool rc3on = c3on && (core::mem.sysregs(NR51) & 0b01000000);
 				bool rc4on = c4on && (core::mem.sysregs(NR51) & 0b10000000);
 				if (rc1on)
-					out[i] += c1 / 4;
+					out[i] += c1 / 4.;
 				if (rc2on)
-					out[i] += c2 / 4;
+					out[i] += c2 / 4.;
 				if (rc3on)
-					out[i] += c3 / 4;
+					out[i] += c3 / 4.;
 				if (rc4on)
-					out[i] += c4 / 4;
+					out[i] += c4 / 4.;
 				out[i] *= ((core::mem.sysregs(NR50) & 0b01110000) >> 4) / 7.;
 			}
 		}
 		if (frame >= nextClock)
 		{
-			if (clockCount & 0x1)
+			if (clockCount % 1 == 1)
+			{
 				updateLengthTick();
-			//cout << dec << (clockCount & 0x7) << endl;
-			if ((clockCount & 0x7) == 0)
+			}
+			if (clockCount % 8 == 7)
 			{
 				updateEnvTick();
 				envtick++;
 			}
-			if ((clockCount + 1) % 4 != 30)
+			if (clockCount % 4 == 2)
 			{
 				updateSweepTick();
 				swptick++;
@@ -489,50 +481,6 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 Audio::Audio()
 : c12type(AUDIO_C12_TYPE_SQUARE)
 {
-	//triangle
-	/*core::mem.sysregs(0xFF30) = 0x01;
-	core::mem.sysregs(0xFF31) = 0x23;
-	core::mem.sysregs(0xFF32) = 0x45;
-	core::mem.sysregs(0xFF33) = 0x67;
-	core::mem.sysregs(0xFF34) = 0x89;
-	core::mem.sysregs(0xFF35) = 0xAB;
-	core::mem.sysregs(0xFF36) = 0xCD;
-	core::mem.sysregs(0xFF37) = 0xEF;
-	core::mem.sysregs(0xFF38) = 0xED;
-	core::mem.sysregs(0xFF39) = 0xCB;
-	core::mem.sysregs(0xFF3A) = 0xA9;
-	core::mem.sysregs(0xFF3B) = 0x87;
-	core::mem.sysregs(0xFF3C) = 0x65;
-	core::mem.sysregs(0xFF3D) = 0x43;
-	core::mem.sysregs(0xFF3E) = 0x32;
-	core::mem.sysregs(0xFF3F) = 0x10;
-
-	core::mem.sysregs(NR10) = 0b10100111;
-	core::mem.sysregs(NR11) = 0b10000000;
-	core::mem.sysregs(NR12) = 0b11110011;
-	core::mem.sysregs(NR13) = 0b10101100;
-	core::mem.sysregs(NR14) = 0b10000011;
-
-	core::mem.sysregs(NR21) = 0b10101010;
-	core::mem.sysregs(NR22) = 0b10000000;
-	core::mem.sysregs(NR23) = 0b11110011;
-	core::mem.sysregs(NR24) = 0b10100011;
-
-	core::mem.sysregs(NR30) = 0b10000000;
-	core::mem.sysregs(NR31) = 0b00000000;
-	core::mem.sysregs(NR32) = 0b00100000;
-	core::mem.sysregs(NR33) = 0b11011111;
-	core::mem.sysregs(NR34) = 0b10000001;
-
-	core::mem.sysregs(NR41) = 0b00001111;
-	core::mem.sysregs(NR42) = 0b11111111;
-	core::mem.sysregs(NR43) = 0b01100000;
-	core::mem.sysregs(NR44) = 0b11000000;
-
-	core::mem.sysregs(NR50) = 0b00010001;
-	core::mem.sysregs(NR51) = 0b11110011;
-	core::mem.sysregs(NR52) = 0b00000001;*/
-
 	PaStreamParameters parameters;
 	parameters.device = Pa_GetDefaultOutputDevice();
 	parameters.channelCount = 2;

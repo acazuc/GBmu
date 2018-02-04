@@ -8,7 +8,7 @@
 ##                                  ##
 ######################################
 
-NAME	= essentials.a
+NAME	= libessentials.a
 
 RM	= rm -f
 

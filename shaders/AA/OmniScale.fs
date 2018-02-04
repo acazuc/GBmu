@@ -25,10 +25,7 @@ vec4 OmniScale(vec2 texCoord)
 {
 	vec2 uResolution = vec2(1920, 1080);
 	vec2 textureDimensions = vec2(160, 144);
-	// o = offset, the width of a pixel
 	vec2 o = 1.0 / textureDimensions;
-	/* We always calculate the top left quarter.  If we need a different quarter, we flip our co-ordinates */
-	// p = the position within a pixel [0...1]
 	vec2 p = fract(texCoord * textureDimensions);
 	if (p.x > 0.5)
 	{
