@@ -99,7 +99,7 @@ void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 	uint16_t charaddr = core::mem[LCDC] & 0b00010000 ? LCD_BG1_CHAR_BEGIN : LCD_BG2_CHAR_BEGIN;
 	charaddr += charcode * 16;
 	uint8_t color = ((core::mem[charaddr + by * 2]) >> ((~bx) & 7)) & 1;
-	color =| ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
+	color |= ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
 	color = (core::mem[BGP] >> (color << 1)) & 3;
 	color = UCHAR_MAX - (color / 3. * UCHAR_MAX);
 	uint8_t col[] = {color, color, color};
