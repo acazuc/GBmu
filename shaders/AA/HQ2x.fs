@@ -4,7 +4,7 @@ in vec2 UV;
 
 uniform sampler2D image;
 
-out vec4 frag_color;
+layout(location = 0) out vec4 frag_color;
 
 vec3 rgb_to_hq_colospace(vec4 rgb)
 {

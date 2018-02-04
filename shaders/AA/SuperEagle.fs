@@ -4,9 +4,9 @@ in vec2 UV;
 
 uniform sampler2D image;
 
-out vec4 frag_color;
+layout(location = 0) out vec4 frag_color;
 
-vec3 dtt = vec3(65536.0,255.0,1.0);
+vec3 dtt = vec3(65536, 255, 1);
 
 float reduce(vec3 color)
 {

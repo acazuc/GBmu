@@ -17,10 +17,18 @@
 #define AA_SUPEREAGLE 9
 #define AA_LAST 10
 
+#define COLOR_NONE 0
+#define COLOR_GAMEBOY 1
+#define COLOR_LAST 2
+
 static float mat[16];
 static int32_t ctx_width = 160;
 static int32_t ctx_height = 144;
+static GLuint fbotexture;
 static GLuint texture;
+static GLuint mainfbo;
+static GLuint fbo;
+static GLuint rbo;
 static GLuint vao;
 
 struct glprogram
@@ -32,8 +40,10 @@ struct glprogram
 	GLuint program;
 };
 
-static glprogram programs[AA_LAST];
-static glprogram *currentprogram;
+static glprogram colorprograms[COLOR_LAST];
+static glprogram *currentcolorprogram;
+static glprogram aaprograms[AA_LAST];
+static glprogram *currentaaprogram;
 
 struct vertex_info
 {
@@ -134,10 +144,14 @@ static void initProgram(glprogram *program, std::string vertex, std::string frag
 
 static void initPrograms()
 {
-	std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs"};
+	std::string aafragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs"};
 	for (uint8_t i = 0; i < AA_LAST; ++i)
-		initProgram(&programs[i], "shaders/AA/basic.vs", "shaders/AA/" + fragments[i]);
-	currentprogram = &programs[0];
+		initProgram(&aaprograms[i], "shaders/AA/basic.vs", "shaders/AA/" + aafragments[i]);
+	currentaaprogram = &aaprograms[0];
+	std::string colorfragments[] = {"basic.fs", "Gameboy.fs"};
+	for (uint8_t i = 0; i < COLOR_LAST; ++i)
+		initProgram(&colorprograms[i], "shaders/Color/basic.vs", "shaders/Color/" + colorfragments[i]);
+	currentcolorprogram = &colorprograms[0];
 }
 
 static void initBuffers()
@@ -148,13 +162,40 @@ static void initBuffers()
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(currentprogram->texCoordsLocation);
-	glVertexAttribPointer(currentprogram->texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
-	glEnableVertexAttribArray(currentprogram->vertexesLocation);
-	glVertexAttribPointer(currentprogram->vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
+	glUseProgram(currentaaprogram->program);
+	glEnableVertexAttribArray(currentaaprogram->texCoordsLocation);
+	glVertexAttribPointer(currentaaprogram->texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
+	glEnableVertexAttribArray(currentaaprogram->vertexesLocation);
+	glVertexAttribPointer(currentaaprogram->vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
+	glUseProgram(currentcolorprogram->program);
+	glEnableVertexAttribArray(currentcolorprogram->texCoordsLocation);
+	glVertexAttribPointer(currentcolorprogram->texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
+	glEnableVertexAttribArray(currentcolorprogram->vertexesLocation);
+	glVertexAttribPointer(currentcolorprogram->vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glDeleteBuffers(1, &buffer);
+}
+
+static void initFBO()
+{
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&mainfbo);
+	glBindVertexArray(vao);
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glGenTextures(1, &fbotexture);
+	glBindTexture(GL_TEXTURE_2D, fbotexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, fbotexture, 0);
+	GLenum drawBuffers = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers(1, &drawBuffers);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		cout << "fbo error: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << endl;
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, mainfbo);
 }
 
 static void gl_realize(GtkGLArea *area)
@@ -168,10 +209,12 @@ static void gl_realize(GtkGLArea *area)
 	initPrograms();
 	initBuffers();
 	glActiveTexture(GL_TEXTURE0);
+	initFBO();
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	Main::glErrors("1");
 }
 
 static bool gl_render(GtkGLArea *area, GdkGLContext *context)
@@ -181,12 +224,36 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	gdk_gl_context_make_current(context);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
 	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(currentprogram->program);
-	glUniformMatrix4fv(currentprogram->mvpLocation, 1, GL_FALSE, &(mat[0]));
+	glUseProgram(currentaaprogram->program);
+	glUniformMatrix4fv(currentaaprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
 	glBindVertexArray(vao);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&mainfbo);
+	
+	//FBO render
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glViewport(0, 0, 160, 144);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	//Window render
+	/*glViewport(0, 0, ctx_width, ctx_height);
+	glUseProgram(currentcolorprogram->program);
+	glUniformMatrix4fv(currentcolorprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
+	glBindTexture(GL_TEXTURE_2D, fbotexture);
+	glBindFramebuffer(GL_FRAMEBUFFER, mainfbo);*/
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	//Flush debug
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mainfbo);
+	GLsizei HalfWindowWidth = (GLsizei)(160 / 2.0f);
+	GLsizei HalfWindowHeight = (GLsizei)(144 / 2.0f);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	//glBlitFramebuffer(0, 0, 160, 144, 0, 0, HalfWindowWidth, HalfWindowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	
 	glFlush();
+	Main::glErrors("main");
 	return (TRUE);
 }
 
@@ -366,8 +433,17 @@ static void cb_tool_aa(GtkWidget *osef1, gpointer type)
 	uint64_t id = (uint64_t)type;
 	if (id >= AA_LAST)
 		id = AA_NONE;
-	currentprogram = &programs[id];
+	currentaaprogram = &aaprograms[id];
 }
+/*
+static void cb_tool_color(GtkWidget *osef1, gpointer type)
+{
+	(void)osef1;
+	uint64_t id = (uint64_t)type;
+	if (id >= COLOR_LAST)
+		id = COLOR_NONE;
+	currentcolorprogram = &colorprograms[id];
+}*/
 
 static void build_menu_file(GtkWidget *menubar)
 {
