@@ -41,7 +41,7 @@ void Main::run(int ac, char **av)
 	{
 		tmp = high_resolution_clock::now();
 		auto basecount = duration_cast<nanoseconds>( tmp - draw_last ).count();
-		if (basecount > 1000000000  / 59.7)
+		if (basecount > 1000000000  / 59.72750056960583276373)
 		{
 			draw_last = tmp;
 			lcd->render();
