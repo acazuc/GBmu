@@ -61,17 +61,17 @@ void LCD::render()
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
 			corerun(80 / div);
-		if (!stopped)
-			;//renderOBJ(y);
+		if (!stopped && core::mem[LCDC] & 0b00000010)
+			renderOBJ(y);
 		core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 3;
 		if (core::mem[STAT] & 0b00001000)
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
 			corerun(172 / div);
-		if (!stopped)
+		if (!stopped && core::mem[LCDC] & 0b00000001)
 			renderBG(y);
-		//if (core::mem[LCDC] & 0b00100000)
-		//	renderWindow(y);
+		if (!stopped && core::mem[LCDC] & 0b00100000)
+			renderWindow(y);
 		core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 0;
 		if (core::mem[STAT] & 0b00010000)
 			core::mem[IF] |= 1 << 1;
@@ -98,11 +98,11 @@ void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 {
 	uint16_t charaddr = core::mem[LCDC] & 0b00010000 ? LCD_BG1_CHAR_BEGIN : LCD_BG2_CHAR_BEGIN;
 	charaddr += charcode * 16;
-	uint8_t color = ((core::mem[charaddr + by * 2]) >> (7 - bx)) & 1;
-	color = (color << 1) | ((core::mem[charaddr + by * 2 + 1] >> (7 - bx)) & 1);
-	color = (core::mem[BGP] >> (color * 2)) & 0x3;
+	uint8_t color = ((core::mem[charaddr + by * 2]) >> ((~bx) & 7)) & 1;
+	color =| ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
+	color = (core::mem[BGP] >> (color << 1)) & 3;
 	color = UCHAR_MAX - (color / 3. * UCHAR_MAX);
-	uint8_t col[] = {color, color, color, color};
+	uint8_t col[] = {color, color, color};
 	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&col);
 	priorities[y][x] = 0;
 	hasprinted[y][x] = col != 0;

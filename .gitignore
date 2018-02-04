@@ -1,5 +1,7 @@
 Build/roms
 Build/gbmu
+Build/test/gbcs
+Build/test/yay.gb
 obj
 *.swp
 *.o

@@ -47,8 +47,14 @@ section "header", ROM0[$100]
 	; Name ( YAY )
 	db $59, $41, $59, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-	; ?
-	db 0, 0, 0, 0
+	; CGB flag
+	db 0
+
+	; Licensee code
+	db 0, 0
+
+	; SGB flag
+	db 0
 
 	; Cartridge type
         db 0
@@ -86,7 +92,7 @@ ztop:	ld [c], a
 
 	; Set stack and some hardware registers
 start:	ld sp, $fffe
-	ld a, $fc
+	ld a, $e4
 	ldh [BGP], a
 	ld a, $91
 	ldh [LCDC], a
@@ -111,7 +117,7 @@ gu:	ldd [hl], a
 	ld hl, CBK0
 
 	; Save them, then call charcpy
-yay:	push hl
+chrinit:push hl
 	push de
 	call charcpy
 
@@ -126,12 +132,9 @@ yay:	push hl
 
 	; Shift dst to next slot
 	pop hl
-	ld a, 16
-	add a, l
-	ld l, a
-	ld a, 0
-	adc a, h
-	ld h, a
+	ld b, 0
+	ld c, 16
+	add hl, bc
 
 	; Test for and of loop
 	ldh a, [$80]
@@ -139,7 +142,7 @@ yay:	push hl
 	jr z, next
 	inc a
 	ldh [$80], a
-	jr yay
+	jr chrinit
 
 	; Set chars on screen
 next:	ld hl, CSTART
@@ -156,6 +159,7 @@ ltop2:	ld a, b
 	ldh [IE], a
 	ei
 main:	halt
+	nop
 	jr main
 
 ; ------ Test binds routine ------
@@ -205,7 +209,7 @@ down:	ld hl, SCY
 
 ; ------ Charcopy ------
 
-	; Set up 8 counter
+	; Set up 8 counter (doubled 8 lines)
 charcpy:ld b, 8
 
 	; Load byte from source

@@ -1,11 +1,11 @@
 # Time elapsed between 2 instruction
-periode=100000000
+periode=00000000
 
 # Initial PC value
 startat=0x0000
 
 # Debug display start point
-debugstart=0xf1b1
+debugstart=0x117f
 
 # Debug display end point
 debugend=0xf051
