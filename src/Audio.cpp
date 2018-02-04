@@ -91,6 +91,16 @@ static int16_t getc1val()
 		core::mem.sysregs(NR14) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000001;
 	}
+	if (!c1swpdir && !core::mem.sysregs(NR10) & 8)
+	{
+		core::mem.sysregs(NR52) &= 0b11111110;
+		return (0);
+	}
+	if (!(core::mem.sysregs(NR12) & 0xF8))
+	{
+		core::mem.sysregs(NR52) &= 0b11111110;
+		return (0);
+	}
 	if (!c1freq)
 		return (0);
 	uint8_t duty = (core::mem.sysregs(NR11) & 0b11000000) >> 6;
@@ -145,6 +155,11 @@ static int16_t getc2val()
 		c2envstep = core::mem.sysregs(NR22) & 0b00000111;
 		core::mem.sysregs(NR24) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000010;
+	}
+	if (!(core::mem.sysregs(NR22) & 0xF8))
+	{
+		core::mem.sysregs(NR52) &= 0b11111101;
+		return (0);
 	}
 	if (!c2freq)
 		return (0);
@@ -246,6 +261,11 @@ static int16_t getc4val()
 		c4envstep = core::mem.sysregs(NR42) & 0b00000111;
 		core::mem.sysregs(NR44) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00001000;
+	}
+	if (!(core::mem.sysregs(NR42) & 0xF8))
+	{
+		core::mem.sysregs(NR52) &= 0b11110111;
+		return (0);
 	}
 	if (frame >= c4nextclocktick)
 	{
@@ -376,7 +396,7 @@ static void updateSweepTick()
 			{
 				int32_t newfreq = c1freq + c1freq / pow(2, c1swpshift);
 				if (newfreq && c1freqtoval(newfreq) > 2047)
-					newfreq = 2047;
+					core::mem.sysregs(NR52) &= 0b11111110;
 				c1freq = newfreq;
 			}
 			else

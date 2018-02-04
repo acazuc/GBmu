@@ -261,7 +261,7 @@ void LCD::renderOBJ(uint8_t y)
 			else /*CGB*/
 				renderOBJCharCGB(cx + x, y, x, y - cy, charcode, attr);
 		}
-		if (++spritescount >= 10)
+		if (++spritescount == 10)
 			return;
 	}
 }
