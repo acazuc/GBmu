@@ -23,7 +23,6 @@ class Main
 		static void run(int ac, char **av);
 		static void glErrors(std::string str);
 		static void windowClosed();
-		static void GLError(std::string text);
 		static DebugDisplay *getDebugDisplay() {return (debugDisplay);};
 		static MainDisplay *getMainDisplay() {return (mainDisplay);};
 		static BindDisplay *getBindDisplay() {return (bindDisplay);};
@@ -31,7 +30,6 @@ class Main
 		static LCD *getLcd() {return (lcd);};
 		static void setPaused(bool paused) {Main::paused = paused;};
 		static bool isPaused() {return (paused);};
-		static void glError();
 
 };
 

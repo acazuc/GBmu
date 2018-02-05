@@ -6,14 +6,8 @@
 
 # define AUDIO_C12_TYPE_SQUARE 1
 # define AUDIO_C12_TYPE_SIN 2
+# define AUDIO_C12_TYPE_TRIANGLE 3
 # define AUDIO_C12_TYPE_SAW 4
-
-/*
-1: rectangle with sweep and envelope
-2: rectangle with envelope
-3: input of RAM
-4: white noise with envelope
-*/
 
 class Audio
 {

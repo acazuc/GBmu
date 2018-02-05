@@ -130,11 +130,18 @@ static int16_t getc1val()
 		float a = curr / (float)inter - dutyper;
 		if (a > 0)
 			return (SHRT_MAX * sin(a / (1 - dutyper) * M_PI) * envfac);
-		return (SHRT_MIN * sin(-a / (dutyper) * M_PI) * envfac);
+		return (SHRT_MIN * sin(-a / dutyper * M_PI) * envfac);
 	}
 	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SAW)
 	{
 		return (SHRT_MIN + (SHRT_MAX - SHRT_MIN) * (inter - curr) / (float)inter * envfac);
+	}
+	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_TRIANGLE)
+	{
+		float a = curr / (float)inter - dutyper;
+		if (a > 0)
+			return (SHRT_MIN + SHRT_MAX * (1 - (a / (1 - dutyper))) * envfac);
+		return (SHRT_MIN + SHRT_MAX * (-a / dutyper) * envfac);
 	}
 	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SQUARE)
 	{
@@ -188,6 +195,13 @@ static int16_t getc2val()
 	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SAW)
 	{
 		return (SHRT_MIN + (SHRT_MAX - SHRT_MIN) * (inter - curr) / (float)inter * envfac);
+	}
+	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_TRIANGLE)
+	{
+		float a = curr / (float)inter - dutyper;
+		if (a > 0)
+			return (SHRT_MIN + SHRT_MAX * (1 - (a / (1 - dutyper))) * envfac);
+		return (SHRT_MIN + SHRT_MAX * (-a / dutyper) * envfac);
 	}
 	else if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SQUARE)
 	{

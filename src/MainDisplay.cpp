@@ -179,7 +179,6 @@ static void initBuffers()
 
 static void initFBO()
 {
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&mainfbo);
 	glBindVertexArray(vao);
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -195,7 +194,6 @@ static void initFBO()
 		cout << "fbo error: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << endl;
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
-	glBindFramebuffer(GL_FRAMEBUFFER, mainfbo);
 }
 
 static void gl_realize(GtkGLArea *area)
@@ -209,11 +207,11 @@ static void gl_realize(GtkGLArea *area)
 	initPrograms();
 	initBuffers();
 	glActiveTexture(GL_TEXTURE0);
-	initFBO();
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	initFBO();
 	Main::glErrors("1");
 }
 
@@ -222,26 +220,28 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	(void)area;
 	(void)context;
 	gdk_gl_context_make_current(context);
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&mainfbo);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
-	glClear(GL_COLOR_BUFFER_BIT);
+	glBindVertexArray(vao);
+
+	//FBO render
 	glUseProgram(currentaaprogram->program);
 	glUniformMatrix4fv(currentaaprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
-	glBindVertexArray(vao);
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&mainfbo);
-	
-	//FBO render
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glViewport(0, 0, 160, 144);
 	glBindTexture(GL_TEXTURE_2D, texture);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//glViewport(0, 0, 160, 144);
+	glClearColor(1, 1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	//Window render
-	/*glViewport(0, 0, ctx_width, ctx_height);
-	glUseProgram(currentcolorprogram->program);
+	/*glUseProgram(currentcolorprogram->program);
 	glUniformMatrix4fv(currentcolorprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
 	glBindTexture(GL_TEXTURE_2D, fbotexture);
-	glBindFramebuffer(GL_FRAMEBUFFER, mainfbo);*/
+	glBindFramebuffer(GL_FRAMEBUFFER, mainfbo);
+	glViewport(0, 0, ctx_width, ctx_height);
+	glClearColor(1, 1, 1, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	//Flush debug
@@ -250,8 +250,8 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	GLsizei HalfWindowWidth = (GLsizei)(160 / 2.0f);
 	GLsizei HalfWindowHeight = (GLsizei)(144 / 2.0f);
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	//glBlitFramebuffer(0, 0, 160, 144, 0, 0, HalfWindowWidth, HalfWindowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-	
+	glBlitFramebuffer(0, 0, 160, 144, 0, 0, HalfWindowWidth, HalfWindowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);*/
+
 	glFlush();
 	Main::glErrors("main");
 	return (TRUE);
@@ -514,6 +514,11 @@ static void build_menu_tools_audio_wave(GtkWidget *tool_wave)
 	GtkWidget *tool_wave_saw = gtk_menu_item_new_with_label("Saw");
 	g_signal_connect(G_OBJECT(tool_wave_saw), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_saw);
+
+	//Triangle
+	GtkWidget *tool_wave_triangle = gtk_menu_item_new_with_label("Triangle");
+	g_signal_connect(G_OBJECT(tool_wave_triangle), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_TRIANGLE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_triangle);
 
 	//Sin
 	GtkWidget *tool_wave_sin = gtk_menu_item_new_with_label("Sin");
