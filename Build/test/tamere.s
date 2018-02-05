@@ -96,7 +96,7 @@ ztop:	ld [c], a
 start:	ld sp, $fffe
 	ld a, $e4
 	ldh [BGP], a
-	ld a, $91
+	ld a, %10010001
 	ldh [LCDC], a
 	ld a, $20
 	ldh [JOYP], a
@@ -160,10 +160,31 @@ ltop2:	ld a, [STAT]
 	cp $9C
 	jr nz, ltop2
 
-	; Main loop
+	; Wait for OAM
+	ld hl, STAT
+woam1:	bit 1, [hl]
+	jr z, woam1
+woam2:	bit 1, [hl]
+	jr nz, woam2
+
+	; Then set the sprite
+	ld a, 80
+	ld [$fe00], a
+	ld [$fe01], a
+	ld [$fe02], a
+	ld a, %00010000
+	ld [$fe03], a
+
+	; Turn on sprites
+	ld a, %10010011
+	ld [LCDC], a
+
+	; Enable VBlank IRQ
 	ld a, %00000001
 	ldh [IE], a
 	ei
+
+	; Main loop
 main:	halt
 	jr main
 
@@ -271,94 +292,6 @@ vsp2:	ldh a, [$44]
 vsync:	ldh a, [$44]
 	cp $90
 	jr nz, vsync
-	ret
-
-; ------ Chars on screen pseudo randomization ------
-
-randchr:ld hl, CSTART
-	ld b, 0
-ltop:	ld a, b
-	ldi [hl], a
-	inc b
-	ld a, h
-	cp $9C
-	jr nz, ltop
-	ret
-
-; ------ Char bank pseudo randomization ------
-
-randbnk:ld b, $88
-	ld hl, CBK0
-gruu:	ld a, b
-	rrca
-	inc a
-	ld b, a
-	ldi [hl], a
-	ld a, h
-	cp $90
-	jr nz, gruu
-	ld hl, CBK0
-	inc b
-	ret
-
-; ------ Charcopy ------
-
-	inc sp
-	inc sp
-	ld b, 8
-
-	pop hl
-	pop de
-
-;cctop:	ld a, [hl]
-	inc hl
-
-	ld [de], a
-	inc de
-	ld [de], a
-	inc de
-
-	dec b
-	jr nz, cctop
-
-	dec sp
-	dec sp
-	dec sp
-	dec sp
-	dec sp
-	dec sp
-	ret
-
-; ------ Memcopy ------
-
-	inc sp
-	inc sp
-
-	ld hl, sp + 5
-	ld b, [hl]
-
-	ld hl, sp + 2
-	ld d, [hl]
-	inc hl
-	ld c, [hl]
-
-;mctop:	pop hl
-	ld a, [hl]
-	inc hl
-	push hl
-
-	ld h, c
-	ld l, d
-	ld [hl], a
-	inc hl
-	ld c, h
-	ld d, l
-
-	dec b
-	;jr nz, mctop
-
-	dec sp
-	dec sp
 	ret
 
 ; ------ Include IBM style characters ------
