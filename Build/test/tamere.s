@@ -118,34 +118,10 @@ gu:	ldd [hl], a
 	ld de, chars
 	ld hl, CBK0
 
-	; Wait for a 3 on stat
-	ld b, 3
-wait3:	ldh a, [STAT]
-	and b
-	cp b
-	jr nz, wait3
-
-	; Wait for a non-3 on stat
-drwait:	ld b, 3
-waitn3:	ldh a, [STAT]
-	and b
-	cp b
-	jr z, waitn3
-
 	; Save them, then call charcpy
 chrinit:push hl
 	push de
 	call charcpy
-
-	; Test for STAT
-	ld b, 3
-	ld a, [STAT]
-	and b
-	cp b
-	jr nz, mooga
-	pop de
-	pop hl
-	jr z, drwait
 
 	; Shift src to next char
 mooga:	pop de
@@ -194,10 +170,10 @@ main:	halt
 ; ------ Test binds routine ------
 
 	; Load JOYP state
-	ld a, [JOYP]
+bndtest:ldh a, [JOYP]
 
 	; Test right
-bndtest:bit 0, a
+	bit 0, a
 	jr z, right
 
 	; Test left
@@ -245,6 +221,12 @@ charcpy:ld b, 8
 	; Load byte from source
 cctop:	ld a, [de]
 	inc de
+
+	ld c, a
+ccstat:	ldh a, [STAT]
+	bit 1, a
+	jr nz, ccstat
+	ld a, c
 
 	; Store byte to dest, twice
 	ld [hli], a
