@@ -47,11 +47,11 @@ void Main::run(int ac, char **av)
 			lcd->render();
 			mainDisplay->iter();
 			++fps;
-			fps_last = high_resolution_clock::now();
-			basecount = duration_cast<nanoseconds>( fps_last - tmp ).count();
+			tmp = high_resolution_clock::now();
+			basecount = duration_cast<nanoseconds>( tmp - fps_last ).count();
 			if (basecount > 1000000000)
 			{
-				tmp = fps_last;
+				fps_last = tmp;
 				cout << "fps: " << dec << fps << endl;
 				fps = 0;
 			}

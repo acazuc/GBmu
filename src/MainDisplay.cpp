@@ -229,8 +229,15 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	glUniformMatrix4fv(currentaaprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	//glViewport(0, 0, 160, 144);
-	glClearColor(1, 1, 1, 1);
+	float tmpw = ctx_width / 160.;
+	float tmph = ctx_height / 144.;
+	float tmp;
+	if (tmpw > tmph)
+		tmp = tmph;
+	else
+		tmp = tmpw;
+	glViewport((ctx_width - tmp * 160) / 2, (ctx_height - tmp * 144) / 2, tmp * 160, tmp * 144);
+	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
