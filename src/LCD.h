@@ -13,6 +13,9 @@
 # define LCD_BG2_BEGIN 0x9C00
 # define LCD_BG2_END   0x9FFF
 
+# define LCD_OBJ_CHAR_BEGIN 0x8000
+# define LCD_OBJ_CHAR_END 0x8FFF
+
 # define LCD_OAM_BEGIN 0xFE00
 # define LCD_OAM_END 0xFE9F
 # define LCD_CHAR_LEN 0xf

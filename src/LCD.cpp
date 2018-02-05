@@ -166,7 +166,7 @@ void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		bx = 7 - bx;
 	if (vflip)
 		by = (height16 ? 15 : 7) - by;
-	uint16_t charaddr = 0x8000 + ((charcode & 0b11111110) >> 1) * (height16 ? 32 : 16);
+	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + (charcode & 0b11111110);
 	uint8_t idx = (bx + by * 8) * 2;
 	uint8_t pixel = ((core::mem[charaddr + by * 2]) >> (7 - bx)) & 1;
 	pixel |= (((core::mem[charaddr + by * 2 + 1]) >> (7 - bx)) & 1) << 1;
@@ -194,7 +194,7 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		bx = 7 - bx;
 	if (vflip)
 		by = (height16 ? 15 : 7) - by;
-	uint16_t charaddr = 0x8000 + ((charcode & 0b11111110) >> 1) * (height16 ? 32 : 16);
+	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + (charcode & 0b11111110);
 	uint8_t idx = (bx + by * 8) * 2;
 	uint8_t pixel;
 	if (charbank)
