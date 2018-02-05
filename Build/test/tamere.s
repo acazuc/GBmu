@@ -12,6 +12,8 @@ JOYP equ $FF00
 
 IE equ $FFFF
 
+STAT equ $FF41
+
 section "vblank", ROM0[$40]
 
 	reti
@@ -47,13 +49,13 @@ section "header", ROM0[$100]
 	; Name ( YAY )
 	db $59, $41, $59, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-	; CGB flag
+	; CGB Flag
 	db 0
 
-	; Licensee code
+	; Licensee Code
 	db 0, 0
 
-	; SGB flag
+	; SGB Flag
 	db 0
 
 	; Cartridge type
@@ -116,13 +118,37 @@ gu:	ldd [hl], a
 	ld de, chars
 	ld hl, CBK0
 
+	; Wait for a 3 on stat
+	ld b, 3
+wait3:	ldh a, [STAT]
+	and b
+	cp b
+	jr nz, wait3
+
+	; Wait for a non-3 on stat
+drwait:	ld b, 3
+waitn3:	ldh a, [STAT]
+	and b
+	cp b
+	jr z, waitn3
+
 	; Save them, then call charcpy
 chrinit:push hl
 	push de
 	call charcpy
 
-	; Shift src to next char
+	; Test for STAT
+	ld b, 3
+	ld a, [STAT]
+	and b
+	cp b
+	jr nz, mooga
 	pop de
+	pop hl
+	jr z, drwait
+
+	; Shift src to next char
+mooga:	pop de
 	ld a, 8
 	add a, e
 	ld e, a
@@ -132,14 +158,15 @@ chrinit:push hl
 
 	; Shift dst to next slot
 	pop hl
-	ld b, 0
-	ld c, 16
+	ld bc, 16
 	add hl, bc
 
-	; Test for and of loop
+	; Test for end of loop
 	ldh a, [$80]
 	cp 255
 	jr z, next
+
+	; Inc counter
 	inc a
 	ldh [$80], a
 	jr chrinit
@@ -147,7 +174,10 @@ chrinit:push hl
 	; Set chars on screen
 next:	ld hl, CSTART
 	ld b, 0
-ltop2:	ld a, b
+ltop2:	ld a, [STAT]
+	bit 1, a
+	jr nz, ltop2
+	ld a, b
 	ldi [hl], a
 	inc b
 	ld a, h
@@ -159,31 +189,30 @@ ltop2:	ld a, b
 	ldh [IE], a
 	ei
 main:	halt
-	nop
 	jr main
 
 ; ------ Test binds routine ------
 
+	; Load JOYP state
+	ld a, [JOYP]
+
 	; Test right
-bndtest:ld a, [JOYP]
-	bit 0, a
+bndtest:bit 0, a
 	jr z, right
 
 	; Test left
-ltest	ld a, [JOYP]
-	bit 1, a
+ltest	bit 1, a
 	jr z, left
 
 	; Test up
-utest:	ld a, [JOYP]
-	bit 2, a
+utest:	bit 2, a
 	jr z, up
 
 	; Test down
-dtest:	ld a, [JOYP]
-	bit 3, a
+dtest:	bit 3, a
 	jr z, down
 
+	; Leave
 	ret
 
 	; Sroll CAM Right
@@ -205,6 +234,7 @@ up:	ld hl, SCY
 down:	ld hl, SCY
 	inc [HL]
 
+	; Leave
 	ret
 
 ; ------ Charcopy ------
