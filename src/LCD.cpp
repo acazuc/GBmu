@@ -61,8 +61,6 @@ void LCD::render()
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
 			corerun(80 / div);
-		/*if (!stopped && core::mem[LCDC] & 0b00000010)
-			renderOBJ(y);*/
 		core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 3;
 		if (core::mem[STAT] & 0b00001000)
 			core::mem[IF] |= 1 << 1;
@@ -70,8 +68,10 @@ void LCD::render()
 			corerun(172 / div);
 		if (!stopped && core::mem[LCDC] & 0b00000001)
 			renderBG(y);
-		/*if (!stopped && core::mem[LCDC] & 0b00100000)
-			renderWindow(y);*/
+		if (!stopped && core::mem[LCDC] & 0b00100000)
+			renderWindow(y);
+		if (!stopped && core::mem[LCDC] & 0b00000010)
+			renderOBJ(y);
 		core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 0;
 		if (core::mem[STAT] & 0b00010000)
 			core::mem[IF] |= 1 << 1;
