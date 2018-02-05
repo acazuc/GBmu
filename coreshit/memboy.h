@@ -7,7 +7,6 @@
 
 #define YAY cout << __FILE__ << ':' << __LINE__ << ": Breakpoint passed yay :3" << endl;
 
-
 #define P1 0xFF00
 #define JOYP 0xFF00
 #define SB 0xFF01

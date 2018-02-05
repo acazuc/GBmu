@@ -112,6 +112,17 @@ oncemore:		s = strchr( s2, 'n' );
 	cout << endl;
 }
 
+void stackdraw( void )
+{
+	word sp = core::getsp();
+
+	while ( sp != 0xfffe )
+	{
+		cout << WHITE << '[' << PEACHY << ( word ) core::mem[sp] << WHITE << ']' << endl;
+		sp += 2;
+	}
+}
+
 void corerun( dword cycle )
 {
 	static bool display = false;
@@ -128,6 +139,7 @@ void corerun( dword cycle )
 			if ( display )
 			{
 				statedisplay( s, pc );
+				//stackdraw();
 				stime.tv_sec = 0;
 				stime.tv_nsec = ref::periode; 
 				nanosleep( &stime, NULL );
