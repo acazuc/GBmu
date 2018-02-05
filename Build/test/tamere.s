@@ -14,25 +14,25 @@ IE equ $FFFF
 
 STAT equ $FF41
 
-section "vblank", ROM0[$40]
-
-	reti
-
-section "lcdc", ROM0[$48]
-
-	reti
-
-section "timer", ROM0[$50]
-
-	reti
-
-section "serial", ROM0[$58]
-
-	reti
-
-section "joyint", ROM0[$60]
+section "Vblank IRQ", ROM0[$40]
 
 	call bndtest
+	reti
+
+section "LCD Stat IRQ", ROM0[$48]
+
+	reti
+
+section "Timer IRQ", ROM0[$50]
+
+	reti
+
+section "Serial IRQ", ROM0[$58]
+
+	reti
+
+section "Joyint IRQ", ROM0[$60]
+
 	reti
 
 section "header", ROM0[$100]
@@ -161,7 +161,7 @@ ltop2:	ld a, [STAT]
 	jr nz, ltop2
 
 	; Main loop
-	ld a, $10
+	ld a, %00000001
 	ldh [IE], a
 	ei
 main:	halt
@@ -222,6 +222,7 @@ charcpy:ld b, 8
 cctop:	ld a, [de]
 	inc de
 
+	; Wait for display mode 0 or 1
 	ld c, a
 ccstat:	ldh a, [STAT]
 	bit 1, a
@@ -253,6 +254,51 @@ memcpy:	ld a, [de]
 	jr nz, memcopy
 
 	; Leave
+	ret
+
+; ------ Wait for V-Sync+ ------
+
+vsyncp:	ldh a, [$44]
+	cp $90
+	jr nz, vsync
+vsp2:	ldh a, [$44]
+	cp $91
+	jr nz, vsp2
+	ret
+
+; ------ Wait for V-Sync ------
+
+vsync:	ldh a, [$44]
+	cp $90
+	jr nz, vsync
+	ret
+
+; ------ Chars on screen pseudo randomization ------
+
+randchr:ld hl, CSTART
+	ld b, 0
+ltop:	ld a, b
+	ldi [hl], a
+	inc b
+	ld a, h
+	cp $9C
+	jr nz, ltop
+	ret
+
+; ------ Char bank pseudo randomization ------
+
+randbnk:ld b, $88
+	ld hl, CBK0
+gruu:	ld a, b
+	rrca
+	inc a
+	ld b, a
+	ldi [hl], a
+	ld a, h
+	cp $90
+	jr nz, gruu
+	ld hl, CBK0
+	inc b
 	ret
 
 ; ------ Charcopy ------
@@ -309,55 +355,10 @@ memcpy:	ld a, [de]
 	ld d, l
 
 	dec b
-	jr nz, mctop
+	;jr nz, mctop
 
 	dec sp
 	dec sp
-	ret
-
-; ------ Wait for V-Sync+ ------
-
-vsyncp:	ldh a, [$44]
-	cp $90
-	jr nz, vsync
-vsp2:	ldh a, [$44]
-	cp $91
-	jr nz, vsp2
-	ret
-
-; ------ Wait for V-Sync ------
-
-vsync:	ldh a, [$44]
-	cp $90
-	jr nz, vsync
-	ret
-
-; ------ Chars on screen pseudo randomization ------
-
-randchr:ld hl, CSTART
-	ld b, 0
-ltop:	ld a, b
-	ldi [hl], a
-	inc b
-	ld a, h
-	cp $9C
-	jr nz, ltop
-	ret
-
-; ------ Char bank pseudo randomization ------
-
-randbnk:ld b, $88
-	ld hl, CBK0
-gruu:	ld a, b
-	rrca
-	inc a
-	ld b, a
-	ldi [hl], a
-	ld a, h
-	cp $90
-	jr nz, gruu
-	ld hl, CBK0
-	inc b
 	ret
 
 ; ------ Include IBM style characters ------
