@@ -289,48 +289,12 @@ static void gl_resize(GtkGLArea *area, gint width, gint height, gpointer osef)
 	mat[15] = 1;
 }
 
-       //Choualbox dbar
+//Choualbox dbar
 static void cb_quit(GtkWidget *osef1, gpointer osef2)
 {
 	(void)osef1;
 	(void)osef2;
 	Main::windowClosed();
-}
-
-static int get_key_bit(int key)
-{
-	for (int i = 0; i < 8; ++i)
-	{
-		if (key == Main::getBindDisplay()->getBinds()[i])
-			return (i);
-	}
-	return (-1);
-}
-
-static void cb_key_press_event(GtkWidget *osef1, GdkEventKey *event)
-{
-	(void)osef1;
-	int bit = get_key_bit(event->keyval);
-	if (bit != -1)
-		Main::getMainDisplay()->setKeys(Main::getMainDisplay()->getKeys() | (1 << bit));
-	//std::cout << "Pressed" << std::endl;
-	//std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
-	//std::cout << "state: " << event->state << std::endl;
-	//std::cout << "type: " << event->type << std::endl;
-	//std::cout << std::endl;
-}
-
-static void cb_key_release_event(GtkWidget *osef1, GdkEventKey *event)
-{
-	(void)osef1;
-	int bit = get_key_bit(event->keyval);
-	if (bit != -1)
-		Main::getMainDisplay()->setKeys(Main::getMainDisplay()->getKeys() & (~(1 << bit)));
-	//std::cout << "Released" << std::endl;
-	//std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
-	//std::cout << "state: " << event->state << std::endl;
-	//std::cout << "type: " << event->type << std::endl;
-	//std::cout << std::endl;
 }
 
 static void cb_file_open(GtkWidget *osef1, gpointer osef2)
@@ -635,6 +599,46 @@ static void build_menu_help(GtkWidget *menubar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(help_menu), help_about);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), help_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
+}
+
+static int get_key_bit(int key)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		if (key == Main::getBindDisplay()->getBinds()[i])
+			return (i);
+	}
+	return (-1);
+}
+
+static void cb_key_press_event(GtkWidget *osef1, GdkEventKey *event)
+{
+	(void)osef1;
+	int bit = get_key_bit(event->keyval);
+	if (bit != -1)
+		Main::getMainDisplay()->setKeys(Main::getMainDisplay()->getKeys() | (1 << bit));
+	else if (event->keyval == GDK_KEY_o && event->state & GDK_CONTROL_MASK)
+		cb_file_open(NULL, NULL);
+	else if (event->keyval == GDK_KEY_q && event->state & GDK_CONTROL_MASK)
+		cb_file_quit(NULL, NULL);
+	//std::cout << "Pressed" << std::endl;
+	//std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
+	//std::cout << "state: " << event->state << std::endl;
+	//std::cout << "type: " << event->type << std::endl;
+	//std::cout << std::endl;
+}
+
+static void cb_key_release_event(GtkWidget *osef1, GdkEventKey *event)
+{
+	(void)osef1;
+	int bit = get_key_bit(event->keyval);
+	if (bit != -1)
+		Main::getMainDisplay()->setKeys(Main::getMainDisplay()->getKeys() & (~(1 << bit)));
+	//std::cout << "Released" << std::endl;
+	//std::cout << "keyval: " << gdk_keyval_name(event->keyval) << "(" << event->keyval << ")" << std::endl;
+	//std::cout << "state: " << event->state << std::endl;
+	//std::cout << "type: " << event->type << std::endl;
+	//std::cout << std::endl;
 }
 
 MainDisplay::MainDisplay()

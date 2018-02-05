@@ -434,6 +434,8 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 	for (unsigned long i = 0; i < frameCount; ++i)
 	{
 		out[i] = 0;
+		if (Main::isPaused())
+			continue;
 		if (core::mem.sysregs(NR52) & 0b10000000)
 		{
 			bool c1on = core::mem.sysregs(NR52) & 0b00000001;
@@ -517,8 +519,9 @@ Audio::Audio()
 {
 	PaStreamParameters parameters;
 	parameters.device = Pa_GetDefaultOutputDevice();
+	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo(parameters.device);
 	parameters.channelCount = 2;
-	parameters.suggestedLatency = .1;
+	parameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 	parameters.sampleFormat = paInt16;
 	parameters.hostApiSpecificStreamInfo = 0;
 	PaError error = Pa_OpenStream(&this->stream, 0, &parameters, freq, 1, paNoFlag, paCallback, this);
