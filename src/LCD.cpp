@@ -127,8 +127,8 @@ void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 	}
 	else
 	{
-		coloridx = core::mem.cbank0(charaddr + by * 2) >> ((~bx) & 7);
-		coloridx |= (core::mem.cbank0(charaddr + by * 2 + 1) >> ((~bx) & 7)) << 1;
+		coloridx = core::mem.cbank0(charaddr + by * 2) >> ((~bx) & 7) & 1;
+		coloridx |= (core::mem.cbank0(charaddr + by * 2 + 1) >> ((~bx) & 7) & 1) << 1;
 	}
 	Main::getMainDisplay()->putPixel(x, y, bgpalettes[palette][coloridx]);
 	priorities[y][x] = priority;
@@ -166,10 +166,11 @@ void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		bx = 7 - bx;
 	if (vflip)
 		by = (height16 ? 15 : 7) - by;
-	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + (charcode & 0b11111110);
-	uint8_t idx = (bx + by * 8) * 2;
-	uint8_t pixel = ((core::mem[charaddr + by * 2]) >> (7 - bx)) & 1;
-	pixel |= (((core::mem[charaddr + by * 2 + 1]) >> (7 - bx)) & 1) << 1;
+	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + charcode * 16;
+	if (height16)
+		charaddr &= ~1;
+	uint8_t pixel = (core::mem[charaddr + by * 2] >> ((~bx) & 7)) & 1;
+	pixel |= ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
 	if (!pixel)
 		return;
 	if (priorities[y][x] || priority)
@@ -177,9 +178,10 @@ void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		if (hasprinted[y][x])
 			return;
 	}
-	uint8_t color = ((core::mem[palette ? OBP0 : OBP1] >> (pixel * 2)) & 0b00000011) / 3. * UCHAR_MAX;
+	uint8_t color = (core::mem[palette ? OBP1 : OBP0] >> (pixel << 1)) & 3;
+	color = UCHAR_MAX - (color / 3. * UCHAR_MAX);
 	uint8_t col[] = {color, color, color};
-	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&color);
+	Main::getMainDisplay()->putPixel(x, y, col);
 }
 
 void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
@@ -194,8 +196,9 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		bx = 7 - bx;
 	if (vflip)
 		by = (height16 ? 15 : 7) - by;
-	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + (charcode & 0b11111110);
-	uint8_t idx = (bx + by * 8) * 2;
+	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + charcode * 16;
+	if (height16)
+		charaddr &= ~1;
 	uint8_t pixel;
 	if (charbank)
 	{
@@ -224,28 +227,28 @@ void LCD::renderOBJ(uint8_t y)
 	uint8_t spritescount = 0;
 	uint8_t lowestx[160];
 	std::memset(lowestx, 0xff, 160);
-	for (uint8_t i = 39; i >= 0; --i)
+	for (int8_t i = 39; i >= 0; --i)
 	{
 		uint32_t addr = LCD_OAM_BEGIN + 4 * i;
 		uint8_t cy = core::mem[addr + 0];
-		if (cy > y || cy + (height16 ? 16 : 8) <= y)
+		if (cy == 0 || cy >= 160 || cy > y + 16 || cy + (height16 ? 16 : 8) <= y + 16)
 			continue;
 		uint8_t cx = core::mem[addr + 1];
-		if (cx < -7 || cx >= 160)
+		if (cx == 0 || cx >= 168)
 			continue;
 		uint8_t charcode = core::mem[addr + 2];
 		uint8_t attr = core::mem[addr + 3];
 		for (uint8_t x = 0; x < 8; ++x)
 		{
-			if (cx + x >= 160)
+			if (cx + x < 8 || cx + x - 8 >= 160)
 				return;
 			if (true/*DMG*/ && cx > lowestx[cx + x])
 				continue;
 			lowestx[cx + x] = cx;
 			if (true/*DMG*/)
-				renderOBJCharDMG(cx + x, y, x, y - cy, charcode, attr);
+				renderOBJCharDMG(cx + x - 8, y, x, y - cy + 16, charcode, attr);
 			else /*CGB*/
-				renderOBJCharCGB(cx + x, y, x, y - cy, charcode, attr);
+				renderOBJCharCGB(cx + x - 8, y, x, y - cy + 16, charcode, attr);
 		}
 		if (++spritescount == 10)
 			return;
