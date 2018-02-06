@@ -7,6 +7,8 @@ SCY equ $FF42
 SCX equ $FF43
 LCDC equ $FF40
 BGP equ $FF47
+OBP0 equ $FF48
+OBP1 equ $FF49
 
 JOYP equ $FF00
 
@@ -94,8 +96,11 @@ ztop:	ld [c], a
 
 	; Set stack and some hardware registers
 start:	ld sp, $fffe
-	ld a, $e4
+	ld a, %11100100
 	ldh [BGP], a
+	ldh [OBP0], a
+	ld a, %10010011
+	ldh [OBP1], a
 	ld a, %10010001
 	ldh [LCDC], a
 	ld a, $20
@@ -179,6 +184,10 @@ woam2:	bit 1, [hl]
 	ld a, %10010011
 	ld [LCDC], a
 
+	; Mooga
+	xor a
+	ldh [$81], a
+
 	; Enable VBlank IRQ
 	ld a, %00000001
 	ldh [IE], a
@@ -186,6 +195,20 @@ woam2:	bit 1, [hl]
 
 	; Main loop
 main:	halt
+
+	; Swap 
+	ldh a, [$81]
+	cpl
+	ldh [$81], a
+	cp 0
+	jr nz, casenz
+
+	ld a, %00010000
+	ld [$fe03], a
+	jr main
+	
+casenz:	ld a, %00000000
+	ld [$fe03], a
 	jr main
 
 ; ------ Test binds routine ------
