@@ -11,7 +11,6 @@ LCD::LCD()
 {
 	std::memset(objpalettes, 0, sizeof(objpalettes));
 	std::memset(bgpalettes, 0, sizeof(bgpalettes));
-	core::mem[BGP] = 0xFC;
 }
 
 void LCD::render()
