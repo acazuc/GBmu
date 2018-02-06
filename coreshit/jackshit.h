@@ -114,7 +114,6 @@ class core
 
 		#include <InstructionSet/instructionset.h>
 
-		static void timer( void );
 	public:
 		static memboy mem;
 		static struct instruction decode[256];
@@ -162,6 +161,7 @@ class ref
 		static void init( void );
 };
 
+void timer( void );
 void corereset( char *rom );
 void corereset( void );
 void corerun( dword cycle );

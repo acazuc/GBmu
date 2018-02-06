@@ -99,7 +99,7 @@ start:	ld sp, $fffe
 	ld a, %11100100
 	ldh [BGP], a
 	ldh [OBP0], a
-	ld a, %10010011
+	ld a, %01010011
 	ldh [OBP1], a
 	ld a, %10010001
 	ldh [LCDC], a
@@ -176,6 +176,7 @@ woam2:	bit 1, [hl]
 	ld a, 80
 	ld [$fe00], a
 	ld [$fe01], a
+	ld a, 2
 	ld [$fe02], a
 	ld a, %00010000
 	ld [$fe03], a
@@ -198,10 +199,10 @@ main:	halt
 
 	; Swap 
 	ldh a, [$81]
-	cpl
+	add a, 16
 	ldh [$81], a
-	cp 0
-	jr nz, casenz
+	cp 128
+	jr nc, casenz
 
 	ld a, %00010000
 	ld [$fe03], a

@@ -123,6 +123,35 @@ void stackdraw( void )
 	}
 }
 
+void timer( void )
+{
+	static word divider = 256;
+	static dword timer = 0;
+
+	const dword clockselect[4] = { 4096, 262144, 65536, 16384 };
+
+	if ( !--divider )
+	{
+		divider = 256;
+		core::mem[DIV]++;
+	}
+
+	if ( core::mem[TAC] & 0b00000100 )
+	{
+		if ( ++timer > clockselect[TAC & 3] )
+		{
+			timer = 0;
+			if ( core::mem[TIMA] == 0xff )
+			{
+				core::mem[TIMA] = core::mem[TMA];
+				core::mem[IF] |= 0b00000100;
+			}
+			else
+				core::mem[TIMA]++;
+		}
+	}
+}
+
 void corerun( dword cycle )
 {
 	static bool display = false;
@@ -133,6 +162,7 @@ void corerun( dword cycle )
 		struct timespec stime;
 		word pc;
 
+		timer();
 		pc = core::getpc();
 		if ( s = core::cue() )
 		{
@@ -153,7 +183,6 @@ void corerun( dword cycle )
 			}
 		}
 
-		//	cout << PEACHY << cycle << WHITE << endl;
 		//stime.tv_sec = 0;
 		//stime.tv_nsec = ref::periode; 
 		//nanosleep( &stime, NULL );

@@ -23,39 +23,8 @@ void core::init( void )
 	regs.w.hl = 0;
 }
 
-void core::timer( void )
-{
-	static word divider = 256;
-	static dword timer = 0;
-
-	const dword clockselect[4] = { 4096, 262144, 65536, 16384 };
-
-	if ( !--divider )
-	{
-		divider = 256;
-		mem[DIV]++;
-	}
-
-	if ( mem[TAC] & 0b00000100 )
-	{
-		if ( ++timer > clockselect[TAC & 3] )
-		{
-			timer = 0;
-			if ( mem[TIMA] == 0xff )
-			{
-				mem[TIMA] = mem[TMA];
-				mem[IF] |= 0b00000100;
-			}
-			else
-				mem[TIMA]++;
-		}
-	}
-}
-
 const char *core::cue( void )
 {
-	timer();
-
 	if ( cycle )
 	{
 		cycle--;
