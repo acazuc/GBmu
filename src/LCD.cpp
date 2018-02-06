@@ -267,7 +267,7 @@ void LCD::renderWindow(uint8_t y)
 		uint8_t ry = wy + y;
 		uint8_t bx = rx % 8;
 		uint8_t by = ry % 8;
-		uint32_t addr = baseaddr + (rx - bx) + (ry - by) * 32;
+		uint32_t addr = baseaddr + ((rx - bx) + (ry - by) * 32) / 8;
 		uint8_t charcode = core::mem.cbank0(addr);
 		if (true/*DMG*/)
 			renderBGCharDMG(x, y, bx, by, charcode);

@@ -5,30 +5,26 @@
 #include <iostream>
 #include <fstream>
 
-#define AA_NONE 0
-#define AA_AASCALE2X 1
-#define AA_AASCALE4X 2
-#define AA_AASCALE8X 3
-#define AA_SCALE2X 4
-#define AA_SCALE4X 5
-#define AA_SCALE8X 6
-#define AA_HQ2X 7
-#define AA_OMNISCALE 8
-#define AA_SUPEREAGLE 9
-#define AA_LAST 10
-
-#define COLOR_NONE 0
-#define COLOR_GAMEBOY 1
-#define COLOR_LAST 2
+#define FILTER_NONE 0
+#define FILTER_AASCALE2X 1
+#define FILTER_AASCALE4X 2
+#define FILTER_AASCALE8X 3
+#define FILTER_SCALE2X 4
+#define FILTER_SCALE4X 5
+#define FILTER_SCALE8X 6
+#define FILTER_HQ2X 7
+#define FILTER_OMNISCALE 8
+#define FILTER_SUPEREAGLE 9
+#define FILTER_2XSAI 10
+#define FILTER_XBR 11
+#define FILTER_XBRZ 12
+#define FILTER_GAMEBOY 13
+#define FILTER_LAST 14
 
 static float mat[16];
 static int32_t ctx_width = 160;
 static int32_t ctx_height = 144;
-static GLuint fbotexture;
 static GLuint texture;
-static GLuint mainfbo;
-static GLuint fbo;
-static GLuint rbo;
 static GLuint vao;
 
 struct glprogram
@@ -40,10 +36,8 @@ struct glprogram
 	GLuint program;
 };
 
-static glprogram colorprograms[COLOR_LAST];
-static glprogram *currentcolorprogram;
-static glprogram aaprograms[AA_LAST];
-static glprogram *currentaaprogram;
+static glprogram programs[FILTER_LAST];
+static glprogram *currentprogram;
 
 struct vertex_info
 {
@@ -144,14 +138,10 @@ static void initProgram(glprogram *program, std::string vertex, std::string frag
 
 static void initPrograms()
 {
-	std::string aafragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs"};
-	for (uint8_t i = 0; i < AA_LAST; ++i)
-		initProgram(&aaprograms[i], "shaders/AA/basic.vs", "shaders/AA/" + aafragments[i]);
-	currentaaprogram = &aaprograms[0];
-	std::string colorfragments[] = {"basic.fs", "Gameboy.fs"};
-	for (uint8_t i = 0; i < COLOR_LAST; ++i)
-		initProgram(&colorprograms[i], "shaders/Color/basic.vs", "shaders/Color/" + colorfragments[i]);
-	currentcolorprogram = &colorprograms[0];
+	std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
+	for (uint8_t i = 0; i < FILTER_LAST; ++i)
+		initProgram(&programs[i], "shaders/basic.vs", "shaders/" + fragments[i]);
+	currentprogram = &programs[0];
 }
 
 static void initBuffers()
@@ -162,38 +152,14 @@ static void initBuffers()
 	glGenBuffers(1, &buffer);
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_STATIC_DRAW);
-	glUseProgram(currentaaprogram->program);
-	glEnableVertexAttribArray(currentaaprogram->texCoordsLocation);
-	glVertexAttribPointer(currentaaprogram->texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
-	glEnableVertexAttribArray(currentaaprogram->vertexesLocation);
-	glVertexAttribPointer(currentaaprogram->vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
-	glUseProgram(currentcolorprogram->program);
-	glEnableVertexAttribArray(currentcolorprogram->texCoordsLocation);
-	glVertexAttribPointer(currentcolorprogram->texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
-	glEnableVertexAttribArray(currentcolorprogram->vertexesLocation);
-	glVertexAttribPointer(currentcolorprogram->vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
+	glUseProgram(currentprogram->program);
+	glEnableVertexAttribArray(currentprogram->texCoordsLocation);
+	glVertexAttribPointer(currentprogram->texCoordsLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, texCoords)));
+	glEnableVertexAttribArray(currentprogram->vertexesLocation);
+	glVertexAttribPointer(currentprogram->vertexesLocation, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertex_info), (GLvoid*)(G_STRUCT_OFFSET(struct vertex_info, position)));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	glDeleteBuffers(1, &buffer);
-}
-
-static void initFBO()
-{
-	glBindVertexArray(vao);
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glGenTextures(1, &fbotexture);
-	glBindTexture(GL_TEXTURE_2D, fbotexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, fbotexture, 0);
-	GLenum drawBuffers = GL_COLOR_ATTACHMENT0;
-	glDrawBuffers(1, &drawBuffers);
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		cout << "fbo error: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
 }
 
 static void gl_realize(GtkGLArea *area)
@@ -211,7 +177,6 @@ static void gl_realize(GtkGLArea *area)
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	initFBO();
 	Main::glErrors("1");
 }
 
@@ -220,15 +185,11 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	(void)area;
 	(void)context;
 	gdk_gl_context_make_current(context);
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint*)&mainfbo);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
 	glBindVertexArray(vao);
-
-	//FBO render
-	glUseProgram(currentaaprogram->program);
-	glUniformMatrix4fv(currentaaprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
+	glUseProgram(currentprogram->program);
+	glUniformMatrix4fv(currentprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	float tmpw = ctx_width / 160.;
 	float tmph = ctx_height / 144.;
 	float tmp;
@@ -240,25 +201,6 @@ static bool gl_render(GtkGLArea *area, GdkGLContext *context)
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	//Window render
-	/*glUseProgram(currentcolorprogram->program);
-	glUniformMatrix4fv(currentcolorprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
-	glBindTexture(GL_TEXTURE_2D, fbotexture);
-	glBindFramebuffer(GL_FRAMEBUFFER, mainfbo);
-	glViewport(0, 0, ctx_width, ctx_height);
-	glClearColor(1, 1, 1, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	//Flush debug
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mainfbo);
-	GLsizei HalfWindowWidth = (GLsizei)(160 / 2.0f);
-	GLsizei HalfWindowHeight = (GLsizei)(144 / 2.0f);
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
-	glBlitFramebuffer(0, 0, 160, 144, 0, 0, HalfWindowWidth, HalfWindowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);*/
-
 	glFlush();
 	Main::glErrors("main");
 	return (TRUE);
@@ -398,23 +340,14 @@ static void cb_tool_wave(GtkWidget *osef1, gpointer type)
 	Main::getAudio()->getC12type() = (uint8_t)((uint64_t)type);
 }
 
-static void cb_tool_aa(GtkWidget *osef1, gpointer type)
+static void cb_tool_filter(GtkWidget *osef1, gpointer type)
 {
 	(void)osef1;
 	uint64_t id = (uint64_t)type;
-	if (id >= AA_LAST)
-		id = AA_NONE;
-	currentaaprogram = &aaprograms[id];
+	if (id >= FILTER_LAST)
+		id = FILTER_NONE;
+	currentprogram = &programs[id];
 }
-/*
-static void cb_tool_color(GtkWidget *osef1, gpointer type)
-{
-	(void)osef1;
-	uint64_t id = (uint64_t)type;
-	if (id >= COLOR_LAST)
-		id = COLOR_NONE;
-	currentcolorprogram = &colorprograms[id];
-}*/
 
 static void build_menu_file(GtkWidget *menubar)
 {
@@ -499,61 +432,81 @@ static void build_menu_tools_audio_wave(GtkWidget *tool_wave)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_wave), tool_wave_menu);
 }
 
-static void build_menu_tools_aa(GtkWidget *tool_aa)
+static void build_menu_tools_filter(GtkWidget *tool_filter)
 {
-	GtkWidget *tool_aa_menu = gtk_menu_new();
+	GtkWidget *tool_filter_menu = gtk_menu_new();
 
 	//None
-	GtkWidget *tool_aa_none = gtk_menu_item_new_with_label("None");
-	g_signal_connect(G_OBJECT(tool_aa_none), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_NONE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_none);
+	GtkWidget *tool_filter_none = gtk_menu_item_new_with_label("None");
+	g_signal_connect(G_OBJECT(tool_filter_none), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_NONE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_none);
 
-	//AAScale2x
-	GtkWidget *tool_aa_aascale2x = gtk_menu_item_new_with_label("AAScale2x");
-	g_signal_connect(G_OBJECT(tool_aa_aascale2x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_AASCALE2X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_aascale2x);
+	//FILTERScale2x
+	GtkWidget *tool_filter_aascale2x = gtk_menu_item_new_with_label("AAScale2x");
+	g_signal_connect(G_OBJECT(tool_filter_aascale2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE2X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_aascale2x);
 
-	//AAScale4x
-	GtkWidget *tool_aa_aascale4x = gtk_menu_item_new_with_label("AAScale4x");
-	g_signal_connect(G_OBJECT(tool_aa_aascale4x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_AASCALE4X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_aascale4x);
+	//FILTERScale4x
+	GtkWidget *tool_filter_aascale4x = gtk_menu_item_new_with_label("AAScale4x");
+	g_signal_connect(G_OBJECT(tool_filter_aascale4x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE4X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_aascale4x);
 
-	//AAScale8x
-	GtkWidget *tool_aa_aascale8x = gtk_menu_item_new_with_label("AAScale8x");
-	g_signal_connect(G_OBJECT(tool_aa_aascale8x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_AASCALE8X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_aascale8x);
+	//FILTERScale8x
+	GtkWidget *tool_filter_aascale8x = gtk_menu_item_new_with_label("AAScale8x");
+	g_signal_connect(G_OBJECT(tool_filter_aascale8x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE8X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_aascale8x);
 
 	//Scale2x
-	GtkWidget *tool_aa_scale2x = gtk_menu_item_new_with_label("Scale2x");
-	g_signal_connect(G_OBJECT(tool_aa_scale2x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_SCALE2X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_scale2x);
+	GtkWidget *tool_filter_scale2x = gtk_menu_item_new_with_label("Scale2x");
+	g_signal_connect(G_OBJECT(tool_filter_scale2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE2X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_scale2x);
 
 	//Scale4x
-	GtkWidget *tool_aa_scale4x = gtk_menu_item_new_with_label("Scale4x");
-	g_signal_connect(G_OBJECT(tool_aa_scale4x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_SCALE4X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_scale4x);
+	GtkWidget *tool_filter_scale4x = gtk_menu_item_new_with_label("Scale4x");
+	g_signal_connect(G_OBJECT(tool_filter_scale4x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE4X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_scale4x);
 
 	//Scale8x
-	GtkWidget *tool_aa_scale8x = gtk_menu_item_new_with_label("Scale8x");
-	g_signal_connect(G_OBJECT(tool_aa_scale8x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_SCALE8X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_scale8x);
+	GtkWidget *tool_filter_scale8x = gtk_menu_item_new_with_label("Scale8x");
+	g_signal_connect(G_OBJECT(tool_filter_scale8x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE8X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_scale8x);
 
 	//HQ2x
-	GtkWidget *tool_aa_hq2x = gtk_menu_item_new_with_label("HQ2x");
-	g_signal_connect(G_OBJECT(tool_aa_hq2x), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_HQ2X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_hq2x);
+	GtkWidget *tool_filter_hq2x = gtk_menu_item_new_with_label("HQ2x");
+	g_signal_connect(G_OBJECT(tool_filter_hq2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_HQ2X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_hq2x);
 
 	//OmniScale
-	GtkWidget *tool_aa_omniscale = gtk_menu_item_new_with_label("OmniScale");
-	g_signal_connect(G_OBJECT(tool_aa_omniscale), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_OMNISCALE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_omniscale);
+	GtkWidget *tool_filter_omniscale = gtk_menu_item_new_with_label("OmniScale");
+	g_signal_connect(G_OBJECT(tool_filter_omniscale), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_OMNISCALE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_omniscale);
 
 	//SuperEagle
-	GtkWidget *tool_aa_supereagle = gtk_menu_item_new_with_label("SuperEagle");
-	g_signal_connect(G_OBJECT(tool_aa_supereagle), "activate", G_CALLBACK(cb_tool_aa), (void*)((unsigned long)AA_SUPEREAGLE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_aa_menu), tool_aa_supereagle);
+	GtkWidget *tool_filter_supereagle = gtk_menu_item_new_with_label("SuperEagle");
+	g_signal_connect(G_OBJECT(tool_filter_supereagle), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SUPEREAGLE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_supereagle);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_aa), tool_aa_menu);
+	//2xsai
+	GtkWidget *tool_filter_2xsai = gtk_menu_item_new_with_label("2xai");
+	g_signal_connect(G_OBJECT(tool_filter_2xsai), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_2XSAI));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_2xsai);
+
+	//xbr
+	GtkWidget *tool_filter_xbr = gtk_menu_item_new_with_label("xbr");
+	g_signal_connect(G_OBJECT(tool_filter_xbr), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_XBR));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_xbr);
+
+	//xbrz
+	GtkWidget *tool_filter_xbrz = gtk_menu_item_new_with_label("xbrz");
+	g_signal_connect(G_OBJECT(tool_filter_xbrz), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_XBRZ));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_xbrz);
+
+	//Gameboy
+	GtkWidget *tool_filter_gameboy = gtk_menu_item_new_with_label("Gameboy");
+	g_signal_connect(G_OBJECT(tool_filter_gameboy), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_GAMEBOY));
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_gameboy);
+
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_filter), tool_filter_menu);
 }
 
 static void build_menu_tools(GtkWidget *menubar)
@@ -581,10 +534,10 @@ static void build_menu_tools(GtkWidget *menubar)
 	build_menu_tools_audio_wave(tool_audio_wave);
 	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_audio_wave);
 
-	//Antialiasing
-	GtkWidget *tool_aa = gtk_menu_item_new_with_label("Antialiasing");
-	build_menu_tools_aa(tool_aa);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_aa);
+	//Filter
+	GtkWidget *tool_filter = gtk_menu_item_new_with_label("Filter");
+	build_menu_tools_filter(tool_filter);
+	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_filter);
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool), tool_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), tool);
