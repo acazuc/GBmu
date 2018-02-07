@@ -73,6 +73,7 @@
 //#define RAM 0xFF30~FF3F 
 
 #define MEMBOY_MAXSTACK 8
+#define MEMREF_MAXSTACK 8
 
 using namespace std;
 
@@ -95,6 +96,23 @@ class memboy
 		byte *svbk2to7;
 		byte *rombank;
 
+		class memref
+		{
+			friend class memboy;
+
+			private:
+				memboy *ref;
+				byte *addr;
+				void ( memboy::*setfunc )( byte &addr, byte b );
+				byte ( memboy::*getfunc )( byte &addr );
+			public:
+				void set( byte b );
+				byte get( void );
+		};
+
+		memref rblock[MEMREF_MAXSTACK];
+		int rblockid;
+
 		class mempassthru
 		{
 			friend class memboy;
@@ -116,7 +134,6 @@ class memboy
 				mempassthru &operator |=( int n );
 				mempassthru &operator &=( byte n );
 				mempassthru &operator &=( int n );
-
 				mempassthru &operator ++( int n );
 				mempassthru &operator --( int n );
 		};
@@ -124,7 +141,10 @@ class memboy
 		mempassthru block[MEMBOY_MAXSTACK];
 		int blockid;
 
-		byte &deref( word addr );
+		void classicset( byte &addr, byte b );
+		byte classicget( byte &addr );
+
+		memref *deref( word addr );
 	public:
 		// Constructor
 		memboy( void );
