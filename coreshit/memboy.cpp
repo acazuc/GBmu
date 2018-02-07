@@ -168,6 +168,10 @@ memboy::memboy( void )
 		rblock[i].ref = this;
 
 	blockid = 0;
+	rblockid = 0;
+
+	joyparrows = 0;
+	joypbuttons = 0;
 
 	map[RBK] = 0;
 }
@@ -192,11 +196,11 @@ byte memboy::joypget( byte &addr )
 	switch ( addr & 0b00110000 )
 	{
 		case 0b00000000:
-			return joypbuttons & joyparrows & addr;
+			return joypbuttons | joyparrows | addr;
 		case 0b00010000:
-			return joypbuttons & addr;
+			return joypbuttons | addr;
 		case 0b00100000:
-			return joyparrows & addr;
+			return joyparrows | addr;
 		case 0b00110000:
 			return addr;
 	}
@@ -322,12 +326,12 @@ byte &memboy::cbank1( word addr )
 
 void memboy::setarrowsstate( byte b )
 {
-	joyparrows = b & 0xF0;
+	joyparrows = b & 0x0F;
 }
 
 void memboy::setbuttonsstate( byte b )
 {
-	joypbuttons = b & 0xF0;
+	joypbuttons = b & 0x0F;
 }
 
 byte memboy::getarrowsstate( void )
