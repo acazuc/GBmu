@@ -14,6 +14,7 @@ MainDisplay *Main::mainDisplay;
 BindDisplay *Main::bindDisplay;
 Audio *Main::audio;
 LCD *Main::lcd;
+uint64_t Main::speedFactor = 1;
 bool Main::paused;
 
 void Main::run(int ac, char **av)
@@ -33,19 +34,18 @@ void Main::run(int ac, char **av)
 	lcd = new LCD();
 	audio = new Audio();
 	audio->start();
-	high_resolution_clock::time_point fps_last, draw_last, tmp;
+	high_resolution_clock::time_point fps_last, draw_last, render_last, tmp;
 	fps_last = high_resolution_clock::now();
 	draw_last = high_resolution_clock::now();
+	render_last = high_resolution_clock::now();
 	int fps = 0;
 	while (true)
 	{
 		tmp = high_resolution_clock::now();
 		auto basecount = duration_cast<nanoseconds>( tmp - draw_last ).count();
-		if (basecount > 1000000000  / 59.72750056960583276373)
+		if (!speedFactor || basecount > 1000000000  / (59.72750056960583276373 * speedFactor))
 		{
 			draw_last = tmp;
-			lcd->render();
-			mainDisplay->iter();
 			++fps;
 			tmp = high_resolution_clock::now();
 			basecount = duration_cast<nanoseconds>( tmp - fps_last ).count();
@@ -55,6 +55,14 @@ void Main::run(int ac, char **av)
 				cout << "fps: " << dec << fps << endl;
 				fps = 0;
 			}
+			lcd->render();
+		}
+		tmp = high_resolution_clock::now();
+		basecount = duration_cast<nanoseconds>( tmp - render_last ).count();
+		if (basecount > 1000000000 / 60.)
+		{
+			render_last = tmp;
+			mainDisplay->iter();
 		}
 		debugDisplay->iter();
 		gtk_main_iteration_do(false);

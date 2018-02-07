@@ -289,7 +289,7 @@ static int16_t getc4val()
 			c4stepstate = 0xffff;
 		}
 		uint8_t xored = (c4stepstate & 0x1) ^ ((c4stepstate & 0x2) >> 1);
-		c4stepstate = c4stepstate >> 1;
+		c4stepstate >>= 1;
 		c4stepstate = (c4stepstate & 0b011111111111111) | (xored << 14);
 		if (core::mem.sysregs(NR43) & 0b00001000)
 			c4stepstate = (c4stepstate & 0b0111111) | (xored << 6);
@@ -446,16 +446,18 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			int16_t c2 = getc2val() / 0xfff * 0xfff;
 			int16_t c3 = getc3val() / 0xfff * 0xfff;
 			int16_t c4 = getc4val() / 0xfff * 0xfff;
-			core::mem.sysregs(PCM12) = 0;
+			uint8_t pcm12 = 0;
 			if (c1on)
-				core::mem.sysregs(PCM12) += (c1 / 0xfff + CHAR_MIN);
+				pcm12 += (c1 / 0xfff + CHAR_MIN);
 			if (c2on)
-				core::mem.sysregs(PCM12) += (c2 / 0xfff + CHAR_MIN) * 0xf;
-			core::mem.sysregs(PCM34) = 0;
+				pcm12 += (c2 / 0xfff + CHAR_MIN) << 4;
+			core::mem.sysregs(PCM12) = pcm12;
+			uint8_t pcm34 = 0;
 			if (c3on)
-				core::mem.sysregs(PCM34) += (c3 / 0xfff + CHAR_MIN);
+				pcm34 += (c3 / 0xfff + CHAR_MIN);
 			if (c4on)
-				core::mem.sysregs(PCM34) += (c4 / 0xfff + CHAR_MIN) * 0xf;
+				pcm34 += (c4 / 0xfff + CHAR_MIN) << 4;
+			core::mem.sysregs(PCM34) = pcm34;
 			if (i & 0x1)
 			{
 				bool lc1on = c1on && (core::mem.sysregs(NR51) & 0b00000001);

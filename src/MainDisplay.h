@@ -50,6 +50,17 @@ class MainDisplay
 		GtkWidget *menu_options_filter_xbr;
 		GtkWidget *menu_options_filter_xbrz;
 		GtkWidget *menu_options_filter_gameboy;
+		GtkWidget *menu_options_speed;
+		GtkWidget *menu_options_speed_menu;
+		GtkWidget *menu_options_speed_1x;
+		GtkWidget *menu_options_speed_2x;
+		GtkWidget *menu_options_speed_4x;
+		GtkWidget *menu_options_speed_8x;
+		GtkWidget *menu_options_speed_16x;
+		GtkWidget *menu_options_speed_32x;
+		GtkWidget *menu_options_speed_64x;
+		GtkWidget *menu_options_speed_128x;
+		GtkWidget *menu_options_speed_unlimited;
 		GtkWidget *menu_help;
 		GtkWidget *menu_help_menu;
 		GtkWidget *menu_help_about;
@@ -64,6 +75,7 @@ class MainDisplay
 		void build_menu_options_size();
 		void build_menu_options_wave();
 		void build_menu_options_filter();
+		void build_menu_options_speed();
 		void build_menu_options();
 		void build_menu_help();
 
