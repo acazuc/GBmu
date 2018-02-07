@@ -19,31 +19,32 @@ void LCD::render()
 	if (stopped)
 		memset(Main::getMainDisplay()->getTexDatas(), 0xff, 160 * 144 * 3);
 	bool paused = Main::isPaused();
-	uint8_t keys = 0xF;
 	uint8_t keys_org = core::mem[JOYP] & 0xf;
+	uint8_t keys = 0xf;
+	uint8_t arrowsstate = 0xF;
+	if (Main::getMainDisplay()->getKeys() & 0b00000001)
+		arrowsstate &= ~0b00000010;
+	if (Main::getMainDisplay()->getKeys() & 0b00000010)
+		arrowsstate &= ~0b00000001;
+	if (Main::getMainDisplay()->getKeys() & 0b00000100)
+		arrowsstate &= ~0b00000100;
+	if (Main::getMainDisplay()->getKeys() & 0b00001000)
+		arrowsstate &= ~0b00001000;
 	if (!(core::mem[JOYP] & 0b00010000))
-	{
-		if (Main::getMainDisplay()->getKeys() & 0b00000001)
-			keys &= ~0b00000010;
-		if (Main::getMainDisplay()->getKeys() & 0b00000010)
-			keys &= ~0b00000001;
-		if (Main::getMainDisplay()->getKeys() & 0b00000100)
-			keys &= ~0b00000100;
-		if (Main::getMainDisplay()->getKeys() & 0b00001000)
-			keys &= ~0b00001000;
-	}
+		keys &= ~arrowsstate;
+	core::mem.setarrowsstate(arrowsstate);
+	uint8_t buttonsstate = 0xf;
+	if (Main::getMainDisplay()->getKeys() & 0b00010000)
+		buttonsstate &= ~0b00000100;
+	if (Main::getMainDisplay()->getKeys() & 0b00100000)
+		buttonsstate &= ~0b00001000;
+	if (Main::getMainDisplay()->getKeys() & 0b01000000)
+		buttonsstate &= ~0b00000010;
+	if (Main::getMainDisplay()->getKeys() & 0b10000000)
+		buttonsstate &= ~0b00000001;
 	if (!(core::mem[JOYP] & 0b00100000))
-	{
-		if (Main::getMainDisplay()->getKeys() & 0b00010000)
-			keys &= ~0b00000100;
-		if (Main::getMainDisplay()->getKeys() & 0b00100000)
-			keys &= ~0b00001000;
-		if (Main::getMainDisplay()->getKeys() & 0b01000000)
-			keys &= ~0b00000010;
-		if (Main::getMainDisplay()->getKeys() & 0b10000000)
-			keys &= ~0b00000001;
-	}
-	core::mem[JOYP] = (core::mem[JOYP] & (0b00110000)) | keys;
+		keys &= ~buttonsstate;
+	core::mem.setbuttonsstate(buttonsstate);
 	if (keys != keys_org)
 		core::mem[IF] |= 1 << 4;
 	uint8_t div = core::is2xspeed() ? 2 : 4;
