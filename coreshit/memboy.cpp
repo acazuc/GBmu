@@ -164,6 +164,9 @@ memboy::memboy( void )
 	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
 		block[i].ref = this;
 
+	for ( int i = 0 ; i < MEMREF_MAXSTACK ; i++ )
+		rblock[i].ref = this;
+
 	blockid = 0;
 
 	map[RBK] = 0;
@@ -177,6 +180,26 @@ void memboy::classicset( byte &addr, byte b )
 byte memboy::classicget( byte &addr )
 {
 	return addr;
+}
+
+void memboy::joypset( byte &addr, byte b )
+{
+	addr = b & 0b11110000;
+}
+
+byte memboy::joypget( byte &addr )
+{
+	switch ( addr & 0b00110000 )
+	{
+		case 0b00000000:
+			return joypbuttons & joyparrows & addr;
+		case 0b00010000:
+			return joypbuttons & addr;
+		case 0b00100000:
+			return joyparrows & addr;
+		case 0b00110000:
+			return addr;
+	}
 }
 
 memboy::memref *memboy::deref( word addr )
@@ -255,6 +278,15 @@ memboy::memref *memboy::deref( word addr )
 		return ref;
 	}
 
+	// Registers Sector
+	if ( addr == 0xFF00 )
+	{
+		(*ref).getfunc = &memboy::joypget;
+		(*ref).setfunc = &memboy::joypset;
+		(*ref).addr = &map[addr];
+		return ref;
+	}
+
 	// End Sector
 	(*ref).getfunc = &memboy::classicget;
 	(*ref).setfunc = &memboy::classicset;
@@ -286,6 +318,26 @@ byte &memboy::cbank1( word addr )
 	if ( addr < 0x8000 || addr > 0x9fff )
 		return map[addr];
 	return bank1chardts[addr - 0x8000];
+}
+
+void memboy::setarrowsstate( byte b )
+{
+	joyparrows = b & 0xF0;
+}
+
+void memboy::setbuttonsstate( byte b )
+{
+	joypbuttons = b & 0xF0;
+}
+
+byte memboy::getarrowsstate( void )
+{
+	return joyparrows;
+}
+
+byte memboy::getbuttonsstate( void )
+{
+	return joypbuttons;
 }
 
 bool memboy::biosload( const char *path )

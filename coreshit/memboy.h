@@ -91,10 +91,15 @@ union xword
 class memboy
 {
 	private:
+		// Memory Maps
 		byte *map;
 		byte *bank1chardts;
 		byte *svbk2to7;
 		byte *rombank;
+
+		// Hardware Registers
+		byte joyparrows;
+		byte joypbuttons;
 
 		class memref
 		{
@@ -144,6 +149,9 @@ class memboy
 		void classicset( byte &addr, byte b );
 		byte classicget( byte &addr );
 
+		void joypset( byte &addr, byte b );
+		byte joypget( byte &addr );
+
 		memref *deref( word addr );
 	public:
 		// Constructor
@@ -159,6 +167,13 @@ class memboy
 		bool biosload( const char *path );
 		bool romload( const char *path );
 		void ramclear( void );
+
+		void setarrowsstate( byte b );
+		void setbuttonsstate( byte b );
+
+		// Getters
+		byte getarrowsstate( void );
+		byte getbuttonsstate( void );
 
 		// Destructor
 		~memboy( void );
