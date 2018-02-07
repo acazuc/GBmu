@@ -138,13 +138,11 @@ void main()
 	vec4 Aw = vec4( 2.0, -6.0, -2.0, 6.0 );
 	vec4 Bw = vec4( 6.0, 2.0, -6.0,-2.0 );
 	vec4 Cw = vec4( 5.0, -1.0, -3.0, 3.0 );
-
-	fx  = (Ao*fp.y+Bo*fp.x); 
-	fx_left = (Ax*fp.y+Bx*fp.x);
-	fx_up   = (Ay*fp.y+By*fp.x);
-	fx3_left= (Az*fp.y+Bz*fp.x);
-	fx3_up  = (Aw*fp.y+Bw*fp.x);
-
+	fx  = (Ao * fp.y + Bo * fp.x);
+	fx_left = (Ax * fp.y + Bx * fp.x);
+	fx_up   = (Ay * fp.y + By * fp.x);
+	fx3_left= (Az * fp.y + Bz * fp.x);
+	fx3_up  = (Aw * fp.y + Bw * fp.x);
 	if (corner_type == 1.0)
 	{
 		interp_restriction_lv1 = and(notEqual(e, f), notEqual(e, h));
@@ -152,66 +150,88 @@ void main()
 	else if (corner_type == 2.0)
 	{
 		interp_restriction_lv1  = and(and(notEqual(e,f), notEqual(e,h)),
-			(or(or(and(and(or(and(not(eq(f,b)),  not(eq(h,d))) ,
+			(or(or(and(and(or(and(not(eq(f,b)), not(eq(h,d))),
 					   eq(e,i)) , not(eq(f,i4))) , not(eq(h,i5))) , eq(e,g)) , eq(e,c)) ) );
 	}
 	else
-	{interp_restriction_lv1 = and(and(notEqual(e, f), notEqual(e, h)),
+	{
+		interp_restriction_lv1 = and(and(notEqual(e, f), notEqual(e, h)),
 			or(or(and(not(eq(f,b)), not(eq(f,c))),
 					and(not(eq(h,d)), not(eq(h,g)))),
 				or(and(eq(e,i), or(and(not(eq(f,f4)), not(eq(f,i4))),
 							and(not(eq(h,h5)), not(eq(h,i5))))),
-					or(eq(e,g), eq(e,c)))));}
-
+					or(eq(e,g), eq(e,c)))));
+	}
 	interp_restriction_lv2_left = and(notEqual(e, g), notEqual(d, g));
 	interp_restriction_lv2_up   = and(notEqual(e, c), notEqual(b, c));
 	interp_restriction_lv3_left = and(eq2(g,g0), not(eq2(d0,g0)));
 	interp_restriction_lv3_up   = and(eq2(c,c1), not(eq2(b1,c1)));
-
 	vec4 fx45 = smoothstep(Co - delta, Co + delta, fx);
 	vec4 fx30 = smoothstep(Cx - delta, Cx + delta, fx_left);
 	vec4 fx60 = smoothstep(Cy - delta, Cy + delta, fx_up);
 	vec4 fx15 = smoothstep(Cz - delta, Cz + delta, fx3_left);
 	vec4 fx75 = smoothstep(Cw - delta, Cw + delta, fx3_up);
-
 	edr = and(lessThan(weighted_distance( e, c, g, i, h5, f4, h, f), weighted_distance( h, d, i5, f, i4, b, e, i)), interp_restriction_lv1);
 	edr_left = and(lessThanEqual((XBR_LV2_COEFFICIENT*df(f,g)), df(h,c)), interp_restriction_lv2_left);
 	edr_up   = and(greaterThanEqual(df(f,g), (XBR_LV2_COEFFICIENT*df(h,c))), interp_restriction_lv2_up);
 	edr3_left = interp_restriction_lv3_left;
 	edr3_up = interp_restriction_lv3_up;
-
 	nc45 = and(edr, bvec4(fx45));
 	nc30 = and(edr, and(edr_left, bvec4(fx30)));
 	nc60 = and(edr, and(edr_up, bvec4(fx60)));
 	nc15 = and(and(edr, edr_left), and(edr3_left, bvec4(fx15)));
 	nc75 = and(and(edr, edr_up), and(edr3_up, bvec4(fx75)));
-
 	px = lessThanEqual(df(e, f), df(e, h));
-
 	nc = bvec4(nc75.x || nc15.x || nc30.x || nc60.x || nc45.x, nc75.y || nc15.y || nc30.y || nc60.y || nc45.y, nc75.z || nc15.z || nc30.z || nc60.z || nc45.z, nc75.w || nc15.w || nc30.w || nc60.w || nc45.w);
-
 	vec4 final45 = vec4(nc45) * fx45;
 	vec4 final30 = vec4(nc30) * fx30;
 	vec4 final60 = vec4(nc60) * fx60;
 	vec4 final15 = vec4(nc15) * fx15;
 	vec4 final75 = vec4(nc75) * fx75;
-
 	vec4 maximo = max(max(max(final15, final75),max(final30, final60)), final45);
-
-	if (nc.x) {pix1 = px.x ? F : H; blend1 = maximo.x;}
-	else if (nc.y) {pix1 = px.y ? B : F; blend1 = maximo.y;}
-	else if (nc.z) {pix1 = px.z ? D : B; blend1 = maximo.z;}
-	else if (nc.w) {pix1 = px.w ? H : D; blend1 = maximo.w;}
-
-	if (nc.w) {pix2 = px.w ? H : D; blend2 = maximo.w;}
-	else if (nc.z) {pix2 = px.z ? D : B; blend2 = maximo.z;}
-	else if (nc.y) {pix2 = px.y ? B : F; blend2 = maximo.y;}
-	else if (nc.x) {pix2 = px.x ? F : H; blend2 = maximo.x;}
-
+	if (nc.x)
+	{
+		pix1 = px.x ? F : H;
+		blend1 = maximo.x;
+	}
+	else if (nc.y)
+	{
+		pix1 = px.y ? B : F;
+		blend1 = maximo.y;
+	}
+	else if (nc.z)
+	{
+		pix1 = px.z ? D : B;
+		blend1 = maximo.z;
+	}
+	else if (nc.w)
+	{
+		pix1 = px.w ? H : D;
+		blend1 = maximo.w;
+	}
+	if (nc.w)
+	{
+		pix2 = px.w ? H : D;
+		blend2 = maximo.w;
+	}
+	else if (nc.z)
+	{
+		pix2 = px.z ? D : B;
+		blend2 = maximo.z;
+	}
+	else if (nc.y)
+	{
+		pix2 = px.y ? B : F;
+		blend2 = maximo.y;
+	}
+	else if (nc.x)
+	{
+		pix2 = px.x ? F : H;
+		blend2 = maximo.x;
+	}
 	res1 = mix(E, pix1, blend1);
 	res2 = mix(E, pix2, blend2);
 	vec3 res = mix(res1, res2, step(c_df(E, res1), c_df(E, res2)));
-
 	frag_color = res;
 }
 

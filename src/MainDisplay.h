@@ -10,11 +10,62 @@
 class MainDisplay
 {
 
-	private:
+	public:
+		GtkWidget *menu;
+		GtkWidget *menu_file;
+		GtkWidget *menu_file_menu;
+		GtkWidget *menu_file_open;
+		GtkWidget *menu_file_quit;
+		GtkWidget *menu_edit;
+		GtkWidget *menu_edit_menu;
+		GtkWidget *menu_edit_play;
+		GtkWidget *menu_edit_pause;
+		GtkWidget *menu_edit_restart;
+		GtkWidget *menu_options;
+		GtkWidget *menu_options_menu;
+		GtkWidget *menu_options_debugger;
+		GtkWidget *menu_options_binds;
+		GtkWidget *menu_options_size;
+		GtkWidget *menu_options_size_menu;
+		GtkWidget *menu_options_size_item[20];
+		GtkWidget *menu_options_wave;
+		GtkWidget *menu_options_wave_menu;
+		GtkWidget *menu_options_wave_square;
+		GtkWidget *menu_options_wave_saw;
+		GtkWidget *menu_options_wave_triangle;
+		GtkWidget *menu_options_wave_sine;
+		GtkWidget *menu_options_filter;
+		GtkWidget *menu_options_filter_menu;
+		GtkWidget *menu_options_filter_none;
+		GtkWidget *menu_options_filter_aascale2x;
+		GtkWidget *menu_options_filter_aascale4x;
+		GtkWidget *menu_options_filter_aascale8x;
+		GtkWidget *menu_options_filter_scale2x;
+		GtkWidget *menu_options_filter_scale4x;
+		GtkWidget *menu_options_filter_scale8x;
+		GtkWidget *menu_options_filter_hq2x;
+		GtkWidget *menu_options_filter_omniscale;
+		GtkWidget *menu_options_filter_supereagle;
+		GtkWidget *menu_options_filter_2xsai;
+		GtkWidget *menu_options_filter_xbr;
+		GtkWidget *menu_options_filter_xbrz;
+		GtkWidget *menu_options_filter_gameboy;
+		GtkWidget *menu_help;
+		GtkWidget *menu_help_menu;
+		GtkWidget *menu_help_about;
 		GtkWidget *window;
 		GtkWidget *gl;
+
+	private:
 		uint8_t *texDatas;
 		uint8_t keys;
+		void build_menu_file();
+		void build_menu_edit();
+		void build_menu_options_size();
+		void build_menu_options_wave();
+		void build_menu_options_filter();
+		void build_menu_options();
+		void build_menu_help();
 
 	public:
 		MainDisplay();

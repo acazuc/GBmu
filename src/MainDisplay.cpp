@@ -308,6 +308,61 @@ static void cb_tool_size(GtkWidget *osef1, gpointer size)
 	gtk_window_resize(GTK_WINDOW(Main::getMainDisplay()->getWindow()), 160 * (unsigned long)size, 144 * (unsigned long)size);
 }
 
+static void cb_tool_wave(GtkWidget *widget, gpointer type)
+{
+	if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)))
+		return;
+	Main::getAudio()->getC12type() = (uint8_t)((uint64_t)type);
+	MainDisplay *mainDisplay = Main::getMainDisplay();
+	if ((uint64_t)type != AUDIO_C12_TYPE_SQUARE)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_wave_square), false);
+	if ((uint64_t)type != AUDIO_C12_TYPE_SAW)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_wave_saw), false);
+	if ((uint64_t)type != AUDIO_C12_TYPE_TRIANGLE)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_wave_triangle), false);
+	if ((uint64_t)type != AUDIO_C12_TYPE_SINE)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_wave_sine), false);
+}
+
+static void cb_tool_filter(GtkWidget *widget, gpointer type)
+{
+	if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)))
+		return;
+	uint64_t id = (uint64_t)type;
+	if (id >= FILTER_LAST)
+		id = FILTER_NONE;
+	currentprogram = &programs[id];
+	MainDisplay *mainDisplay = Main::getMainDisplay();
+	if ((uint64_t)type != FILTER_NONE)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_none), false);
+	if ((uint64_t)type != FILTER_AASCALE2X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale2x), false);
+	if ((uint64_t)type != FILTER_AASCALE4X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale4x), false);
+	if ((uint64_t)type != FILTER_AASCALE8X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale8x), false);
+	if ((uint64_t)type != FILTER_SCALE2X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_scale2x), false);
+	if ((uint64_t)type != FILTER_SCALE4X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_scale4x), false);
+	if ((uint64_t)type != FILTER_SCALE8X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_scale8x), false);
+	if ((uint64_t)type != FILTER_HQ2X)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_hq2x), false);
+	if ((uint64_t)type != FILTER_OMNISCALE)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_omniscale), false);
+	if ((uint64_t)type != FILTER_SUPEREAGLE)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_supereagle), false);
+	if ((uint64_t)type != FILTER_2XSAI)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_2xsai), false);
+	if ((uint64_t)type != FILTER_XBR)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_xbr), false);
+	if ((uint64_t)type != FILTER_XBRZ)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_xbrz), false);
+	if ((uint64_t)type != FILTER_GAMEBOY)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_gameboy), false);
+}
+
 static void cb_dialog_quit(GtkWidget *dialog, gpointer osef1)
 {
 	(void)osef1;
@@ -334,224 +389,211 @@ static void cb_help_about(GtkWidget *osef1, gpointer osef2)
 	gtk_widget_destroy(dialog);
 }
 
-static void cb_tool_wave(GtkWidget *osef1, gpointer type)
+void MainDisplay::build_menu_file()
 {
-	(void)osef1;
-	Main::getAudio()->getC12type() = (uint8_t)((uint64_t)type);
-}
-
-static void cb_tool_filter(GtkWidget *osef1, gpointer type)
-{
-	(void)osef1;
-	uint64_t id = (uint64_t)type;
-	if (id >= FILTER_LAST)
-		id = FILTER_NONE;
-	currentprogram = &programs[id];
-}
-
-static void build_menu_file(GtkWidget *menubar)
-{
-	GtkWidget *file = gtk_menu_item_new_with_label("File");
-	GtkWidget *file_menu = gtk_menu_new();
+	this->menu_file = gtk_menu_item_new_with_label("File");
+	this->menu_file_menu = gtk_menu_new();
 
 	//Open
-	GtkWidget *file_open = gtk_menu_item_new_with_label("Open");
-	g_signal_connect(G_OBJECT(file_open), "activate", G_CALLBACK(cb_file_open), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_open);
+	this->menu_file_open = gtk_menu_item_new_with_label("Open");
+	g_signal_connect(G_OBJECT(this->menu_file_open), "activate", G_CALLBACK(cb_file_open), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_file_menu), this->menu_file_open);
 
 	//Quit
-	GtkWidget *file_quit = gtk_menu_item_new_with_label("Quit");
-	g_signal_connect(G_OBJECT(file_quit), "activate", G_CALLBACK(cb_file_quit), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_quit);
+	this->menu_file_quit = gtk_menu_item_new_with_label("Quit");
+	g_signal_connect(G_OBJECT(this->menu_file_quit), "activate", G_CALLBACK(cb_file_quit), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_file_menu), this->menu_file_quit);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), file_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_file), this->menu_file_menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu), this->menu_file);
 }
 
-static void build_menu_edit(GtkWidget *menubar)
+void MainDisplay::build_menu_edit()
 {
-	GtkWidget *edit = gtk_menu_item_new_with_label("Edit");
-	GtkWidget *edit_menu = gtk_menu_new();
+	this->menu_edit = gtk_menu_item_new_with_label("Edit");
+	this->menu_edit_menu = gtk_menu_new();
 
 	//Play
-	GtkWidget *edit_play = gtk_menu_item_new_with_label("Play");
-	g_signal_connect(G_OBJECT(edit_play), "activate", G_CALLBACK(cb_edit_play), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_play);
+	this->menu_edit_play = gtk_menu_item_new_with_label("Play");
+	g_signal_connect(G_OBJECT(this->menu_edit_play), "activate", G_CALLBACK(cb_edit_play), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_edit_menu), this->menu_edit_play);
 
 	//Pause
-	GtkWidget *edit_pause = gtk_menu_item_new_with_label("Pause");
-	g_signal_connect(G_OBJECT(edit_pause), "activate", G_CALLBACK(cb_edit_pause), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_pause);
+	this->menu_edit_pause = gtk_menu_item_new_with_label("Pause");
+	g_signal_connect(G_OBJECT(this->menu_edit_pause), "activate", G_CALLBACK(cb_edit_pause), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_edit_menu), this->menu_edit_pause);
 
 	//Restart
-	GtkWidget *edit_restart = gtk_menu_item_new_with_label("Restart");
-	g_signal_connect(G_OBJECT(edit_restart), "activate", G_CALLBACK(cb_edit_restart), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(edit_menu), edit_restart);
+	this->menu_edit_restart = gtk_menu_item_new_with_label("Restart");
+	g_signal_connect(G_OBJECT(this->menu_edit_restart), "activate", G_CALLBACK(cb_edit_restart), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_edit_menu), this->menu_edit_restart);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(edit), edit_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), edit);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_edit), this->menu_edit_menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu), this->menu_edit);
 }
 
-static void build_menu_tools_size(GtkWidget *tool_size)
+void MainDisplay::build_menu_options_size()
 {
-	GtkWidget *tool_size_menu = gtk_menu_new();
-	for (uint8_t i = 1; i < 20; ++i)
+	this->menu_options_size_menu = gtk_menu_new();
+	for (uint8_t i = 1; i <= 20; ++i)
 	{
 		std::string a = std::to_string(160 * i) + "x" + std::to_string(144 * i);
-		GtkWidget *tool_size_x = gtk_menu_item_new_with_label(a.c_str());
-		g_signal_connect(G_OBJECT(tool_size_x), "activate", G_CALLBACK(cb_tool_size), (void*)((unsigned long)i));
-		gtk_menu_shell_append(GTK_MENU_SHELL(tool_size_menu), tool_size_x);
+		this->menu_options_size_item[i - 1] = gtk_menu_item_new_with_label(a.c_str());
+		g_signal_connect(G_OBJECT(this->menu_options_size_item[i - 1]), "activate", G_CALLBACK(cb_tool_size), (void*)((unsigned long)i));
+		gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_size_menu), this->menu_options_size_item[i - 1]);
 	}
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_size), tool_size_menu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options_size), this->menu_options_size_menu);
 }
 
-static void build_menu_tools_audio_wave(GtkWidget *tool_wave)
+void MainDisplay::build_menu_options_wave()
 {
-	GtkWidget *tool_wave_menu = gtk_menu_new();
+	this->menu_options_wave_menu = gtk_menu_new();
 
 	//Square
-	GtkWidget *tool_wave_square = gtk_menu_item_new_with_label("Square");
-	g_signal_connect(G_OBJECT(tool_wave_square), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SQUARE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_square);
+	this->menu_options_wave_square = gtk_check_menu_item_new_with_label("Square");
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(this->menu_options_wave_square), true);
+	g_signal_connect(G_OBJECT(this->menu_options_wave_square), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SQUARE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_square);
 
 	//Saw
-	GtkWidget *tool_wave_saw = gtk_menu_item_new_with_label("Saw");
-	g_signal_connect(G_OBJECT(tool_wave_saw), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_saw);
+	this->menu_options_wave_saw = gtk_check_menu_item_new_with_label("Saw");
+	g_signal_connect(G_OBJECT(this->menu_options_wave_saw), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_saw);
 
 	//Triangle
-	GtkWidget *tool_wave_triangle = gtk_menu_item_new_with_label("Triangle");
-	g_signal_connect(G_OBJECT(tool_wave_triangle), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_TRIANGLE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_triangle);
+	this->menu_options_wave_triangle = gtk_check_menu_item_new_with_label("Triangle");
+	g_signal_connect(G_OBJECT(this->menu_options_wave_triangle), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_TRIANGLE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_triangle);
 
-	//Sin
-	GtkWidget *tool_wave_sin = gtk_menu_item_new_with_label("Sin");
-	g_signal_connect(G_OBJECT(tool_wave_sin), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SIN));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_wave_menu), tool_wave_sin);
+	//Sine
+	this->menu_options_wave_sine = gtk_check_menu_item_new_with_label("Sine");
+	g_signal_connect(G_OBJECT(this->menu_options_wave_sine), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SINE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_sine);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_wave), tool_wave_menu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options_wave), this->menu_options_wave_menu);
 }
 
-static void build_menu_tools_filter(GtkWidget *tool_filter)
+void MainDisplay::build_menu_options_filter()
 {
-	GtkWidget *tool_filter_menu = gtk_menu_new();
+	this->menu_options_filter_menu = gtk_menu_new();
 
 	//None
-	GtkWidget *tool_filter_none = gtk_menu_item_new_with_label("None");
-	g_signal_connect(G_OBJECT(tool_filter_none), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_NONE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_none);
+	this->menu_options_filter_none = gtk_check_menu_item_new_with_label("None");
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(this->menu_options_filter_none), true);
+	g_signal_connect(G_OBJECT(this->menu_options_filter_none), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_NONE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_none);
 
-	//FILTERScale2x
-	GtkWidget *tool_filter_aascale2x = gtk_menu_item_new_with_label("AAScale2x");
-	g_signal_connect(G_OBJECT(tool_filter_aascale2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE2X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_aascale2x);
+	//AAScale2x
+	this->menu_options_filter_aascale2x = gtk_check_menu_item_new_with_label("AAScale2x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_aascale2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE2X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_aascale2x);
 
-	//FILTERScale4x
-	GtkWidget *tool_filter_aascale4x = gtk_menu_item_new_with_label("AAScale4x");
-	g_signal_connect(G_OBJECT(tool_filter_aascale4x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE4X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_aascale4x);
+	//AAScale4x
+	this->menu_options_filter_aascale4x = gtk_check_menu_item_new_with_label("AAScale4x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_aascale4x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE4X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_aascale4x);
 
-	//FILTERScale8x
-	GtkWidget *tool_filter_aascale8x = gtk_menu_item_new_with_label("AAScale8x");
-	g_signal_connect(G_OBJECT(tool_filter_aascale8x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE8X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_aascale8x);
+	//AAScale8x
+	this->menu_options_filter_aascale8x = gtk_check_menu_item_new_with_label("AAScale8x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_aascale8x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_AASCALE8X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_aascale8x);
 
 	//Scale2x
-	GtkWidget *tool_filter_scale2x = gtk_menu_item_new_with_label("Scale2x");
-	g_signal_connect(G_OBJECT(tool_filter_scale2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE2X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_scale2x);
+	this->menu_options_filter_scale2x = gtk_check_menu_item_new_with_label("Scale2x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_scale2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE2X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_scale2x);
 
 	//Scale4x
-	GtkWidget *tool_filter_scale4x = gtk_menu_item_new_with_label("Scale4x");
-	g_signal_connect(G_OBJECT(tool_filter_scale4x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE4X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_scale4x);
+	this->menu_options_filter_scale4x = gtk_check_menu_item_new_with_label("Scale4x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_scale4x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE4X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_scale4x);
 
 	//Scale8x
-	GtkWidget *tool_filter_scale8x = gtk_menu_item_new_with_label("Scale8x");
-	g_signal_connect(G_OBJECT(tool_filter_scale8x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE8X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_scale8x);
+	this->menu_options_filter_scale8x = gtk_check_menu_item_new_with_label("Scale8x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_scale8x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SCALE8X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_scale8x);
 
 	//HQ2x
-	GtkWidget *tool_filter_hq2x = gtk_menu_item_new_with_label("HQ2x");
-	g_signal_connect(G_OBJECT(tool_filter_hq2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_HQ2X));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_hq2x);
+	this->menu_options_filter_hq2x = gtk_check_menu_item_new_with_label("HQ2x");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_hq2x), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_HQ2X));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_hq2x);
 
 	//OmniScale
-	GtkWidget *tool_filter_omniscale = gtk_menu_item_new_with_label("OmniScale");
-	g_signal_connect(G_OBJECT(tool_filter_omniscale), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_OMNISCALE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_omniscale);
+	this->menu_options_filter_omniscale = gtk_check_menu_item_new_with_label("OmniScale");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_omniscale), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_OMNISCALE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_omniscale);
 
 	//SuperEagle
-	GtkWidget *tool_filter_supereagle = gtk_menu_item_new_with_label("SuperEagle");
-	g_signal_connect(G_OBJECT(tool_filter_supereagle), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SUPEREAGLE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_supereagle);
+	this->menu_options_filter_supereagle = gtk_check_menu_item_new_with_label("SuperEagle");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_supereagle), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_SUPEREAGLE));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_supereagle);
 
 	//2xsai
-	GtkWidget *tool_filter_2xsai = gtk_menu_item_new_with_label("2xai");
-	g_signal_connect(G_OBJECT(tool_filter_2xsai), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_2XSAI));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_2xsai);
+	this->menu_options_filter_2xsai = gtk_check_menu_item_new_with_label("2xai");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_2xsai), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_2XSAI));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_2xsai);
 
 	//xbr
-	GtkWidget *tool_filter_xbr = gtk_menu_item_new_with_label("xbr");
-	g_signal_connect(G_OBJECT(tool_filter_xbr), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_XBR));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_xbr);
+	this->menu_options_filter_xbr = gtk_check_menu_item_new_with_label("xbr");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_xbr), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_XBR));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_xbr);
 
 	//xbrz
-	GtkWidget *tool_filter_xbrz = gtk_menu_item_new_with_label("xbrz");
-	g_signal_connect(G_OBJECT(tool_filter_xbrz), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_XBRZ));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_xbrz);
+	this->menu_options_filter_xbrz = gtk_check_menu_item_new_with_label("xbrz");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_xbrz), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_XBRZ));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_xbrz);
 
 	//Gameboy
-	GtkWidget *tool_filter_gameboy = gtk_menu_item_new_with_label("Gameboy");
-	g_signal_connect(G_OBJECT(tool_filter_gameboy), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_GAMEBOY));
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_filter_menu), tool_filter_gameboy);
+	this->menu_options_filter_gameboy = gtk_check_menu_item_new_with_label("Gameboy");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_gameboy), "activate", G_CALLBACK(cb_tool_filter), (void*)((unsigned long)FILTER_GAMEBOY));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_gameboy);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool_filter), tool_filter_menu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options_filter), this->menu_options_filter_menu);
 }
 
-static void build_menu_tools(GtkWidget *menubar)
+void MainDisplay::build_menu_options()
 {
-	GtkWidget *tool = gtk_menu_item_new_with_label("Tools");
-	GtkWidget *tool_menu = gtk_menu_new();
+	this->menu_options = gtk_menu_item_new_with_label("Options");
+	this->menu_options_menu = gtk_menu_new();
 
 	//Debugger
-	GtkWidget *tool_debugger = gtk_menu_item_new_with_label("Debugger");
-	g_signal_connect(G_OBJECT(tool_debugger), "activate", G_CALLBACK(cb_tool_debug), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_debugger);
+	this->menu_options_debugger = gtk_menu_item_new_with_label("Debugger");
+	g_signal_connect(G_OBJECT(this->menu_options_debugger), "activate", G_CALLBACK(cb_tool_debug), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_debugger);
 
 	//Binds
-	GtkWidget *tool_binds = gtk_menu_item_new_with_label("Binds");
-	g_signal_connect(G_OBJECT(tool_binds), "activate", G_CALLBACK(cb_tool_binds), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_binds);
+	this->menu_options_binds = gtk_menu_item_new_with_label("Binds");
+	g_signal_connect(G_OBJECT(this->menu_options_binds), "activate", G_CALLBACK(cb_tool_binds), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_binds);
 
 	//Size
-	GtkWidget *tool_size = gtk_menu_item_new_with_label("Size");
-	build_menu_tools_size(tool_size);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_size);
+	this->menu_options_size = gtk_menu_item_new_with_label("Size");
+	build_menu_options_size();
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_size);
 
 	//Audio wave
-	GtkWidget *tool_audio_wave = gtk_menu_item_new_with_label("Audio wave");
-	build_menu_tools_audio_wave(tool_audio_wave);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_audio_wave);
+	this->menu_options_wave = gtk_menu_item_new_with_label("Audio wave");
+	build_menu_options_wave();
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_wave);
 
 	//Filter
-	GtkWidget *tool_filter = gtk_menu_item_new_with_label("Filter");
-	build_menu_tools_filter(tool_filter);
-	gtk_menu_shell_append(GTK_MENU_SHELL(tool_menu), tool_filter);
+	this->menu_options_filter = gtk_menu_item_new_with_label("Filter");
+	build_menu_options_filter();
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_filter);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(tool), tool_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), tool);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options), this->menu_options_menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu), this->menu_options);
 }
 
-static void build_menu_help(GtkWidget *menubar)
+void MainDisplay::build_menu_help()
 {
-	GtkWidget *help = gtk_menu_item_new_with_label("Help");
-	GtkWidget *help_menu = gtk_menu_new();
-	GtkWidget *help_about = gtk_menu_item_new_with_label("About");
-	g_signal_connect(G_OBJECT(help_about), "activate", G_CALLBACK(cb_help_about), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(help_menu), help_about);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), help_menu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
+	this->menu_help = gtk_menu_item_new_with_label("Help");
+	this->menu_help_menu = gtk_menu_new();
+	this->menu_help_about = gtk_menu_item_new_with_label("About");
+	g_signal_connect(G_OBJECT(this->menu_help_about), "activate", G_CALLBACK(cb_help_about), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_help_menu), this->menu_help_about);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_help), this->menu_help_menu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu), this->menu_help);
 }
 
 static int get_key_bit(int key)
@@ -612,15 +654,15 @@ MainDisplay::MainDisplay()
 	g_signal_connect(G_OBJECT(this->window), "key-press-event", G_CALLBACK(cb_key_press_event), NULL);
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	g_object_set(box, "expand", TRUE, NULL);
-	GtkWidget *menubar = gtk_menu_bar_new();
+	this->menu = gtk_menu_bar_new();
 
-	build_menu_file(menubar);
-	build_menu_edit(menubar);
-	build_menu_tools(menubar);
-	build_menu_help(menubar);
+	build_menu_file();
+	build_menu_edit();
+	build_menu_options();
+	build_menu_help();
 
-	gtk_widget_show_all(menubar);
-	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
+	gtk_widget_show_all(this->menu);
+	gtk_box_pack_start(GTK_BOX(box), this->menu, FALSE, FALSE, 0);
 	this->gl = gtk_gl_area_new();
 	gtk_widget_set_hexpand(this->gl, true);
 	g_signal_connect(this->gl, "realize", G_CALLBACK(gl_realize), NULL);

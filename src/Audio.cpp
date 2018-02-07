@@ -125,7 +125,7 @@ static int16_t getc1val()
 		return (0);
 	uint32_t curr = frame % inter;
 	float envfac = c1env / 15.;
-	if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SIN)
+	if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SINE)
 	{
 		float a = curr / (float)inter - dutyper;
 		if (a > 0)
@@ -185,7 +185,7 @@ static int16_t getc2val()
 		return (0);
 	uint32_t curr = frame % inter;
 	float envfac = c2env / 15.;
-	if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SIN)
+	if (Main::getAudio()->getC12type() == AUDIO_C12_TYPE_SINE)
 	{
 		float a = curr / (float)inter - dutyper;
 		if (a > 0)

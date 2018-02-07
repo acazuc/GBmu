@@ -5,7 +5,7 @@
 # include <cstdint>
 
 # define AUDIO_C12_TYPE_SQUARE 1
-# define AUDIO_C12_TYPE_SIN 2
+# define AUDIO_C12_TYPE_SINE 2
 # define AUDIO_C12_TYPE_TRIANGLE 3
 # define AUDIO_C12_TYPE_SAW 4
 
