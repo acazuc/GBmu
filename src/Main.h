@@ -17,6 +17,7 @@ class Main
 		static BindDisplay *bindDisplay;
 		static Audio *audio;
 		static LCD *lcd;
+		static uint64_t speedFactor;
 		static bool paused;
 
 	public:
@@ -30,6 +31,7 @@ class Main
 		static LCD *getLcd() {return (lcd);};
 		static void setPaused(bool paused) {Main::paused = paused;};
 		static bool isPaused() {return (paused);};
+		static void setSpeedFactor(uint64_t speedFactor) {Main::speedFactor = speedFactor;};
 
 };
 

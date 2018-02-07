@@ -333,34 +333,61 @@ static void cb_tool_filter(GtkWidget *widget, gpointer type)
 		id = FILTER_NONE;
 	currentprogram = &programs[id];
 	MainDisplay *mainDisplay = Main::getMainDisplay();
-	if ((uint64_t)type != FILTER_NONE)
+	if (id != FILTER_NONE)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_none), false);
-	if ((uint64_t)type != FILTER_AASCALE2X)
+	if (id != FILTER_AASCALE2X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale2x), false);
-	if ((uint64_t)type != FILTER_AASCALE4X)
+	if (id != FILTER_AASCALE4X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale4x), false);
-	if ((uint64_t)type != FILTER_AASCALE8X)
+	if (id != FILTER_AASCALE8X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale8x), false);
-	if ((uint64_t)type != FILTER_SCALE2X)
+	if (id != FILTER_SCALE2X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_scale2x), false);
-	if ((uint64_t)type != FILTER_SCALE4X)
+	if (id != FILTER_SCALE4X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_scale4x), false);
-	if ((uint64_t)type != FILTER_SCALE8X)
+	if (id != FILTER_SCALE8X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_scale8x), false);
-	if ((uint64_t)type != FILTER_HQ2X)
+	if (id != FILTER_HQ2X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_hq2x), false);
-	if ((uint64_t)type != FILTER_OMNISCALE)
+	if (id != FILTER_OMNISCALE)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_omniscale), false);
-	if ((uint64_t)type != FILTER_SUPEREAGLE)
+	if (id != FILTER_SUPEREAGLE)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_supereagle), false);
-	if ((uint64_t)type != FILTER_2XSAI)
+	if (id != FILTER_2XSAI)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_2xsai), false);
-	if ((uint64_t)type != FILTER_XBR)
+	if (id != FILTER_XBR)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_xbr), false);
-	if ((uint64_t)type != FILTER_XBRZ)
+	if (id != FILTER_XBRZ)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_xbrz), false);
-	if ((uint64_t)type != FILTER_GAMEBOY)
+	if (id != FILTER_GAMEBOY)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_gameboy), false);
+}
+
+static void cb_tool_speed(GtkWidget *widget, gpointer data)
+{
+	if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)))
+		return;
+	uint64_t speed = (uint64_t)data;
+	Main::setSpeedFactor(speed);
+	MainDisplay *mainDisplay = Main::getMainDisplay();
+	if (speed != 1)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_1x), false);
+	if (speed != 2)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_2x), false);
+	if (speed != 4)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_4x), false);
+	if (speed != 8)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_8x), false);
+	if (speed != 16)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_16x), false);
+	if (speed != 32)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_32x), false);
+	if (speed != 64)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_64x), false);
+	if (speed != 128)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_128x), false);
+	if (speed != 0)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_speed_unlimited), false);
 }
 
 static void cb_dialog_quit(GtkWidget *dialog, gpointer osef1)
@@ -452,22 +479,22 @@ void MainDisplay::build_menu_options_wave()
 	//Square
 	this->menu_options_wave_square = gtk_check_menu_item_new_with_label("Square");
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(this->menu_options_wave_square), true);
-	g_signal_connect(G_OBJECT(this->menu_options_wave_square), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SQUARE));
+	g_signal_connect(G_OBJECT(this->menu_options_wave_square), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SQUARE));
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_square);
 
 	//Saw
 	this->menu_options_wave_saw = gtk_check_menu_item_new_with_label("Saw");
-	g_signal_connect(G_OBJECT(this->menu_options_wave_saw), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
+	g_signal_connect(G_OBJECT(this->menu_options_wave_saw), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SAW));
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_saw);
 
 	//Triangle
 	this->menu_options_wave_triangle = gtk_check_menu_item_new_with_label("Triangle");
-	g_signal_connect(G_OBJECT(this->menu_options_wave_triangle), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_TRIANGLE));
+	g_signal_connect(G_OBJECT(this->menu_options_wave_triangle), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_TRIANGLE));
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_triangle);
 
 	//Sine
 	this->menu_options_wave_sine = gtk_check_menu_item_new_with_label("Sine");
-	g_signal_connect(G_OBJECT(this->menu_options_wave_sine), "toggled", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SINE));
+	g_signal_connect(G_OBJECT(this->menu_options_wave_sine), "activate", G_CALLBACK(cb_tool_wave), (void*)((unsigned long)AUDIO_C12_TYPE_SINE));
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_wave_menu), this->menu_options_wave_sine);
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options_wave), this->menu_options_wave_menu);
@@ -551,6 +578,59 @@ void MainDisplay::build_menu_options_filter()
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options_filter), this->menu_options_filter_menu);
 }
 
+void MainDisplay::build_menu_options_speed()
+{
+	this->menu_options_speed_menu = gtk_menu_new();
+
+	//1x
+	this->menu_options_speed_1x = gtk_check_menu_item_new_with_label("1x");
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(this->menu_options_speed_1x), true);
+	g_signal_connect(G_OBJECT(this->menu_options_speed_1x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)1));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_1x);
+
+	//2x
+	this->menu_options_speed_2x = gtk_check_menu_item_new_with_label("2x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_2x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)2));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_2x);
+
+	//4x
+	this->menu_options_speed_4x = gtk_check_menu_item_new_with_label("4x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_4x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)4));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_4x);
+
+	//8x
+	this->menu_options_speed_8x = gtk_check_menu_item_new_with_label("8x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_8x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)8));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_8x);
+
+	//16x
+	this->menu_options_speed_16x = gtk_check_menu_item_new_with_label("16x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_16x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)16));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_16x);
+
+	//32x
+	this->menu_options_speed_32x = gtk_check_menu_item_new_with_label("32x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_32x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)32));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_32x);
+
+	//64x
+	this->menu_options_speed_64x = gtk_check_menu_item_new_with_label("64x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_64x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)64));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_64x);
+
+	//128x
+	this->menu_options_speed_128x = gtk_check_menu_item_new_with_label("128x");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_128x), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)128));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_128x);
+
+	//Unlimited
+	this->menu_options_speed_unlimited = gtk_check_menu_item_new_with_label("Unlimited");
+	g_signal_connect(G_OBJECT(this->menu_options_speed_unlimited), "activate", G_CALLBACK(cb_tool_speed), (void*)((unsigned long)0));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_speed_menu), this->menu_options_speed_unlimited);
+
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options_speed), this->menu_options_speed_menu);
+}
+
 void MainDisplay::build_menu_options()
 {
 	this->menu_options = gtk_menu_item_new_with_label("Options");
@@ -580,6 +660,11 @@ void MainDisplay::build_menu_options()
 	this->menu_options_filter = gtk_menu_item_new_with_label("Filter");
 	build_menu_options_filter();
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_filter);
+
+	//Speed
+	this->menu_options_speed = gtk_menu_item_new_with_label("Speed");
+	build_menu_options_speed();
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_speed);
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(this->menu_options), this->menu_options_menu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu), this->menu_options);
