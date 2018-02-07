@@ -128,7 +128,7 @@ void timer( void )
 	static word divider = 256;
 	static dword timer = 0;
 
-	const dword clockselect[4] = { 4096, 262144, 65536, 16384 };
+	const dword clockselect[4] = { 1024, 16, 64, 256 };
 
 	if ( !--divider )
 	{
@@ -138,7 +138,7 @@ void timer( void )
 
 	if ( core::mem[TAC] & 0b00000100 )
 	{
-		if ( ++timer > clockselect[TAC & 3] )
+		if ( ++timer > clockselect[core::mem[TAC] & 3] )
 		{
 			timer = 0;
 			if ( core::mem[TIMA] == 0xff )
