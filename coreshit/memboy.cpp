@@ -170,8 +170,8 @@ memboy::memboy( void )
 	blockid = 0;
 	rblockid = 0;
 
-	joyparrows = 0;
-	joypbuttons = 0;
+	joyparrows = 0x0F;
+	joypbuttons = 0x0F;
 
 	map[RBK] = 0;
 }

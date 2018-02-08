@@ -8,7 +8,7 @@ byte core::sbcan( void )
 	a = regs.b.a;
 	regs.b.a -= ( byte ) mem[regs.w.pc + 1];
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );

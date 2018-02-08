@@ -8,7 +8,7 @@ byte core::sbcaa( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.a;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
@@ -25,7 +25,7 @@ byte core::sbcab( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.b;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
@@ -42,7 +42,7 @@ byte core::sbcac( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.c;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
@@ -59,7 +59,7 @@ byte core::sbcad( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.d;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
@@ -76,7 +76,7 @@ byte core::sbcae( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.e;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
@@ -93,7 +93,7 @@ byte core::sbcah( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.h;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
@@ -110,7 +110,7 @@ byte core::sbcal( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.l;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );

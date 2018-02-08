@@ -16,9 +16,18 @@ IE equ $FFFF
 
 STAT equ $FF41
 
-section "Vblank IRQ", ROM0[$40]
+FTS equ 4
 
-	call bndtest
+BLINK equ $FF81
+FRMCNT equ $FF82
+
+CURSORY equ $FE00
+CURSORX equ $FE01
+CHARNUM equ $FE02
+
+section "VBlank IRQ", ROM0[$40]
+
+	call blnkdrv
 	reti
 
 section "LCD Stat IRQ", ROM0[$48]
@@ -37,7 +46,7 @@ section "Joyint IRQ", ROM0[$60]
 
 	reti
 
-section "header", ROM0[$100]
+section "Header", ROM0[$100]
 
 	; Entry point
 	nop
@@ -49,7 +58,7 @@ section "header", ROM0[$100]
 	db $BB, $BB, $67, $63, $6E, $0E, $EC, $CC, $DD, $DC, $99, $9F, $BB, $B9, $33, $3E
 
 	; Name ( YAY )
-	db $59, $41, $59, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	db "STUPIDDRAW", 0, 0, 0, 0, 0
 
 	; CGB Flag
 	db 0
@@ -84,15 +93,7 @@ section "header", ROM0[$100]
 	; Checksum
         dw 0
 
-section "", ROM0[$150]
-
-	; Zero registers zone
-	ld c, $80
-	xor a
-ztop:	ld [c], a
-	dec c
-	jr nz, ztop
-	ld [c], a
+section "Main", ROM0[$150]
 
 	; Set stack and some hardware registers
 start:	ld sp, $fffe
@@ -101,7 +102,7 @@ start:	ld sp, $fffe
 	ldh [OBP0], a
 	ld a, %01010011
 	ldh [OBP1], a
-	ld a, %10010001
+	ld a, %10000000
 	ldh [LCDC], a
 	xor a
 	ldh [SCX], a
@@ -152,13 +153,12 @@ mooga:	pop de
 
 	; Set chars on screen
 next:	ld hl, CSTART
-	ld b, 0
+	ld b, $20
 ltop2:	ld a, [STAT]
 	bit 1, a
 	jr nz, ltop2
 	ld a, b
 	ldi [hl], a
-	inc b
 	ld a, h
 	cp $9C
 	jr nz, ltop2
@@ -179,13 +179,15 @@ woam2:	bit 1, [hl]
 	ld a, %00010000
 	ld [$fe03], a
 
-	; Turn on sprites
+	; Turn on sprites and background
 	ld a, %10010011
 	ld [LCDC], a
 
-	; Mooga
+	; Set blinker counter
 	xor a
-	ldh [$81], a
+	ldh [BLINK], a
+	ldh [FRMCNT], a
+	ld hl, $9909
 
 	; Enable VBlank IRQ
 	ld a, %00000001
@@ -195,71 +197,169 @@ woam2:	bit 1, [hl]
 	; Main loop
 main:	halt
 
-	ld a, %00010000
-	ldh [JOYP], a
-	ldh a, [JOYP]
-	bit 0, a
-	jr nz, casenz
+	; Delay between cursor moves
+	ldh a, [FRMCNT]
+	cp 0
+	jr z, follow
+	dec a
+	ldh [FRMCNT], a
+	jr main
 
-	; Swap 
-	;ldh a, [$81]
-	;add a, 16
-	;ldh [$81], a
-	;cp 128
-	;jr nc, casenz
+follow:	res 0, c
+
+	; Test for character change
+	call buttest
+
+	; Test for cursor move
+	call bndtest
+
+	bit 0, c
+	jr z, clrfc
+
+	ld a, FTS
+	ldh [FRMCNT], a
+	jr main
+
+clrfc:	xor a
+	ldh [FRMCNT], a
+	jr main
+
+; ------ Blinker Driver ------
+ 
+blnkdrv:ldh a, [BLINK]
+	add a, 16
+	ldh [BLINK], a
+	cp 128
+	jr nc, casenz
 
 	ld a, %00010000
 	ld [$fe03], a
-	jr main
+	ret
 	
 casenz:	ld a, %00000000
 	ld [$fe03], a
-	jr main
+	ret
 
-; ------ Test binds routine ------
+; ------ Test buttons routine ------
+
+	; Load JOYP state
+buttest:ld a, %00010000
+	ldh [JOYP], a
+	ldh a, [JOYP]
+	ld b, a
+
+	; Test A
+	bit 0, b
+	jr z, ba
+
+	; Test start
+ustrt:	bit 2, b
+	jr z, strt
+
+	; Test select
+uselect:bit 3, b
+	jr z, select
+
+	; Leave
+	ret
+
+	; Put char
+ba:	ld a, [CHARNUM]
+	ld [hl], a
+	set 0, c
+	jr ustrt
+
+	; Go next char
+strt:	ld a, [CHARNUM]
+	inc a
+	ld [CHARNUM], a
+	set 0, c
+	jr uselect
+
+	; Go prev char
+select:	ld a, [CHARNUM]
+	dec a
+	ld [CHARNUM], a
+	set 0, c
+
+	; Leave
+	ret
+
+; ------ Test arrows routine ------
 
 	; Load JOYP state
 bndtest:ld a, %00100000
 	ldh [JOYP], a
 	ldh a, [JOYP]
+	ld b, a
 
 	; Test right
-	bit 0, a
+	bit 0, b
 	jr z, right
 
 	; Test left
-ltest	bit 1, a
+ltest	bit 1, b
 	jr z, left
 
 	; Test up
-utest:	bit 2, a
+utest:	bit 2, b
 	jr z, up
 
 	; Test down
-dtest:	bit 3, a
+dtest:	bit 3, b
 	jr z, down
 
 	; Leave
 	ret
 
 	; Sroll CAM Right
-right:	ld hl, SCX
-	inc [HL]
+right:	ld a, [CURSORX]
+	cp 160
+	jr z, ltest
+	add a, 8
+	ld [CURSORX], a
+	inc hl
+	set 0, c
 	jr ltest
 
 	; Scroll CAM Left
-left:	ld hl, SCX
-	dec [HL]
+left:	ld a, [CURSORX]
+	cp 8
+	jr z, utest
+	sub 8
+	ld [CURSORX], a
+	dec hl
+	set 0, c
 	jr utest
 
 	; Scroll CAM Up
-up:	ld hl, SCY
-	dec [HL]
+up:	ld a, [CURSORY]
+	cp 16
+	jr z, dtest
+	sub 8
+	ld [CURSORY], a
+
+	ld a, l
+	sub 32
+	ld l, a
+	ld a, h
+	sbc 0
+	ld h, a
+	
+	set 0, c
 	jr dtest
 
 	; Scroll CAM Down
-down:	ld hl, SCY
-	inc [HL]
+down:	ld a, [CURSORY]
+	cp 152
+	ret z
+	add a, 8
+	ld [CURSORY], a
+
+	ld de, 32
+	add hl, de
+
+	set 0, c
 
 	; Leave
 	ret
@@ -302,7 +402,7 @@ memcpy:	ld a, [de]
 
 	; Decrement counter and loop if zero not reached
 	dec b
-	jr nz, memcopy
+	jr nz, memcpy
 
 	; Leave
 	ret

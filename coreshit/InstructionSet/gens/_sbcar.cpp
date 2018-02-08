@@ -11,7 +11,7 @@ byte core::subaX( void )
 	a = regs.b.a;
 	regs.b.a -= regs.b.X;
 	if ( regs.b.f & CYFLAG )
-		regs.b.f--;
+		regs.b.a--;
 
 	regs.b.f = NFLAG;
 	CARRYREVUPDATE( a, regs.b.a );
