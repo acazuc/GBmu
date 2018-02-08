@@ -196,7 +196,7 @@ byte memboy::joypget( byte &addr )
 	switch ( addr & 0b00110000 )
 	{
 		case 0b00000000:
-			return joypbuttons | joyparrows | addr;
+			return ( joypbuttons & joyparrows ) | addr;
 		case 0b00010000:
 			return joypbuttons | addr;
 		case 0b00100000:

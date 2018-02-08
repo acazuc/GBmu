@@ -103,7 +103,7 @@ start:	ld sp, $fffe
 	ldh [OBP1], a
 	ld a, %10010001
 	ldh [LCDC], a
-	ld a, $20
+	ld a, %00100000
 	ldh [JOYP], a
 	xor a
 	ldh [SCX], a
