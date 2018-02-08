@@ -52,6 +52,7 @@ void DebugDisplay::show()
 	}
 	this->displayed = true;
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(this->window), "GBmu debugger");
 	gtk_window_resize(GTK_WINDOW(this->window), 640, 480);
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
 	GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);

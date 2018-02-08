@@ -240,11 +240,11 @@ void LCD::renderOBJ(uint8_t y)
 		uint8_t attr = core::mem[addr + 3];
 		for (uint8_t x = 0; x < 8; ++x)
 		{
-			if (cx + x < 8 || cx + x - 8 >= 160)
+			if (cx + x < 8 || cx + x >= 168)
 				return;
-			if (true/*DMG*/ && cx > lowestx[cx + x])
+			if (true/*DMG*/ && cx > lowestx[cx + x - 8])
 				continue;
-			lowestx[cx + x] = cx;
+			lowestx[cx + x - 8] = cx;
 			if (true/*DMG*/)
 				renderOBJCharDMG(cx + x - 8, y, x, y - cy + 16, charcode, attr);
 			else /*CGB*/

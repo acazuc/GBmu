@@ -130,6 +130,7 @@ void BindDisplay::show()
 	}
 	this->displayed = true;
 	this->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(this->window), "GBmu binds");
 	g_signal_connect(G_OBJECT(this->window), "key-press-event", G_CALLBACK(cb_key_press_event), NULL);
 	gtk_window_set_resizable(GTK_WINDOW(this->window), false);
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
