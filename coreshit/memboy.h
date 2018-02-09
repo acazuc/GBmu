@@ -101,6 +101,9 @@ class memboy
 		byte joyparrows;
 		byte joypbuttons;
 
+		// Locks
+		bool dmalock;
+
 		class memref
 		{
 			friend class memboy;
@@ -170,10 +173,13 @@ class memboy
 
 		void setarrowsstate( byte b );
 		void setbuttonsstate( byte b );
+		void dmaswitchon( void );
+		void dmaswitchoff( void );
 
 		// Getters
 		byte getarrowsstate( void );
 		byte getbuttonsstate( void );
+		bool isdmalocked( void );
 
 		// Destructor
 		~memboy( void );

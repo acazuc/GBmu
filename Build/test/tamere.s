@@ -9,12 +9,10 @@ LCDC equ $FF40
 BGP equ $FF47
 OBP0 equ $FF48
 OBP1 equ $FF49
-
 JOYP equ $FF00
-
 IE equ $FFFF
-
 STAT equ $FF41
+DMA equ $FF46
 
 section "Vblank IRQ", ROM0[$40]
 
@@ -179,6 +177,15 @@ woam2:	bit 1, [hl]
 	ld a, %00010000
 	ld [$fe03], a
 
+	; Set a sprite copy in WRAM
+	ld a, 80
+	ld [$c000], a
+	ld [$c001], a
+	ld a, 2
+	ld [$c002], a
+	ld a, %00010000
+	ld [$c003], a
+
 	; Turn on sprites
 	ld a, %10010011
 	ld [LCDC], a
@@ -187,6 +194,12 @@ woam2:	bit 1, [hl]
 	xor a
 	ldh [$81], a
 
+	; Copy the DMA routine in HRAM
+	ld de, dma
+	ld hl, $ff90
+	ld b, 12
+	call memcpy
+
 	; Enable VBlank IRQ
 	ld a, %00000001
 	ldh [IE], a
@@ -194,6 +207,8 @@ woam2:	bit 1, [hl]
 
 	; Main loop
 main:	halt
+
+	;call $ff90
 
 	ld a, %00010000
 	ldh [JOYP], a
@@ -215,6 +230,15 @@ main:	halt
 casenz:	ld a, %00000000
 	ld [$fe03], a
 	jr main
+
+; ------ DMA control routine ( use a copy in HRAM only ) ------
+
+dma:	ld a, $c0
+	ldh [DMA], a
+	ld a, $28
+dmawait:dec a
+	jr nz, dmawait
+	ret
 
 ; ------ Test binds routine ------
 
@@ -302,7 +326,7 @@ memcpy:	ld a, [de]
 
 	; Decrement counter and loop if zero not reached
 	dec b
-	jr nz, memcopy
+	jr nz, memcpy
 
 	; Leave
 	ret

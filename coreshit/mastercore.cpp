@@ -152,6 +152,37 @@ void timer( void )
 	}
 }
 
+void dmaoamtransfert( void )
+{
+	static word counter = 0;
+	static xword addr;
+
+	if ( counter )
+	{
+		if ( !--counter )
+		{
+			core::mem[DMA] = 0;
+			core::mem.dmaswitchoff();
+		}
+
+		core::mem[0xfe00 | addr.b.l] = core::mem[addr.w];
+		//cout << WHITE << '[' << PEACHY << hex << setw( 4 ) << addr.w << WHITE << "] >> [";
+		//cout << CYAN << setw( 4 ) << ( 0xfe00 | addr.b.l ) << WHITE << "] : ";
+		//cout << RED << setw( 2 ) << ( int ) core::mem[addr.w] << WHITE << endl;
+		addr.b.l++;
+
+		return;
+	}
+
+	if ( core::mem[DMA] )
+	{
+		core::mem.dmaswitchon();
+		counter = 160;
+		addr.b.h = core::mem[DMA];
+		addr.b.l = 0;
+	}
+}
+
 void corerun( dword cycle )
 {
 	static bool display = false;
@@ -182,6 +213,7 @@ void corerun( dword cycle )
 				statedisplay( s, pc );
 			}
 		}
+		dmaoamtransfert();
 
 		//stime.tv_sec = 0;
 		//stime.tv_nsec = ref::periode; 

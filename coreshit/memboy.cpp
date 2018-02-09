@@ -174,6 +174,9 @@ memboy::memboy( void )
 	joypbuttons = 0x0F;
 
 	map[RBK] = 0;
+	map[DMA] = 0;
+
+	dmalock = false;
 }
 
 void memboy::classicset( byte &addr, byte b )
@@ -342,6 +345,16 @@ byte memboy::getarrowsstate( void )
 byte memboy::getbuttonsstate( void )
 {
 	return joypbuttons;
+}
+
+void memboy::dmaswitchon( void )
+{
+	dmalock = true;
+}
+
+void memboy::dmaswitchoff( void )
+{
+	dmalock = false;
 }
 
 bool memboy::biosload( const char *path )
