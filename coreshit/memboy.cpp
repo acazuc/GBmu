@@ -160,7 +160,7 @@ memboy::memboy( void )
 	bank1chardts = new byte [0x2000];
 	svbk2to7 = new byte [0x6000];
 	rombank = new byte [0x100];
-	romxtend = new byte [0x1000];
+	romxtend = new byte [0x800];
 
 	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
 		block[i].ref = this;
@@ -171,8 +171,8 @@ memboy::memboy( void )
 	blockid = 0;
 	rblockid = 0;
 
-	joyparrows = 0x0F;
-	joypbuttons = 0x0F;
+	joyparrows = 0x0f;
+	joypbuttons = 0x0f;
 
 	map[RBK] = 0;
 	map[DMA] = 0;
@@ -269,7 +269,7 @@ memboy::memref *memboy::deref( word addr )
 	{
 		(*ref).getfunc = &memboy::classicget;
 		(*ref).setfunc = &memboy::classicset;
-		if ( ( addr >= 0x0150 ) && ( addr < 0x1000 ) )
+		if ( ( addr >= 0x0200 ) && ( addr < 0x1000 ) )
 		{
 			if ( map[RBK] & 1 )
 			{
@@ -277,7 +277,7 @@ memboy::memref *memboy::deref( word addr )
 				return ref;
 			}
 
-			(*ref).addr = &rombank[addr];
+			(*ref).addr = &romxtend[addr - 0x0200];
 			return ref;
 		}
 		(*ref).addr = &map[addr];
@@ -446,18 +446,26 @@ bool memboy::biosload( const char *path )
 	{
 		*cmap = in.get();
 		if ( in.eof() )
+		{
+			*cmap = 0;
 			return true;
+		}
+		//cout << hex << cmap - rombank << " : " << ( int ) *cmap << ' ';
 	}
 
-	if ( len <= 0x150 )
+	if ( len <= 0x200 )
 		return true;
 
-	in.seekg( 0x150, in.beg );
-	for ( byte *cmap = romxtend ; cmap < ( rombank + 0x1000 ) ; cmap++ )
+	in.seekg( 0x200, in.beg );
+	for ( byte *cmap = romxtend ; cmap < ( romxtend + 0x800 ) ; cmap++ )
 	{
 		*cmap = in.get();
 		if ( in.eof() )
+		{
+			*cmap = 0;
 			return true;
+		}
+		//cout << hex << cmap - romxtend << " : " << ( int ) *cmap << ' ';
 	}
 
 	return false;
