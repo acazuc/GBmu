@@ -160,6 +160,7 @@ memboy::memboy( void )
 	bank1chardts = new byte [0x2000];
 	svbk2to7 = new byte [0x6000];
 	rombank = new byte [0x100];
+	romxtend = new byte [0x1000];
 
 	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
 		block[i].ref = this;
@@ -175,6 +176,12 @@ memboy::memboy( void )
 
 	map[RBK] = 0;
 	map[DMA] = 0;
+
+	map[BCPS] = 0;
+	map[OCPS] = 0;
+
+	memset( cgbbgpalette, 0, 64 );
+	memset( cgbsppalette, 0, 64 );
 
 	dmalock = false;
 }
@@ -209,6 +216,30 @@ byte memboy::joypget( byte &addr )
 	}
 }
 
+void memboy::bgpset( byte &addr, byte b )
+{
+	cgbbgpalette[map[BCPS] & 0b00111111] = b;
+	if ( map[BCPS] & 0b10000000 )
+		map[BCPS] = ( map[BCPS] + 1 ) & 0b00111111;
+}
+
+byte memboy::bgpget( byte &addr )
+{
+	return cgbbgpalette[map[BCPS] & 0b00111111];
+}
+
+void memboy::sppset( byte &addr, byte b )
+{
+	cgbsppalette[map[OCPS] & 0b00111111] = b;
+	if ( map[OCPS] & 0b10000000 )
+		map[OCPS] = ( map[OCPS] + 1 ) & 0b00111111;
+}
+
+byte memboy::sppget( byte &addr )
+{
+	return cgbsppalette[map[OCPS] & 0b00111111];
+}
+
 memboy::memref *memboy::deref( word addr )
 {
 	memref *ref;
@@ -238,6 +269,17 @@ memboy::memref *memboy::deref( word addr )
 	{
 		(*ref).getfunc = &memboy::classicget;
 		(*ref).setfunc = &memboy::classicset;
+		if ( ( addr >= 0x0150 ) && ( addr < 0x1000 ) )
+		{
+			if ( map[RBK] & 1 )
+			{
+				(*ref).addr = &map[addr];
+				return ref;
+			}
+
+			(*ref).addr = &rombank[addr];
+			return ref;
+		}
 		(*ref).addr = &map[addr];
 		return ref;
 	}
@@ -290,6 +332,22 @@ memboy::memref *memboy::deref( word addr )
 	{
 		(*ref).getfunc = &memboy::joypget;
 		(*ref).setfunc = &memboy::joypset;
+		(*ref).addr = &map[addr];
+		return ref;
+	}
+
+	if ( addr == BCPD )
+	{
+		(*ref).getfunc = &memboy::bgpget;
+		(*ref).setfunc = &memboy::bgpset;
+		(*ref).addr = &map[addr];
+		return ref;
+	}
+
+	if ( addr == OCPD )
+	{
+		(*ref).getfunc = &memboy::sppget;
+		(*ref).setfunc = &memboy::sppset;
 		(*ref).addr = &map[addr];
 		return ref;
 	}
@@ -360,10 +418,15 @@ void memboy::dmaswitchoff( void )
 bool memboy::biosload( const char *path )
 {
 	ifstream in;
+	int len;
 
 	in.open( path );
 	if ( !in || in.eof() )
 		return false;
+
+	in.seekg( 0, in.end );
+	len = in.tellg();
+	in.seekg( 0, in.beg );
 
 	for ( byte *cmap = rombank ; cmap < ( rombank + 0x100 ) ; cmap++ )
 	{
@@ -371,6 +434,18 @@ bool memboy::biosload( const char *path )
 		if ( in.eof() )
 			return true;
 	}
+
+	if ( len <= 0x150 )
+		return true;
+
+	in.seekg( 0x150, in.beg );
+	for ( byte *cmap = romxtend ; cmap < ( rombank + 0x1000 ) ; cmap++ )
+	{
+		*cmap = in.get();
+		if ( in.eof() )
+			return true;
+	}
+
 	return false;
 }
 

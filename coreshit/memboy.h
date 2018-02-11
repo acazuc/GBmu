@@ -70,7 +70,7 @@
 
 //#define OAM FE00~FE9F
 //#define NR 0xFF10~FF26
-//#define RAM 0xFF30~FF3F 
+//#define RAM 0xFF30~FF3F
 
 #define MEMBOY_MAXSTACK 8
 #define MEMREF_MAXSTACK 8
@@ -96,10 +96,14 @@ class memboy
 		byte *bank1chardts;
 		byte *svbk2to7;
 		byte *rombank;
+		byte *romxtend;
 
 		// Hardware Registers
 		byte joyparrows;
 		byte joypbuttons;
+
+		byte cgbbgpalette[64];
+		byte cgbsppalette[64];
 
 		// Locks
 		bool dmalock;
@@ -154,6 +158,11 @@ class memboy
 
 		void joypset( byte &addr, byte b );
 		byte joypget( byte &addr );
+
+		void bgpset( byte &addr, byte b );
+		byte bgpget( byte &addr );
+		void sppset( byte &addr, byte b );
+		byte sppget( byte &addr );
 
 		memref *deref( word addr );
 	public:
