@@ -5,6 +5,8 @@
 #include <chrono>
 #include <cmath>
 
+#define IS_DMG false
+
 using namespace chrono;
 
 LCD::LCD()
@@ -109,7 +111,7 @@ void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 
 void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
 {
-	uint16_t charaddr = charcode * 16 + (core::mem[LCDC] & 0b00010000 ? LCD_BG2_CHAR_BEGIN : LCD_BG1_CHAR_BEGIN);
+	uint16_t charaddr = charcode * 16 + (core::mem[LCDC] & 0b00010000 ? LCD_BG1_CHAR_BEGIN : LCD_BG2_CHAR_BEGIN);
 	uint8_t palette = attr & 0b00000111;
 	uint8_t charbank = (attr & 0b00001000) >> 3;
 	bool hflip = (attr & 0b00100000) >> 5;
@@ -130,8 +132,11 @@ void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 		coloridx = core::mem.cbank0(charaddr + by * 2) >> ((~bx) & 7) & 1;
 		coloridx |= (core::mem.cbank0(charaddr + by * 2 + 1) >> ((~bx) & 7) & 1) << 1;
 	}
-	uint8_t *pal = &core::mem.bgpalette(palette)[coloridx * 2];
-	uint8_t color[] = {(uint8_t)(pal[1] & 0b00011111), (uint8_t)((pal[1] >> 5) | ((pal[0] << 3) & 0b00011000)), (uint8_t)((pal[0] >> 2) & 0b00011111)};
+	uint8_t *pal = core::mem.bgpalette(palette) + coloridx * 2;
+	uint8_t color[] = {(uint8_t)(pal[0] & 0b00011111), (uint8_t)((pal[0] >> 5) | ((pal[1] << 3) & 0b00011000)), (uint8_t)((pal[1] >> 2) & 0b00011111)};
+	color[0] /= 0b00011111 / (float)0xff;
+	color[1] /= 0b00011111 / (float)0xff;
+	color[2] /= 0b00011111 / (float)0xff;
 	Main::getMainDisplay()->putPixel(x, y, color);
 	priorities[y][x] = priority;
 	hasprinted[y][x] = bgpalettes[palette][coloridx] != 0;
@@ -150,9 +155,9 @@ void LCD::renderBG(uint8_t y)
 		uint8_t by = ry % 8;
 		uint32_t addr = baseaddr + ((rx - bx) + (ry - by) * 32) / 8;
 		uint8_t charcode = core::mem.cbank0(addr);
-		if (true/*DMG*/)
+		if (IS_DMG)
 			renderBGCharDMG(x, y, bx, by, charcode);
-		else/*CGB*/
+		else
 			renderBGCharCGB(x, y, bx, by, charcode, core::mem.cbank1(addr));
 	}
 }
@@ -205,12 +210,12 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 	if (charbank)
 	{
 		pixel = ((core::mem.cbank1(charaddr + by * 2)) >> ((~bx) & 7)) & 1;
-		pixel |= (((core::mem.cbank1(charaddr + by * 2)) >> ((~bx) & 7)) & 1) << 1;
+		pixel |= (((core::mem.cbank1(charaddr + by * 2 + 1)) >> ((~bx) & 7)) & 1) << 1;
 	}
 	else
 	{
 		pixel = ((core::mem.cbank0(charaddr + by * 2)) >> ((~bx) & 7)) & 1;
-		pixel |= (((core::mem.cbank0(charaddr + by * 2)) >> ((~bx) & 7)) & 1) << 1;
+		pixel |= (((core::mem.cbank0(charaddr + by * 2 + 1)) >> ((~bx) & 7)) & 1) << 1;
 	}
 	if (!pixel)
 		return;
@@ -221,6 +226,9 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 	}
 	uint8_t *pal = &core::mem.bgpalette(palette)[pixel * 2];
 	uint8_t color[] = {(uint8_t)(pal[1] & 0b00011111), (uint8_t)((pal[1] >> 5) | ((pal[0] << 3) & 0b00011000)), (uint8_t)((pal[0] >> 2) & 0b00011111)};
+	color[0] /= 0b00011111 / (float)0xff;
+	color[1] /= 0b00011111 / (float)0xff;
+	color[2] /= 0b00011111 / (float)0xff;
 	Main::getMainDisplay()->putPixel(x, y, color);
 }
 
@@ -245,12 +253,12 @@ void LCD::renderOBJ(uint8_t y)
 		{
 			if (cx + x < 8 || cx + x >= 168)
 				return;
-			if (true/*DMG*/ && cx > lowestx[cx + x - 8])
+			if (IS_DMG && cx > lowestx[cx + x - 8])
 				continue;
 			lowestx[cx + x - 8] = cx;
-			if (true/*DMG*/)
+			if (IS_DMG)
 				renderOBJCharDMG(cx + x - 8, y, x, y - cy + 16, charcode, attr);
-			else /*CGB*/
+			else
 				renderOBJCharCGB(cx + x - 8, y, x, y - cy + 16, charcode, attr);
 		}
 		if (++spritescount == 10)
@@ -273,9 +281,9 @@ void LCD::renderWindow(uint8_t y)
 		uint8_t by = ry % 8;
 		uint32_t addr = baseaddr + ((rx - bx) + (ry - by) * 32) / 8;
 		uint8_t charcode = core::mem.cbank0(addr);
-		if (true/*DMG*/)
+		if (IS_DMG)
 			renderBGCharDMG(x, y, bx, by, charcode);
-		else/*CGB*/
+		else
 			renderBGCharCGB(x, y, bx, by, charcode, core::mem.cbank1(addr));
 	}
 }
