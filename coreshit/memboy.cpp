@@ -220,7 +220,7 @@ void memboy::bgpset( byte &addr, byte b )
 {
 	cgbbgpalette[map[BCPS] & 0b00111111] = b;
 	if ( map[BCPS] & 0b10000000 )
-		map[BCPS] = ( map[BCPS] + 1 ) & 0b00111111;
+		map[BCPS] = ( map[BCPS] + 1 ) & 0b10111111;
 }
 
 byte memboy::bgpget( byte &addr )
@@ -232,7 +232,7 @@ void memboy::sppset( byte &addr, byte b )
 {
 	cgbsppalette[map[OCPS] & 0b00111111] = b;
 	if ( map[OCPS] & 0b10000000 )
-		map[OCPS] = ( map[OCPS] + 1 ) & 0b00111111;
+		map[OCPS] = ( map[OCPS] + 1 ) & 0b10111111;
 }
 
 byte memboy::sppget( byte &addr )
@@ -387,14 +387,14 @@ byte &memboy::sysregs( word addr )
 
 byte *memboy::sppalette( byte id )
 {
-	if ( id > 8 )
+	if ( id >= 8 )
 		return NULL;
 	return &cgbsppalette[id * 8];
 }
 
 byte *memboy::bgpalette( byte id )
 {
-	if ( id > 8 )
+	if ( id >= 8 )
 		return NULL;
 	return &cgbbgpalette[id * 8];
 }
