@@ -131,7 +131,7 @@ void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 		coloridx |= (core::mem.cbank0(charaddr + by * 2 + 1) >> ((~bx) & 7) & 1) << 1;
 	}
 	uint8_t *pal = &core::mem.bgpalette(palette)[coloridx * 2];
-	uint8_t color[] = {pal[1] & 0b00011111, (pal[1] >> 5) | ((pal[0] << 3) & 0b00011000), (pal[0] >> 2) & 0b00011111};
+	uint8_t color[] = {(uint8_t)(pal[1] & 0b00011111), (uint8_t)((pal[1] >> 5) | ((pal[0] << 3) & 0b00011000)), (uint8_t)((pal[0] >> 2) & 0b00011111)};
 	Main::getMainDisplay()->putPixel(x, y, color);
 	priorities[y][x] = priority;
 	hasprinted[y][x] = bgpalettes[palette][coloridx] != 0;
@@ -220,7 +220,7 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 			return;
 	}
 	uint8_t *pal = &core::mem.bgpalette(palette)[pixel * 2];
-	uint8_t color[] = {pal[1] & 0b00011111, (pal[1] >> 5) | ((pal[0] << 3) & 0b00011000), (pal[0] >> 2) & 0b00011111};
+	uint8_t color[] = {(uint8_t)(pal[1] & 0b00011111), (uint8_t)((pal[1] >> 5) | ((pal[0] << 3) & 0b00011000)), (uint8_t)((pal[0] >> 2) & 0b00011111)};
 	Main::getMainDisplay()->putPixel(x, y, color);
 }
 
