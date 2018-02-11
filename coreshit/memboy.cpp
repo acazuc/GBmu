@@ -373,16 +373,30 @@ byte &memboy::cbank0( word addr )
 	return map[addr];
 }
 
-byte &memboy::sysregs( word addr )
-{
-	return map[addr];
-}
-
 byte &memboy::cbank1( word addr )
 {
 	if ( addr < 0x8000 || addr > 0x9fff )
 		return map[addr];
 	return bank1chardts[addr - 0x8000];
+}
+
+byte &memboy::sysregs( word addr )
+{
+	return map[addr];
+}
+
+byte *memboy::sppalette( byte id )
+{
+	if ( id > 8 )
+		return NULL;
+	return &cgbsppalette[id * 8];
+}
+
+byte *memboy::bgpalette( byte id )
+{
+	if ( id > 8 )
+		return NULL;
+	return &cgbbgpalette[id * 8];
 }
 
 void memboy::setarrowsstate( byte b )

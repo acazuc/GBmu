@@ -174,6 +174,8 @@ class memboy
 		byte &cbank0( word addr );
 		byte &cbank1( word addr );
 		byte &sysregs( word addr );
+		byte *sppalette( byte id );
+		byte *bgpalette( byte id );
 
 		// Setters
 		bool biosload( const char *path );
