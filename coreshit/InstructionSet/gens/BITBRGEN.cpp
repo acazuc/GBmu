@@ -20,8 +20,11 @@ struct reg regs[7] =
 	{ 'l', 5 }
 };
 
-/*void bitbr( void )
+/*byte bitbr( void )
 {
+	regs.b.f &= ~NFLAG;
+	regs.b.f |= HFLAG;
+
 	ZUPDATE( ( regs.b.j & ( 1 << i ) ) );
 	regs.w.pc++;
 	return 2;
@@ -41,8 +44,11 @@ int main( void )
 
 	for ( int i = 0 ; i < 8 ; i++ ) for ( int j = 0 ; j < 7 ; j++ )
 	{
-		out << endl << "void core::bit" << i << regs[j].letter << "( void )" << endl;
+		out << endl << "byte core::bit" << i << regs[j].letter << "( void )" << endl;
 		out << '{' << endl;
+		out << HT << "regs.b.f &= ~NFLAG;" << endl;
+		out << HT << "regs.b.f |= HFLAG;" << endl;
+		out << endl;
 		out << HT << "ZUPDATE( ( regs.b." << regs[j].letter << " & ( 1 << " << i << " ) ) );" << endl;
 		out << HT << "regs.w.pc++;" << endl;
 		out << HT << "return 2;" << endl << '}' << endl;

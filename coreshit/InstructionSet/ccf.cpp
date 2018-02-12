@@ -3,6 +3,8 @@
 
 byte core::ccf( void )
 {
+	regs.b.f &= ~( HFLAG | NFLAG );
+
 	if ( regs.b.f & CYFLAG )
 		regs.b.f &= ~CYFLAG;
 	else

@@ -16,7 +16,7 @@ byte core::srahl( void )
 
 	ZUPDATE( b );
 
-	mem[regs.w.hl];
+	mem[regs.w.hl] = b;
 	regs.w.pc++;
 	return 2;
 }

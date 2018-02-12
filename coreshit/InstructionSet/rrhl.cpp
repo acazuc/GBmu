@@ -19,7 +19,7 @@ byte core::rrhl( void )
 	regs.b.f = cy;
 	ZUPDATE( b );
 
-	mem[regs.w.hl];
+	mem[regs.w.hl] = b;
 	regs.w.pc++;
 	return 4;
 }

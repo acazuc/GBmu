@@ -87,9 +87,7 @@ section "header", ROM0[$100]
 
 section "", ROM0[$150]
 
-start:	
-	
-	scf
+start:	scf
 	ccf
 	scf
 
@@ -119,6 +117,19 @@ start:
 	pop de
 	pop bc
 	pop af
+
+	ld a, 3
+	dec a
+	dec a
+	dec a
+
+	ld hl, $c000
+	ld a, $86
+	ld [hl], a
+miiii:	dec [hl]
+	ld a, [hl]
+	jr nz, miiii
+
 
 	call next
 
