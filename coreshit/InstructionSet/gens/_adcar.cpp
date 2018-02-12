@@ -11,10 +11,17 @@ byte core::adcaX( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.X;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;

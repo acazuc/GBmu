@@ -7,7 +7,7 @@ byte core::cphl( void )
 
 	a = regs.b.a - ( byte ) mem[regs.w.hl];
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 

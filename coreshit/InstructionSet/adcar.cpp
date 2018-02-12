@@ -8,10 +8,17 @@ byte core::adcaa( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.a;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -25,10 +32,17 @@ byte core::adcab( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.b;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -42,10 +56,17 @@ byte core::adcac( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.c;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -59,10 +80,17 @@ byte core::adcad( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.d;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -76,10 +104,17 @@ byte core::adcae( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.e;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -93,10 +128,17 @@ byte core::adcah( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.h;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -110,10 +152,17 @@ byte core::adcal( void )
 	a = regs.b.a;
 	regs.b.a += regs.b.l;
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;

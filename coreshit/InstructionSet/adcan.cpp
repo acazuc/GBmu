@@ -8,12 +8,19 @@ byte core::adcan( void )
 	a = regs.b.a;
 	regs.b.a += ( byte ) mem[regs.w.pc + 1];
 	if ( regs.b.f & CYFLAG )
+	{
 		regs.b.a++;
+		regs.b.f = 0;
+		CARRYUPDATEWITHCARRY( a, regs.b.a );
+	}
+	else
+	{
+		regs.b.f = 0;
+		CARRYUPDATE( a, regs.b.a );
+	}
 
-	regs.b.f = 0;
-	CARRYUPDATE( a, regs.b.a );
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc += 2;
-	return 1;	
+	return 2;	
 }

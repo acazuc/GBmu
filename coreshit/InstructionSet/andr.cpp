@@ -5,7 +5,7 @@ byte core::anda( void )
 {
 	regs.b.a &= regs.b.a;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -16,7 +16,7 @@ byte core::andb( void )
 {
 	regs.b.a &= regs.b.b;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -27,7 +27,7 @@ byte core::andc( void )
 {
 	regs.b.a &= regs.b.c;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -38,7 +38,7 @@ byte core::andd( void )
 {
 	regs.b.a &= regs.b.d;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -49,7 +49,7 @@ byte core::ande( void )
 {
 	regs.b.a &= regs.b.e;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -60,7 +60,7 @@ byte core::andh( void )
 {
 	regs.b.a &= regs.b.h;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;
@@ -71,7 +71,7 @@ byte core::andl( void )
 {
 	regs.b.a &= regs.b.l;
 
-	regs.b.f = 0;
+	regs.b.f = HFLAG;
 	ZUPDATE( regs.b.a );
 
 	regs.w.pc++;

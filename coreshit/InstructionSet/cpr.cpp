@@ -7,7 +7,7 @@ byte core::cpa( void )
 
 	a = regs.b.a - regs.b.a;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
@@ -21,7 +21,7 @@ byte core::cpb( void )
 
 	a = regs.b.a - regs.b.b;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
@@ -35,7 +35,7 @@ byte core::cpc( void )
 
 	a = regs.b.a - regs.b.c;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
@@ -49,7 +49,7 @@ byte core::cpd( void )
 
 	a = regs.b.a - regs.b.d;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
@@ -63,7 +63,7 @@ byte core::cpe( void )
 
 	a = regs.b.a - regs.b.e;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
@@ -77,7 +77,7 @@ byte core::cph( void )
 
 	a = regs.b.a - regs.b.h;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
@@ -91,7 +91,7 @@ byte core::cpl( void )
 
 	a = regs.b.a - regs.b.l;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 

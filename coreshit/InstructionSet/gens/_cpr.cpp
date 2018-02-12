@@ -10,7 +10,7 @@ byte core::cpX( void )
 
 	a = regs.b.a - regs.b.X;
 
-	regs.b.f = 1;
+	regs.b.f = NFLAG;
 	CARRYREVUPDATE( regs.b.a, a );
 	ZUPDATE( a );
 
