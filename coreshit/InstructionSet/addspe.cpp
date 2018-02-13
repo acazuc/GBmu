@@ -4,12 +4,23 @@
 byte core::addspe( void )
 {
 	byte csave;
+	char e;
+	word cy;
 
 	csave = regs.b.sph;
-	regs.w.sp += ( byte ) mem[regs.w.pc + 1];
+	e = ( char ) mem[regs.w.pc + 1];
+	cy = regs.b.l + e;
+	regs.w.sp += e;
 
 	regs.b.f = 0;
-	CARRYUPDATE( csave, regs.b.sph );
+	if ( cy & 0x0100 )
+	{
+		CARRYUPDATEWITHCARRY( csave, regs.b.h );
+	}
+	else
+	{
+		CARRYUPDATE( csave, regs.b.h );
+	}
 
 	regs.w.pc += 2;
 	return 4;

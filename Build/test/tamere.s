@@ -5,6 +5,8 @@ CEND equ $9BFF
 
 SCY equ $FF42
 SCX equ $FF43
+WY equ $FF4A
+WX equ $FF4B
 LCDC equ $FF40
 BGP equ $FF47
 OBP0 equ $FF48
@@ -101,6 +103,10 @@ start:	ld sp, $fffe
 	ldh [OBP1], a
 	ld a, %10010001
 	ldh [LCDC], a
+	ld a, 50
+	ldh [WY], a
+	ld a, 57
+	ldh [WX], a
 	xor a
 	ldh [SCX], a
 	ldh [SCY], a
@@ -177,17 +183,25 @@ woam2:	bit 1, [hl]
 	ld a, %00010000
 	ld [$fe03], a
 
-	; Set a sprite copy in WRAM
-	ld a, 80
-	ld [$c000], a
-	ld [$c001], a
-	ld a, 2
-	ld [$c002], a
+	; Set sprites in WRAM
+	ld hl, $c000
+	ld b, 20
+
+sptbl:	ld a, b
+	ldi [hl], a
+	ldi [hl], a
+	ldi [hl], a
 	ld a, %00010000
-	ld [$c003], a
+	ldi [hl], a
+	ld a, b
+	add a, 8
+	ld b, a
+	ld a, l
+	cp $a0
+	jr nz, sptbl
 
 	; Turn on sprites
-	ld a, %10010011
+	ld a, %11110011
 	ld [LCDC], a
 
 	; Mooga
@@ -208,7 +222,8 @@ woam2:	bit 1, [hl]
 	; Main loop
 main:	halt
 
-	;call $ff90
+	; Go DMA !
+	call $ff90
 
 	ld a, %00010000
 	ldh [JOYP], a
