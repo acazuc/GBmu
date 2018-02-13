@@ -99,14 +99,14 @@ void LCD::render()
 void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode)
 {
 	uint16_t charaddr = charcode * 16 + (core::mem[LCDC] & 0b00010000 ? LCD_BG1_CHAR_BEGIN : LCD_BG2_CHAR_BEGIN);
-	uint8_t color = (core::mem[charaddr + by * 2] >> ((~bx) & 7)) & 1;
-	color |= ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
-	color = (core::mem[BGP] >> (color << 1)) & 3;
+	uint8_t coloridx = (core::mem[charaddr + by * 2] >> ((~bx) & 7)) & 1;
+	coloridx |= ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
+	uint8_t color = (core::mem[BGP] >> (coloridx << 1)) & 3;
 	color = UCHAR_MAX - (color / 3. * UCHAR_MAX);
 	uint8_t col[] = {color, color, color};
 	Main::getMainDisplay()->putPixel(x, y, (uint8_t*)&col);
 	priorities[y][x] = 0;
-	hasprinted[y][x] = col != 0;
+	hasprinted[y][x] = coloridx != 0;
 }
 
 void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
@@ -139,7 +139,7 @@ void LCD::renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 	color[2] /= 0b00011111 / (float)0xff;
 	Main::getMainDisplay()->putPixel(x, y, color);
 	priorities[y][x] = priority;
-	hasprinted[y][x] = bgpalettes[palette][coloridx] != 0;
+	hasprinted[y][x] = coloridx != 0;
 }
 
 void LCD::renderBG(uint8_t y)
