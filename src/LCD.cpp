@@ -5,7 +5,7 @@
 #include <chrono>
 #include <cmath>
 
-#define IS_DMG false
+#define IS_DMG true
 
 using namespace chrono;
 
@@ -100,7 +100,7 @@ void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t 
 {
 	uint16_t charaddr = charcode * 16 + (core::mem[LCDC] & 0b00010000 ? LCD_BG1_CHAR_BEGIN : LCD_BG2_CHAR_BEGIN);
 	uint8_t color = (core::mem[charaddr + by * 2] >> ((~bx) & 7)) & 1;
-	color = (color << 1) | ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1);
+	color |= ((core::mem[charaddr + by * 2 + 1] >> ((~bx) & 7)) & 1) << 1;
 	color = (core::mem[BGP] >> (color << 1)) & 3;
 	color = UCHAR_MAX - (color / 3. * UCHAR_MAX);
 	uint8_t col[] = {color, color, color};
@@ -269,14 +269,16 @@ void LCD::renderOBJ(uint8_t y)
 void LCD::renderWindow(uint8_t y)
 {
 	uint16_t baseaddr = core::mem[LCDC] & 0b01000000 ? LCD_BG2_BEGIN : LCD_BG1_BEGIN;
-	uint8_t wx = core::mem[WX] - 7;
+	uint8_t wx = core::mem[WX];
 	uint8_t wy = core::mem[WY];
 	if (wx >= 144 || wy > y)
 		return;
 	for (uint8_t x = 0; x < 160; ++x)
 	{
-		uint8_t rx = wx + x;
-		uint8_t ry = wy + y;
+		if (wx >= 7 && x < wx - 7)
+			continue;
+		uint8_t rx = x - wx + 7;
+		uint8_t ry = y - wy;
 		uint8_t bx = rx % 8;
 		uint8_t by = ry % 8;
 		uint32_t addr = baseaddr + ((rx - bx) + (ry - by) * 32) / 8;
