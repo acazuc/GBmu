@@ -87,7 +87,14 @@ section "header", ROM0[$100]
 
 section "", ROM0[$150]
 
-start:	scf
+start:	
+
+	ld a, 0
+choy:	inc a
+	daa
+	jr nz, choy
+
+	scf
 	ccf
 	scf
 

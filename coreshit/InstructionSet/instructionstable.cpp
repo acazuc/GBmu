@@ -206,9 +206,9 @@ struct core::instruction core::decode[256] =
 		&ldhn
 	},
 	{
-		"__ NO INSTRUCTION __",
+		"daa",
 		1,
-		&_blank
+		&daa
 	},
 
 	// 40

@@ -684,7 +684,8 @@ static byte rst5( void );
 static byte rst6( void );
 static byte rst7( void );
 
-////
+// daa
+static byte daa( void );
 
 // cpla
 static byte cpla( void );
