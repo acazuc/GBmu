@@ -1213,7 +1213,7 @@ struct core::instruction core::decode[256] =
 	{
 		"add sp, ne",
 		1,
-		&_blank
+		&addspe
 	},
 	{
 		"jp (hl)",

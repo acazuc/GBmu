@@ -185,6 +185,7 @@ void timer( void );
 void corereset( char *rom );
 void corereset( void );
 void corerun( dword cycle );
+void coremaster( void );
 void coremaster( char *rom );
 
 #endif

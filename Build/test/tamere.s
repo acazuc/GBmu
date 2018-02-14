@@ -201,7 +201,7 @@ sptbl:	ld a, b
 	jr nz, sptbl
 
 	; Turn on sprites
-	ld a, %11110011
+	ld a, %11010011
 	ld [LCDC], a
 
 	; Mooga
@@ -223,7 +223,7 @@ sptbl:	ld a, b
 main:	halt
 
 	; Go DMA !
-	call $ff90
+	;call $ff90
 
 	ld a, %00010000
 	ldh [JOYP], a

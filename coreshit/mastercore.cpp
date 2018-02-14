@@ -221,7 +221,6 @@ void corerun( dword cycle )
 	}
 }
 
-
 void corereset( void )
 {
 	core::init();
@@ -233,6 +232,13 @@ void corereset( char *rom )
 	core::init();
 	core::mem.ramclear();
 	core::mem.romload( rom );
+}
+
+void coremaster( void )
+{
+	ref::init();
+	core::init();
+	core::mem.biosload( ref::biospath );
 }
 
 void coremaster( char *rom )

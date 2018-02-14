@@ -118,18 +118,19 @@ start:	scf
 	pop bc
 	pop af
 
-	ld a, 3
-	dec a
-	dec a
-	dec a
+	ld b, 0
 
-	ld hl, $c000
-	ld a, $86
-	ld [hl], a
-miiii:	dec [hl]
-	ld a, [hl]
-	jr nz, miiii
+	ld sp, $0ff0
+miitop:	ld hl, sp - 1
+	dec sp
+	jr miitop
 
+ltop:	ld sp, $0ff0
+	ld hl, there + 1
+	ld [hl], b
+there:	add sp, 0
+	inc b
+	jr nz, ltop
 
 	call next
 
