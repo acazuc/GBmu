@@ -28,6 +28,11 @@ class MainDisplay
 		GtkWidget *menu_options_size;
 		GtkWidget *menu_options_size_menu;
 		GtkWidget *menu_options_size_item[20];
+		GtkWidget *menu_options_mode;
+		GtkWidget *menu_options_mode_menu;
+		GtkWidget *menu_options_mode_auto;
+		GtkWidget *menu_options_mode_dmg;
+		GtkWidget *menu_options_mode_cgb;
 		GtkWidget *menu_options_wave;
 		GtkWidget *menu_options_wave_menu;
 		GtkWidget *menu_options_wave_square;
@@ -73,6 +78,7 @@ class MainDisplay
 		void build_menu_file();
 		void build_menu_edit();
 		void build_menu_options_size();
+		void build_menu_options_mode();
 		void build_menu_options_wave();
 		void build_menu_options_filter();
 		void build_menu_options_speed();

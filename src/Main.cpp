@@ -15,6 +15,7 @@ BindDisplay *Main::bindDisplay;
 Audio *Main::audio;
 LCD *Main::lcd;
 uint64_t Main::speedFactor = 1;
+uint8_t Main::mode = 0;
 bool Main::paused;
 
 void Main::run(int ac, char **av)
@@ -42,13 +43,13 @@ void Main::run(int ac, char **av)
 	while (true)
 	{
 		tmp = high_resolution_clock::now();
-		auto basecount = duration_cast<nanoseconds>( tmp - draw_last ).count();
+		auto basecount = duration_cast<nanoseconds>(tmp - draw_last).count();
 		if (!speedFactor || basecount > 1000000000  / (59.72750056960583276373 * speedFactor))
 		{
 			draw_last = tmp;
 			++fps;
 			tmp = high_resolution_clock::now();
-			basecount = duration_cast<nanoseconds>( tmp - fps_last ).count();
+			basecount = duration_cast<nanoseconds>(tmp - fps_last).count();
 			if (basecount > 1000000000)
 			{
 				fps_last = tmp;
@@ -58,7 +59,7 @@ void Main::run(int ac, char **av)
 			lcd->render();
 		}
 		tmp = high_resolution_clock::now();
-		basecount = duration_cast<nanoseconds>( tmp - render_last ).count();
+		basecount = duration_cast<nanoseconds>(tmp - render_last).count();
 		if (basecount > 1000000000 / 60.)
 		{
 			render_last = tmp;

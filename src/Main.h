@@ -8,6 +8,10 @@
 # include "LCD.h"
 # include <string>
 
+# define MODE_AUTO 0
+# define MODE_DMG 1
+# define MODE_CGB 2
+
 class Main
 {
 
@@ -18,6 +22,7 @@ class Main
 		static Audio *audio;
 		static LCD *lcd;
 		static uint64_t speedFactor;
+		static uint8_t mode;
 		static bool paused;
 
 	public:
@@ -29,9 +34,12 @@ class Main
 		static BindDisplay *getBindDisplay() {return (bindDisplay);};
 		static Audio *getAudio() {return (audio);};
 		static LCD *getLcd() {return (lcd);};
+		static void setSpeedFactor(uint64_t speedFactor) {Main::speedFactor = speedFactor;};
+		static uint64_t getSpeedFactor() {return (speedFactor);};
+		static void setMode(uint8_t mode) {Main::mode = mode;};
+		static uint8_t getMode() {return (mode);};
 		static void setPaused(bool paused) {Main::paused = paused;};
 		static bool isPaused() {return (paused);};
-		static void setSpeedFactor(uint64_t speedFactor) {Main::speedFactor = speedFactor;};
 
 };
 
