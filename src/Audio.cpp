@@ -297,7 +297,7 @@ static int16_t getc4val()
 		++c4stepcounter;
 	}
 	float envfac = c4env / 15.;
-	if (c4stepstate & 0x1)
+	if (c4stepstate & 1)
 		return (SHRT_MAX * envfac);
 	return (SHRT_MIN * envfac);
 }
@@ -526,7 +526,7 @@ Audio::Audio()
 	parameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 	parameters.sampleFormat = paInt16;
 	parameters.hostApiSpecificStreamInfo = 0;
-	PaError error = Pa_OpenStream(&this->stream, 0, &parameters, freq, 1, paNoFlag, paCallback, this);
+	PaError error = Pa_OpenStream(&this->stream, 0, &parameters, freq, freq / 128, paNoFlag, paCallback, this);
 	if (error)
 	{
 		std::cerr << "Failed to create stream" << std::endl;
