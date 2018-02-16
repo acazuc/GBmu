@@ -68,6 +68,8 @@
 #define PCM34 0xFF77
 #define IE 0xFFFF
 
+#define REGS( n ) hram[n - 0xff00]
+
 //#define OAM FE00~FE9F
 //#define NR 0xFF10~FF26
 //#define RAM 0xFF30~FF3F
@@ -92,11 +94,16 @@ class memboy
 {
 	private:
 		// Memory Maps
-		byte *map;
-		byte *bank1chardts;
-		byte *svbk2to7;
-		byte *rombank;
-		byte *romxtend;
+		byte *biosrombank; // 0000 - 0100
+		byte *biosromxtend; // 0200 - 1000
+		byte *rombank0; // 0000 - 3fff
+		byte *rombank1ton; // 4000 - 7fff
+		byte *vram; // 8000 - 9fff
+		byte *cartram; // a000 - bfff
+		byte *svbk0; // c000 - cfff
+		byte *svbk1to7; // d000 - dfff
+		byte *oam; // fe00 - fe9f
+		byte *hram; // ff00 - ffff
 
 		// Hardware Registers
 		byte joyparrows;
@@ -153,16 +160,27 @@ class memboy
 		mempassthru block[MEMBOY_MAXSTACK];
 		int blockid;
 
+		// Standard memory accessers
 		void classicset( byte &addr, byte b );
 		byte classicget( byte &addr );
 
+		// ROM memory accessers
+		void romset( byte &addr, byte b );
+		byte romget( byte &addr );
+
+		// P1/JOYP memory accessers
 		void joypset( byte &addr, byte b );
 		byte joypget( byte &addr );
 
+		// Colors palettes memory accessers
 		void bgpset( byte &addr, byte b );
 		byte bgpget( byte &addr );
 		void sppset( byte &addr, byte b );
 		byte sppget( byte &addr );
+
+		// Dead memory accessers
+		void deadset( byte &addr, byte b );
+		byte deadget( byte &addr );
 
 		memref *deref( word addr );
 	public:

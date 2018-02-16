@@ -32,5 +32,8 @@ int main( int ac, char **av )
 	yay[0x8000] = 45;
 	cout << ( int ) yay.cbank0( 0x8000 ) << endl;
 
+	for ( int i = 0 ; i < 0x10000 ; i++ )
+		yay[i] = 0;
+
 	return 0;
 }

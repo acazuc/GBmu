@@ -90,8 +90,16 @@ section "", ROM0[$150]
 start:	
 
 	ld a, 0
-choy:	inc a
+	ld b, 1
+choy:	add a, b
 	daa
+	ld c, a
+	jr nc, choy
+	ld a, b
+	add a, 1
+	daa
+	ld b, a
+	ld a, 0
 	jr nz, choy
 
 	scf

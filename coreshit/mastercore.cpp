@@ -116,7 +116,7 @@ void stackdraw( void )
 {
 	word sp = core::getsp();
 
-	while ( sp != 0xfffe )
+	while ( sp != 0xcfff )
 	{
 		cout << WHITE << '[' << PEACHY << ( word ) core::mem[sp] << WHITE << ']' << endl;
 		sp += 2;
