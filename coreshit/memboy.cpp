@@ -491,6 +491,11 @@ byte memboy::getbuttonsstate( void )
 	return joypbuttons;
 }
 
+bool memboy::isdmalocked( void )
+{
+	return dmalock;
+}
+
 void memboy::dmaswitchon( void )
 {
 	dmalock = true;
