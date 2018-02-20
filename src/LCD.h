@@ -26,6 +26,7 @@ class LCD
 	private:
 		uint8_t hasprinted[144][160];
 		uint8_t priorities[144][160];
+		uint8_t lowestx[160];
 		void renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode);
 		void renderBGCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr);
 		void renderBG(uint8_t y);
