@@ -15,12 +15,15 @@ class Audio
 	private:
 		PaStream *stream;
 		uint8_t c12type;
+		bool mute;
 
 	public:
 		Audio();
 		~Audio();
 		void start();
 		inline uint8_t &getC12type() {return (c12type);};
+		inline void setMute(bool mute) {this->mute = mute;};
+		inline bool isMute() {return (this->mute);};
 
 };
 

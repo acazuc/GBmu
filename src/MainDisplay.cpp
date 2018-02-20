@@ -301,6 +301,14 @@ static void cb_options_binds(GtkWidget *osef1, gpointer osef2)
 	Main::getBindDisplay()->show();
 }
 
+static void cb_options_mute(GtkWidget *widget, gpointer osef1)
+{
+	(void)osef1;
+	Main::getAudio()->setMute(!Main::getAudio()->isMute());
+	MainDisplay *mainDisplay = Main::getMainDisplay();
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_mute), Main::getAudio()->isMute());
+}
+
 static void cb_options_size(GtkWidget *osef1, gpointer size)
 {
 	(void)osef1;
@@ -682,6 +690,11 @@ void MainDisplay::build_menu_options()
 	this->menu_options_binds = gtk_menu_item_new_with_label("Binds");
 	g_signal_connect(G_OBJECT(this->menu_options_binds), "activate", G_CALLBACK(cb_options_binds), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_binds);
+
+	//Mute
+	this->menu_options_mute = gtk_check_menu_item_new_with_label("Mute");
+	g_signal_connect(G_OBJECT(this->menu_options_mute), "activate", G_CALLBACK(cb_options_mute), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_menu), this->menu_options_mute);
 
 	//Size
 	this->menu_options_size = gtk_menu_item_new_with_label("Size");

@@ -25,6 +25,7 @@ class MainDisplay
 		GtkWidget *menu_options_menu;
 		GtkWidget *menu_options_debugger;
 		GtkWidget *menu_options_binds;
+		GtkWidget *menu_options_mute;
 		GtkWidget *menu_options_size;
 		GtkWidget *menu_options_size_menu;
 		GtkWidget *menu_options_size_item[20];

@@ -512,12 +512,15 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 		}
 		if (i & 0x1)
 			++frame;
+		if (Main::getAudio()->isMute())
+			out[i] = 0;
 	}
 	return (paContinue);
 }
 
 Audio::Audio()
 : c12type(AUDIO_C12_TYPE_SQUARE)
+, mute(false)
 {
 	PaStreamParameters parameters;
 	parameters.device = Pa_GetDefaultOutputDevice();
