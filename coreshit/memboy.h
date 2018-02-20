@@ -105,12 +105,31 @@ class memboy
 		byte *oam; // fe00 - fe9f
 		byte *hram; // ff00 - ffff
 
+		// MBC Selected Banks
+		byte *currom;
+		byte *curram;
+
+		// MBC Switchable Accessers
+		void ( memboy::*currom0set )( byte *addr, byte b );
+		void ( memboy::*currom1set )( byte *addr, byte b );
+		byte ( memboy::*currom1get )( byte *addr );
+		void ( memboy::*curramset )( byte *addr, byte b );
+		byte ( memboy::*curramget )( byte *addr );
+
+		// MBC 1 Vars
+		byte rbkid;
+
 		// Hardware Registers
 		byte joyparrows;
 		byte joypbuttons;
-
 		byte cgbbgpalette[64];
 		byte cgbsppalette[64];
+
+		// Cartridge Specs
+		bool cgb;
+		bool battery;
+		byte nrom;
+		byte nram;
 
 		// Locks
 		bool dmalock;
@@ -122,8 +141,8 @@ class memboy
 			private:
 				memboy *ref;
 				byte *addr;
-				void ( memboy::*setfunc )( byte &addr, byte b );
-				byte ( memboy::*getfunc )( byte &addr );
+				void ( memboy::*setfunc )( byte *addr, byte b );
+				byte ( memboy::*getfunc )( byte *addr );
 			public:
 				void set( byte b );
 				byte get( void );
@@ -161,29 +180,62 @@ class memboy
 		int blockid;
 
 		// Standard memory accessers
-		void classicset( byte &addr, byte b );
-		byte classicget( byte &addr );
+		void classicset( byte *addr, byte b );
+		byte classicget( byte *addr );
 
 		// ROM memory accessers
-		void romset( byte &addr, byte b );
-		byte romget( byte &addr );
+		void romset( byte *addr, byte b );
+		byte romget( byte *addr );
+		byte rom0get( byte *addr );
+		byte rom1get( byte *addr );
+
+		// ROM MBC setters
+		void mbc1set( byte *addr, byte b );
 
 		// P1/JOYP memory accessers
-		void joypset( byte &addr, byte b );
-		byte joypget( byte &addr );
+		void joypset( byte *addr, byte b );
+		byte joypget( byte *addr );
 
 		// Colors palettes memory accessers
-		void bgpset( byte &addr, byte b );
-		byte bgpget( byte &addr );
-		void sppset( byte &addr, byte b );
-		byte sppget( byte &addr );
+		void bgpset( byte *addr, byte b );
+		byte bgpget( byte *addr );
+		void sppset( byte *addr, byte b );
+		byte sppget( byte *addr );
 
 		// Dead memory accessers
-		void deadset( byte &addr, byte b );
-		byte deadget( byte &addr );
+		void deadset( byte *addr, byte b );
+		byte deadget( byte *addr );
 
 		memref *deref( word addr );
 	public:
+		struct header
+		{
+			byte start[4];
+			byte logo[48];
+			union
+			{
+				byte dmgtitle[16];
+				struct
+				{
+					byte title[11];
+					byte mcode[4];
+					byte cgbflag;
+				}
+				cgb;
+			}
+			shared;
+			word newlcode;
+			byte sgbflag;
+			byte carttype;
+			byte romsize;
+			byte ramsize;
+			byte dcode;
+			byte oldlcode;
+			byte romver;
+			byte headcheck;
+			word globcheck;
+		};
+
 		// Constructor
 		memboy( void );
 

@@ -3,14 +3,16 @@
 #include <iostream>
 #include <cstring>
 
+#pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+
 void memboy::memref::set( byte b )
 {
-	( (*ref).*setfunc )( *addr, b );
+	( (*ref).*setfunc )( addr, b );
 }
 
 byte memboy::memref::get( void )
 {
-	return ( (*ref).*getfunc )( *addr );
+	return ( (*ref).*getfunc )( addr );
 }
 
 memboy::mempassthru::operator byte( void )
@@ -159,13 +161,15 @@ memboy::memboy( void )
 	biosrombank = new byte [0x100];
 	biosromxtend = new byte [0x800];
 	rombank0 = new byte [0x4000];
-	rombank1ton = new byte [0x4000];
+	rombank1ton = NULL;
 	vram = new byte [0x4000];
-	cartram = new byte [0x2000];
+	cartram = NULL;
 	svbk0 = new byte [0x1000];
 	svbk1to7 = new byte [0x7000];
 	oam = new byte [0x100];
 	hram = new byte [0x100];
+
+	memset( hram, 0, 0x100 );
 
 	for ( int i = 0 ; i < MEMBOY_MAXSTACK ; i++ )
 		block[i].ref = this;
@@ -175,94 +179,131 @@ memboy::memboy( void )
 
 	blockid = 0;
 	rblockid = 0;
-
 	joyparrows = 0x0f;
 	joypbuttons = 0x0f;
-
-	sysregs( RBK ) = 0;
-	sysregs( DMA ) = 0;
-
-	sysregs( BCPS ) = 0;
-	sysregs( OCPS ) = 0;
 
 	memset( cgbbgpalette, 0, 64 );
 	memset( cgbsppalette, 0, 64 );
 
+	currom = NULL;
+	curram = NULL;
+	currom0set = &memboy::romset;
+	currom1set = &memboy::deadset;
+	currom1get = &memboy::deadget;
+	curramset = &memboy::deadset;
+	curramget = &memboy::deadget;
+
 	dmalock = false;
 }
 
-void memboy::classicset( byte &addr, byte b )
+void memboy::classicset( byte *addr, byte b )
 {
-	addr = b;
+	*addr = b;
 }
 
-byte memboy::classicget( byte &addr )
+byte memboy::classicget( byte *addr )
 {
-	return addr;
+	return *addr;
 }
 
 // ROM Accessers
-void memboy::romset( byte &addr, byte b )
+void memboy::romset( byte *addr, byte b )
 {
 }
 
-byte memboy::romget( byte &addr )
+byte memboy::romget( byte *addr )
 {
-	return addr;
+	return *addr;
+}
+
+byte memboy::rom0get( byte *addr )
+{
+	return rombank0[( word ) addr];
+}
+
+byte memboy::rom1get( byte *addr )
+{
+	return currom[( ( word ) addr ) - 0x4000];
+}
+
+// ROM MBC Setters
+void memboy::mbc1set( byte *addr, byte b )
+{
+	//cout << hex << ( word ) addr << ' ' << ( ( ( word ) addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
+
+
+	switch ( ( ( word ) addr ) / 0x2000 )
+	{
+		case 0:
+			break;
+		case 1:
+			if ( !b )
+				b++;
+			rbkid = ( rbkid & 0b11100000 ) | ( b & 0b00011111 );
+			currom = rombank1ton + 0x4000 * ( rbkid - 1 );
+			break;
+		case 2:
+			b <<= 5;
+			rbkid = ( rbkid & 0b00011111 ) | ( b & 0b11100000 );
+			currom = rombank1ton + 0x4000 * ( rbkid - 1 );
+			break;
+		case 3:
+			break;
+	}
 }
 
 // Dead Acessers
-void memboy::deadset( byte &addr, byte b )
+void memboy::deadset( byte *addr, byte b )
 {
 }
 
-byte memboy::deadget( byte &addr )
+byte memboy::deadget( byte *addr )
 {
 	return 0;
 }
 
 // P1/JOYP Accessers
-void memboy::joypset( byte &addr, byte b )
+void memboy::joypset( byte *addr, byte b )
 {
-	addr = b & 0b11110000;
+	*addr = b & 0b11110000;
 }
 
-byte memboy::joypget( byte &addr )
+byte memboy::joypget( byte *addr )
 {
-	switch ( addr & 0b00110000 )
+	switch ( *addr & 0b00110000 )
 	{
 		case 0b00000000:
-			return ( joypbuttons & joyparrows ) | addr;
+			return ( joypbuttons & joyparrows ) | *addr;
 		case 0b00010000:
-			return joypbuttons | addr;
+			return joypbuttons | *addr;
 		case 0b00100000:
-			return joyparrows | addr;
+			return joyparrows | *addr;
 		case 0b00110000:
-			return addr;
+			return *addr;
 	}
 }
 
 // Color Palettes Accessers
-void memboy::bgpset( byte &addr, byte b )
+void memboy::bgpset( byte *addr, byte b )
 {
 	cgbbgpalette[REGS( BCPS ) & 0b00111111] = b;
 	if ( REGS( BCPS ) & 0b10000000 )
 		REGS( BCPS ) = ( REGS( BCPS ) + 1 ) & 0b10111111;
 }
 
-byte memboy::bgpget( byte &addr )
+byte memboy::bgpget( byte *addr )
 {
 	return cgbbgpalette[REGS( BCPS ) & 0b00111111];
 }
 
-void memboy::sppset( byte &addr, byte b )
+void memboy::sppset( byte *addr, byte b )
 {
 	cgbsppalette[REGS( OCPS ) & 0b00111111] = b;
 	if ( REGS( OCPS ) & 0b10000000 )
 		REGS( OCPS ) = ( REGS( OCPS ) + 1 ) & 0b10111111;
 }
 
-byte memboy::sppget( byte &addr )
+byte memboy::sppget( byte *addr )
 {
 	return cgbsppalette[REGS( OCPS ) & 0b00111111];
 }
@@ -278,9 +319,6 @@ memboy::memref *memboy::deref( word addr )
 	// ROM Sector
 	if ( addr < 0x8000 )
 	{
-		(*ref).getfunc = &memboy::romget;
-		(*ref).setfunc = &memboy::romset;
-
 		// Bank 0 Sector
 		if ( addr < 0x4000 )
 		{
@@ -289,10 +327,14 @@ memboy::memref *memboy::deref( word addr )
 			{
 				if ( REGS( RBK ) & 1 )
 				{
-					(*ref).addr = &rombank0[addr];
+					(*ref).getfunc = &memboy::rom0get;
+					(*ref).setfunc = currom0set;
+					(*ref).addr = ( byte * ) addr;
 					return ref;
 				}
 
+				(*ref).getfunc = &memboy::romget;
+				(*ref).setfunc = &memboy::romset;
 				(*ref).addr = &biosrombank[addr];
 				return ref;
 			}
@@ -302,20 +344,28 @@ memboy::memref *memboy::deref( word addr )
 			{
 				if ( REGS( RBK ) & 1 )
 				{
-					(*ref).addr = &rombank0[addr];
+					(*ref).getfunc = &memboy::rom0get;
+					(*ref).setfunc = currom0set;
+					(*ref).addr = ( byte * ) addr;
 					return ref;
 				}
 
+				(*ref).getfunc = &memboy::romget;
+				(*ref).setfunc = &memboy::romset;
 				(*ref).addr = &biosromxtend[addr - 0x0200];
 				return ref;
 			}
 
-			(*ref).addr = &rombank0[addr];
+			(*ref).getfunc = &memboy::rom0get;
+			(*ref).setfunc = currom0set;
+			(*ref).addr = ( byte * ) addr;
 			return ref;
 		}
 
 		// Bank 1 Sector
-		(*ref).addr = &rombank1ton[addr - 0x4000];
+		(*ref).getfunc = currom1get;
+		(*ref).setfunc = currom1set;
+		(*ref).addr = ( byte * ) addr;
 		return ref;
 	}
 
@@ -341,9 +391,9 @@ memboy::memref *memboy::deref( word addr )
 		// Cartridge RAM Sector
 		if ( addr < 0xc000 )
 		{
-			(*ref).getfunc = &memboy::classicget;
-			(*ref).setfunc = &memboy::classicset;
-			(*ref).addr = &cartram[addr - 0xa000];
+			(*ref).getfunc = curramget;
+			(*ref).setfunc = curramset;
+			(*ref).addr = &curram[addr - 0xa000];
 			return ref;	
 		}
 
@@ -551,32 +601,138 @@ bool memboy::biosload( const char *path )
 bool memboy::romload( const char *path )
 {
 	ifstream in;
+	struct header *head;
+	int len;
+	int nbk;
+	int off;
 
+	// Clear existing maps if any
+	if ( rombank1ton )
+		delete [] rombank1ton;
+	rombank1ton = NULL;
+	currom = NULL;
+	if ( cartram )
+		delete [] cartram;
+	cartram = NULL;
+	curram = NULL;
+	currom0set = &memboy::romset;
+	currom1set = &memboy::deadset;
+	currom1get = &memboy::deadget;
+	curramset = &memboy::deadset;
+	curramget = &memboy::deadget;
+
+	// Open ROM, abort if it fails
 	in.open( path );
 	if ( !in || in.eof() )
 		return false;
 
-	for ( byte *cmap = rombank0 ; cmap < ( rombank0 + 0x4000 ) ; cmap++ )
+	// Define file length
+	in.seekg( 0, in.end );
+	len = in.tellg();
+	in.seekg( 0, in.beg );
+
+	nbk = len / 0x4000;
+	if ( off = len % 0x4000 )
+		nbk++;
+
+	//cout << nbk << ' ' << off << ' ' << hex << len << endl;
+
+	// Return false if ROM doesn't have any byte in program area
+	if ( len < 0x151 )
+		return false;
+
+	// Load first rom bank in memory
+	in.read( ( char * ) rombank0, 0x4000 );
+
+	head = ( struct header * ) &rombank0[0x100];
+	switch ( (*head).carttype )
 	{
-		*cmap = in.get();
-		if ( in.eof() )
-			return true;
+		case 0x00:
+			battery = false;
+			break;
+		case 0x01:
+			currom0set = &memboy::mbc1set;
+			currom1set = &memboy::mbc1set;
+			rbkid = 1;
+			battery = false;
+			break;
+		case 0x02:
+			currom0set = &memboy::mbc1set;
+			currom1set = &memboy::mbc1set;
+			rbkid = 1;
+			battery = false;
+			break;
+		case 0x03:
+			currom0set = &memboy::mbc1set;
+			currom1set = &memboy::mbc1set;
+			rbkid = 1;
+			battery = true;
+			break;
+		default:
+			return false;
 	}
 
-	for ( byte *cmap = rombank1ton ; cmap < ( rombank1ton + 0x4000 ) ; cmap++ )
+	// Load remaining ROM banks if any
+	if ( !--nbk )
 	{
-		*cmap = in.get();
-		if ( in.eof() )
-			return true;
+		if ( off )
+			memset( rombank0 + off, 0, 0x4000 - off );
+	}
+	else
+	{
+		cout << nbk << endl;
+		rombank1ton = new byte [0x4000 * nbk];
+		currom = rombank1ton;
+		currom1get = &memboy::rom1get;
+		in.read( ( char * ) rombank1ton, 0x4000 * nbk );
+		if ( off )
+			memset( rombank1ton + ( 0x4000 * ( nbk - 1 ) ) + off, 0, 0x4000 - off );
 	}
 
-	return false;
+	// Set up Cart RAM ( if any )
+	switch ( (*head).ramsize )
+	{
+		case 0x00:
+			break;
+		case 0x01:
+		case 0x02:
+			cartram = new byte [0x2000];
+			curram = cartram;
+			curramset = &memboy::classicset;
+			curramget = &memboy::classicget;
+			break;
+		case 0x03:
+			cartram = new byte [0x8000];
+			curram = cartram;
+			curramset = &memboy::classicset;
+			curramget = &memboy::classicget;
+			break;
+		case 0x04:
+			cartram = new byte [0x2c000];
+			curram = cartram;
+			curramset = &memboy::classicset;
+			curramget = &memboy::classicget;
+			break;
+		case 0x05:
+			cartram = new byte [0x10000];
+			curram = cartram;
+			curramset = &memboy::classicset;
+			curramget = &memboy::classicget;
+			break;
+	}
+
+	//for ( int i = 0 ; i < 0x4000 ; i++ )
+	//	cout << ( int ) rombank0[i] << ' ';
+	//for ( int i = 0 ; i < ( nbk * 0x4000 ) ; i++ )
+	//	cout << ( int ) rombank1ton[i] << ' ';
+	//cout << endl;
+
+	return true;
 }
 
 void memboy::ramclear( void )
 {
 	memset( vram, 0, 0x4000 );
-	memset( cartram, 0, 0x2000 );
 	memset( svbk0, 0, 0x1000 );
 	memset( svbk1to7, 0, 0x7000 );
 	memset( oam, 0, 0x100 );
@@ -588,9 +744,11 @@ memboy::~memboy( void )
 	delete [] biosrombank; // 0000 - 0100
 	delete [] biosromxtend; // 0200 - 1000
 	delete [] rombank0; // 0000 - 3fff
-	delete [] rombank1ton; // 4000 - 7fff
+	if ( rombank1ton )
+		delete [] rombank1ton; // 4000 - 7fff
 	delete [] vram; // 8000 - 9fff
-	delete [] cartram; // a000 - bfff
+	if ( cartram )
+		delete [] cartram; // a000 - bfff
 	delete [] svbk0; // c000 - cfff
 	delete [] svbk1to7; // d000 - dfff
 	delete [] oam; // fe00 - fe9f

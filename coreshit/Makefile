@@ -114,7 +114,7 @@ SRC	= InstructionSet/_blank.cpp \
 
 OBJ	= $(SRC:.cpp=.o)
 
-CFLAGS	= -I . -I InstructionSet -I ../Essentials -std=gnu++11 -Ofast -flto
+CFLAGS	= -I . -I InstructionSet -I ../Essentials -std=gnu++11 -Ofast -flto -fpermissive
 
 RM	= rm -f
 
