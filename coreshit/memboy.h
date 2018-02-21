@@ -115,9 +115,15 @@ class memboy
 		byte ( memboy::*currom1get )( byte *addr );
 		void ( memboy::*curramset )( byte *addr, byte b );
 		byte ( memboy::*curramget )( byte *addr );
+		void ( memboy::*cramset )( byte *addr, byte b );
+		byte ( memboy::*cramget )( byte *addr );
 
 		// MBC 1 Vars
 		byte rbkid;
+
+		// MBC 5 Vars
+		xword rombkid5;
+		byte rambkid5;
 
 		// Hardware Registers
 		byte joyparrows;
@@ -191,6 +197,7 @@ class memboy
 
 		// ROM MBC setters
 		void mbc1set( byte *addr, byte b );
+		void mbc5set( byte *addr, byte b );
 
 		// P1/JOYP memory accessers
 		void joypset( byte *addr, byte b );
@@ -205,6 +212,9 @@ class memboy
 		// Dead memory accessers
 		void deadset( byte *addr, byte b );
 		byte deadget( byte *addr );
+
+		// DIV memory accessers
+		void divset( byte *addr, byte b );
 
 		memref *deref( word addr );
 	public:
