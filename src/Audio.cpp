@@ -8,7 +8,7 @@
 
 #define CLOCK_FREQ 4194304
 
-static uint64_t freq = CLOCK_FREQ / 64;
+static uint64_t freq = CLOCK_FREQ / 32;
 static uint64_t frame = 0;
 
 static uint64_t c1len = 0;
@@ -28,9 +28,7 @@ static bool c4envdir = false;
 static uint8_t c1swptime = 0;
 static bool c1swpdir = false;
 static uint8_t c1swpshift = 0;
-static uint64_t c1freq = 1;
-static uint64_t c2freq = 1;
-static uint64_t c3freq = 1;
+static uint16_t c1swpfreq = 0;
 static uint64_t c1lastswptick = 0;
 static uint64_t c1lastenvtick = 0;
 static uint64_t c2lastenvtick = 0;
@@ -46,15 +44,20 @@ static uint64_t nextClock = 0;
 static uint64_t envtick = 0;
 static uint64_t swptick = 0;
 
-static uint32_t c1regtofreq(uint8_t nr13, uint8_t nr14)
-{
-	uint16_t reg = (uint16_t)nr13 | (((uint16_t)(nr14 & 0x7)) << 8);
-	return (CLOCK_FREQ / (32 * (2048 - reg)));
-}
-
 static uint16_t c1freqtoval(uint32_t freq)
 {
 	return (2048 - CLOCK_FREQ / (32 * freq));
+}
+
+static uint32_t c1valtofreq(int32_t val)
+{
+	return (CLOCK_FREQ / (32 * (2048 - val)));
+}
+
+static uint32_t c1regtofreq(uint8_t nr13, uint8_t nr14)
+{
+	uint16_t val = (uint16_t)nr13 | (((uint16_t)(nr14 & 0x7)) << 8);
+	return (c1valtofreq(val));
 }
 
 static void c1freqtoreg(uint32_t freq, uint8_t *nr13, uint8_t *nr14)
@@ -82,9 +85,9 @@ static int16_t getc1val()
 	{
 		c1len = 64 - (core::mem.sysregs(NR11) & 0b00111111);
 		c1env = (core::mem.sysregs(NR12) & 0b11110000) >> 4;
-		c1freq = c1regtofreq(core::mem.sysregs(NR13), core::mem.sysregs(NR14));
 		c1envdir = core::mem.sysregs(NR12) & 0b00001000;
 		c1envstep = core::mem.sysregs(NR12) & 0b00000111;
+		c1swpfreq = ((core::mem.sysregs(NR14) & 0b00000111) << 8) | core::mem.sysregs(NR13);
 		c1swptime = (core::mem.sysregs(NR10) & 0b01110000) >> 4;
 		c1swpdir = core::mem.sysregs(NR10) & 0b00001000;
 		c1swpshift = core::mem.sysregs(NR10) & 0b00000111;
@@ -101,8 +104,6 @@ static int16_t getc1val()
 		core::mem.sysregs(NR52) &= 0b11111110;
 		return (0);
 	}
-	if (!c1freq)
-		return (0);
 	uint8_t duty = (core::mem.sysregs(NR11) & 0b11000000) >> 6;
 	float dutyper = 0;
 	switch (duty)
@@ -120,6 +121,7 @@ static int16_t getc1val()
 			dutyper = .875;
 			break;
 	}
+	uint32_t c1freq = c1regtofreq(core::mem.sysregs(NR13), core::mem.sysregs(NR14));
 	uint32_t inter = freq / c1freq;
 	if (!inter)
 		return (0);
@@ -157,7 +159,6 @@ static int16_t getc2val()
 	{
 		c2len = 64 - (core::mem.sysregs(NR21) & 0b00111111);
 		c2env = (core::mem.sysregs(NR22) & 0b11110000) >> 4;
-		c2freq = c2regtofreq(core::mem.sysregs(NR23), core::mem.sysregs(NR24));
 		c2envdir = core::mem.sysregs(NR22) & 0b00001000;
 		c2envstep = core::mem.sysregs(NR22) & 0b00000111;
 		core::mem.sysregs(NR24) &= 0b01111111;
@@ -168,8 +169,7 @@ static int16_t getc2val()
 		core::mem.sysregs(NR52) &= 0b11111101;
 		return (0);
 	}
-	if (!c2freq)
-		return (0);
+	uint32_t c2freq = c1regtofreq(core::mem.sysregs(NR23), core::mem.sysregs(NR24));
 	uint8_t duty = (core::mem.sysregs(NR21) & 0b11000000) >> 6;
 	float dutyper = 0;
 	if (duty == 0b11)
@@ -221,14 +221,10 @@ static int16_t getc3val()
 	if (core::mem.sysregs(NR34) & 0b10000000)
 	{
 		c3len = 256 - core::mem.sysregs(NR31);
-		c3freq = c3regtofreq(core::mem.sysregs(NR33), core::mem.sysregs(NR34));
 		core::mem.sysregs(NR34) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000100;
 	}
-	if (!(core::mem.sysregs(NR34) & 0b01000000))
-		c3freq = c3regtofreq(core::mem.sysregs(NR33), core::mem.sysregs(NR34));
-	if (!c3freq)
-		return (0);
+	uint32_t c3freq = c3regtofreq(core::mem.sysregs(NR33), core::mem.sysregs(NR34));
 	uint32_t inter = freq / c3freq;
 	if (!inter)
 		return (0);
@@ -307,34 +303,30 @@ static void updateLengthTick()
 	//Channel 1
 	if (core::mem.sysregs(NR14) & 0b01000000)
 	{
+		c1len--;
 		if (c1len == 0)
 			core::mem.sysregs(NR52) &= 0b11111110;
-		else
-			c1len--;
 	}
 	//Channel 2
 	if (core::mem.sysregs(NR24) & 0b01000000)
 	{
+		c2len--;
 		if (c2len == 0)
 			core::mem.sysregs(NR52) &= 0b11111101;
-		else
-			c2len--;
 	}
 	//Channel 3
 	if (core::mem.sysregs(NR34) & 0b01000000)
 	{
+		c3len--;
 		if (c3len == 0)
 			core::mem.sysregs(NR52) &= 0b11111011;
-		else
-			c3len--;
 	}
 	//Channel 4
 	if (core::mem.sysregs(NR44) & 0b01000000)
 	{
+		c4len--;
 		if (c4len == 0)
 			core::mem.sysregs(NR52) &= 0b11110111;
-		else
-			c4len--;
 	}
 }
 
@@ -342,7 +334,7 @@ static void updateEnvTick()
 {
 	//Channel 1
 	{
-		if (c1envstep && envtick - c1lastenvtick > c1envstep)
+		if (c1envstep && envtick - c1lastenvtick >= c1envstep)
 		{
 			c1lastenvtick = envtick;
 			if (c1envdir)
@@ -361,7 +353,7 @@ static void updateEnvTick()
 	}
 	//Channel 2
 	{
-		if (c2envstep && envtick - c2lastenvtick > c2envstep)
+		if (c2envstep && envtick - c2lastenvtick >= c2envstep)
 		{
 			c2lastenvtick = envtick;
 			if (c2envdir)
@@ -380,7 +372,7 @@ static void updateEnvTick()
 	}
 	//Channel 4
 	{
-		if (c4envstep && envtick - c4lastenvtick > c4envstep)
+		if (c4envstep && envtick - c4lastenvtick >= c4envstep)
 		{
 			c4lastenvtick = envtick;
 			if (c4envdir)
@@ -408,17 +400,17 @@ static void updateSweepTick()
 			c1lastswptick = swptick;
 			if (!c1swpdir)
 			{
-				int32_t newfreq = c1freq + c1freq / pow(2, c1swpshift);
-				if (newfreq && c1freqtoval(newfreq) > 2047)
+				c1swpfreq += c1swpfreq >> c1swpshift;
+				if (c1swpfreq > 2047)
 					core::mem.sysregs(NR52) &= 0b11111110;
-				c1freq = newfreq;
+				core::mem.sysregs(NR13) = c1swpfreq & 0xff;
+				core::mem.sysregs(NR14) = (core::mem.sysregs(NR14) & 0b11111000) | (c1swpfreq >> 8);
 			}
 			else
 			{
-				int32_t newfreq = c1freq - c1freq / pow(2, c1swpshift);
-				if (newfreq < 0)
-					newfreq = 0;
-				c1freq = newfreq;
+				c1swpfreq -= (c1swpfreq >> c1swpshift);
+				core::mem.sysregs(NR13) = c1swpfreq & 0xff;
+				core::mem.sysregs(NR14) = (core::mem.sysregs(NR14) & 0b11111000) | (c1swpfreq >> 8);
 			}
 		}
 	}
