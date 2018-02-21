@@ -17,8 +17,6 @@ LCD::LCD()
 void LCD::render()
 {
 	bool stopped = core::getstate() == CPU_STOP;
-	if (stopped)
-		memset(Main::getMainDisplay()->getTexDatas(), 0xff, 160 * 144 * 3);
 	bool paused = Main::isPaused();
 	uint8_t keys_org = core::mem[JOYP] & 0xf;
 	uint8_t keys = 0xf;
@@ -67,12 +65,19 @@ void LCD::render()
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
 			corerun(172 / div);
-		if (!stopped && core::mem[LCDC] & 0b00000001)
-			renderBG(y);
-		if (!stopped && core::mem[LCDC] & 0b00100000)
-			renderWindow(y);
-		if (/*!core::mem.isdmalocked() && */!stopped && core::mem[LCDC] & 0b00000010)
-			renderOBJ(y);
+		if (!stopped && core::mem[LCDC] & 0b10000000)
+		{
+			if (core::mem[LCDC] & 0b00000001)
+				renderBG(y);
+			if (core::mem[LCDC] & 0b00100000)
+				renderWindow(y);
+			if (!core::mem.isdmalocked() && core::mem[LCDC] & 0b00000010)
+				renderOBJ(y);
+		}
+		else
+		{
+			memset(Main::getMainDisplay()->getTexDatas(), 0xff, 160 * 144 * 3);
+		}
 		core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 0;
 		if (core::mem[STAT] & 0b00010000)
 			core::mem[IF] |= 1 << 1;

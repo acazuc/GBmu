@@ -85,7 +85,7 @@ static int16_t getc1val()
 		c1freq = c1regtofreq(core::mem.sysregs(NR13), core::mem.sysregs(NR14));
 		c1envdir = core::mem.sysregs(NR12) & 0b00001000;
 		c1envstep = core::mem.sysregs(NR12) & 0b00000111;
-		c1swptime = core::mem.sysregs(NR10) & 0b01110000;
+		c1swptime = (core::mem.sysregs(NR10) & 0b01110000) >> 4;
 		c1swpdir = core::mem.sysregs(NR10) & 0b00001000;
 		c1swpshift = core::mem.sysregs(NR10) & 0b00000111;
 		core::mem.sysregs(NR14) &= 0b01111111;
@@ -403,10 +403,10 @@ static void updateSweepTick()
 {
 	//Channel 1
 	{
-		if (c1swptime && c1swpshift && swptick - c1lastswptick > c1swptime)
+		if (c1swptime && c1swpshift && swptick - c1lastswptick >= c1swptime)
 		{
 			c1lastswptick = swptick;
-			if (c1swpdir)
+			if (!c1swpdir)
 			{
 				int32_t newfreq = c1freq + c1freq / pow(2, c1swpshift);
 				if (newfreq && c1freqtoval(newfreq) > 2047)
