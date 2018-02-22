@@ -259,7 +259,7 @@ void memboy::mbc1set( byte *addr, byte b )
 			}
 			break;
 		case 1:
-			if ( !b )
+			if ( !( b & 0b00011111 ) )
 				b++;
 			rbkid = ( rbkid & 0b11100000 ) | ( b & 0b00011111 );
 			if ( rbkid & 0b10000000 )
@@ -270,7 +270,7 @@ void memboy::mbc1set( byte *addr, byte b )
 		case 2:
 			rbkid = ( rbkid & 0b10011111 ) | ( ( b << 5 ) & 0b01100000 );
 			if ( rbkid & 0b10000000 )
-				curram = cartram + 0x2000 * ( b & 0b00000111 );
+				curram = cartram + 0x2000 * ( b & 0b00000011 );
 			else
 				currom = rombank1ton + 0x4000 * ( ( rbkid & 0b01111111 ) - 1 );
 			break;
@@ -289,9 +289,9 @@ void memboy::mbc1set( byte *addr, byte b )
 			}
 			break;
 	}
-	cout << ( rbkid & 0b10000000 ) << ' ' << ( rbkid & 0b01100000 ) << ' ' << ( rbkid & 0b00011111 ) << endl;
-	if ( currom > ( rombank1ton + 0x4000 * 511 ) )
-		cout << ( void  * ) currom << endl;
+	//cout << ( ( rbkid & 0b10000000 ) >> 7 ) << ' ' << ( ( rbkid & 0b01100000 ) >> 5 ) << ' ' << ( rbkid & 0b00011111 ) << endl;
+	//cout << ( void * ) currom << ' ' << ( void * ) rombank1ton << endl;
+	//cout << ( void * ) curram << ' ' << ( void * ) cartram << endl;
 }
 
 // ROM MBC2 Setter

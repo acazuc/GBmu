@@ -62,13 +62,13 @@ section "header", ROM0[$100]
 	db 0
 
 	; Cartridge type
-        db 0
+        db 2
 
 	; Rom Size
-        db 0
+        db $8
 
 	; Ram Size
-        db 0
+        db $5
 
 	; Is not Japan ?
 	db 1
@@ -88,96 +88,69 @@ section "header", ROM0[$100]
 section "", ROM0[$150]
 
 start:	
+	ld a, $01
+	ld [$6000], a
 
-	ld a, 0
-	ld b, 1
-choy:	add a, b
-	daa
-	ld c, a
-	jr nc, choy
+	ld a, $0a
+	ld [$0000], a
+
+	ld b, $10
+grill:	ld hl, $a000
+mii:	ld a, b
+	ld [hli], a
+	ld a, h
+	cp $c0
+	jr nz, mii
+	inc b
 	ld a, b
-	add a, 1
-	daa
-	ld b, a
-	ld a, 0
-	jr nz, choy
-
-	scf
-	ccf
-	scf
-
-	ld sp, $fffe
-	ld a, 1
-	ld b, 2
-	ld c, 3
-	ld d, 4
-	ld e, 5
-	ld h, 6
-	ld l, 7
-
-	push af
-	push bc
-	push de
-	push hl
-
-	xor a
-	ld b, a
-	ld c, a
-	ld d, a
-	ld e, a
-	ld h, a
-	ld l, a
-
-	pop hl
-	pop de
-	pop bc
-	pop af
+	ld [$4000], a
+	cp $14
+	jr nz, grill
 
 	ld b, 0
-
-	ld sp, $0ff0
-miitop:	ld hl, sp - 1
-	dec sp
-	jr miitop
-
-ltop:	ld sp, $0ff0
-	ld hl, there + 1
-	ld [hl], b
-there:	add sp, 0
-	inc b
-	jr nz, ltop
-
-	call next
-
-	ld a, %10000000
-	ldh [BCPS], a
-
-	xor a
-yay:	ldh [BCPD], a
-	inc a
-	cp $3f
-	jr nz, yay
-
-	xor a
-	ld b, a
-	ldh [BCPS], a
-aja:	ldh a, [BCPD]
+grill2:	ld hl, $a000
+mii2:	ld a, [hli]
+	ld c, a
+	ld a, h
+	cp $c0
+	jr nz, mii2
 	inc b
 	ld a, b
-	ldh [BCPS], a
-	bit 6, b
-	jr z, aja
+	ld [$4000], a
+	cp $04
+	jr nz, grill2
 
 	stop
 
-next	call c, mii
-	ret
+	ld a, $4
+	ld [$2000], a
+	ld a, $01
+	ld [$4000], a
 
-mii:	call poda
-	ret c
+	ld a, $01
+	ld [$6000], a
+	ld a, $00
+	ld [$6000], a
+	ld a, $01
+	ld [$6000], a
+	ld a, $00
+	ld [$6000], a
 
-poda:	ret
+	stop
 
+	xor a
+	ld b, a
+mooga:	ld [$2000], a
+	inc a
+	cp $20
+	jr nz, mooga
+	inc b
+	ld a, b
+	;ld [$6000], a
+	ld [$4000], a
+	xor a
+	jr mooga
+	stop
 
 ; ------ Charcopy ------
 
