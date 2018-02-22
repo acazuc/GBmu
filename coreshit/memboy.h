@@ -197,7 +197,12 @@ class memboy
 
 		// ROM MBC setters
 		void mbc1set( byte *addr, byte b );
+		void mbc2set( byte *addr, byte b );
 		void mbc5set( byte *addr, byte b );
+
+		// RAM MBC accessers
+		void mbc2rset( byte *addr, byte b );
+		byte mbc2rget( byte *addr );
 
 		// P1/JOYP memory accessers
 		void joypset( byte *addr, byte b );

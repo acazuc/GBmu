@@ -206,6 +206,17 @@ byte memboy::classicget( byte *addr )
 	return *addr;
 }
 
+// MBC2 Special RAM Accessers
+void memboy::mbc2rset( byte *addr, byte b )
+{
+	*addr = b & 0x0f;
+}
+
+byte memboy::mbc2rget( byte *addr )
+{
+	return *addr;
+}
+
 // ROM Accessers
 void memboy::romset( byte *addr, byte b )
 {
@@ -226,7 +237,7 @@ byte memboy::rom1get( byte *addr )
 	return currom[( ( word ) addr ) - 0x4000];
 }
 
-// ROM MBC Setters
+// ROM MBC1 Setter
 void memboy::mbc1set( byte *addr, byte b )
 {
 	//cout << hex << ( word ) addr << ' ' << ( ( ( word ) addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
@@ -283,7 +294,42 @@ void memboy::mbc1set( byte *addr, byte b )
 		cout << ( void  * ) currom << endl;
 }
 
-// ROM MBC5
+// ROM MBC2 Setter
+void memboy::mbc2set( byte *addr, byte b )
+{
+	switch ( ( ( word ) addr ) / 0x1000 )
+	{
+		case 0:
+			if ( !( ( ( word ) addr ) & 0b00010000 ) )
+			{
+				if ( ( b & 0x0f ) == 0x0A )
+				{
+					curramset = memboy::cramset;
+					curramget = memboy::cramget;
+				}
+				else
+				{
+					curramset = &memboy::deadset;
+					curramget = &memboy::deadget;
+				}
+			}
+			break;
+		case 1:
+			if ( ( ( word ) addr ) & 0b00010000 )
+			{
+				b = b & 0x0f;
+
+				if ( b )
+					currom = rombank1ton;
+				else
+					currom = rombank1ton + 0x4000 * ( b - 1 );
+				break;
+			}
+	}
+}
+
+
+// ROM MBC5 Setter
 void memboy::mbc5set( byte *addr, byte b )
 {
 	//cout << hex << ( word ) addr << ' ' << ( ( ( word ) addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
@@ -744,12 +790,14 @@ bool memboy::romload( const char *path )
 		case 0x00: // ROM Only
 			battery = false;
 			break;
+
 		case 0x01: // MBC 1
 			currom0set = &memboy::mbc1set;
 			currom1set = &memboy::mbc1set;
 			rbkid = 1;
 			battery = false;
 			break;
+
 		case 0x02: // MBC 1 + RAM
 			currom0set = &memboy::mbc1set;
 			currom1set = &memboy::mbc1set;
@@ -758,6 +806,7 @@ bool memboy::romload( const char *path )
 			rbkid = 1;
 			battery = false;
 			break;
+
 		case 0x03: // MBC 1 + RAM + Battery
 			currom0set = &memboy::mbc1set;
 			currom1set = &memboy::mbc1set;
@@ -766,12 +815,34 @@ bool memboy::romload( const char *path )
 			rbkid = 1;
 			battery = true;
 			break;
+
+		case 0x05: // MBC 2
+			currom0set = &memboy::mbc2set;
+			currom1set = &memboy::mbc2set;
+			cramset = &memboy::mbc2rset;
+			cramget = &memboy::mbc2rget;
+			cartram = new byte [0x2000];
+			curram = cartram;
+			battery = false;
+			break;
+
+		case 0x06: // MBC 2 + Battery
+			currom0set = &memboy::mbc2set;
+			currom1set = &memboy::mbc2set;
+			cramset = &memboy::mbc2rset;
+			cramget = &memboy::mbc2rget;
+			cartram = new byte [0x2000];
+			curram = cartram;
+			battery = true;
+			break;
+
 		case 0x19: // MBC 5
 			currom0set = &memboy::mbc5set;
 			currom1set = &memboy::mbc5set;
 			rombkid5.w = 1;
 			battery = false;
 			break;
+
 		case 0x1a: // MBC 5 + RAM
 			currom0set = &memboy::mbc5set;
 			currom1set = &memboy::mbc5set;
@@ -780,6 +851,7 @@ bool memboy::romload( const char *path )
 			rombkid5.w = 1;
 			battery = false;
 			break;
+
 		case 0x1b: // MBC 5 + RAM + Battery
 			currom0set = &memboy::mbc5set;
 			currom1set = &memboy::mbc5set;
@@ -788,6 +860,7 @@ bool memboy::romload( const char *path )
 			rombkid5.w = 1;
 			battery = true;
 			break;
+
 		default: // Unhandeled Cartridge Type
 			return false;
 	}
