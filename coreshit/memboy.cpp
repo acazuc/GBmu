@@ -254,6 +254,8 @@ void memboy::mbc1set( byte *addr, byte b )
 			{
 				curramset = &memboy::deadset;
 				curramget = &memboy::deadget;
+				if ( battery )
+					dumpsave();
 			}
 			break;
 		case 1:
@@ -309,6 +311,8 @@ void memboy::mbc2set( byte *addr, byte b )
 				{
 					curramset = &memboy::deadset;
 					curramget = &memboy::deadget;
+					if ( battery )
+						dumpsave();
 				}
 			}
 			break;
@@ -343,6 +347,8 @@ void memboy::mbc3set( byte *addr, byte b )
 			{
 				curramset = &memboy::deadset;
 				curramget = &memboy::deadget;
+				if ( battery )
+					dumpsave();
 			}
 			break;
 		case 1:
