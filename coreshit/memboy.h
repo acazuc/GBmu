@@ -121,9 +121,13 @@ class memboy
 		// MBC 1 Vars
 		byte rbkid;
 
+		// MBC 3 vars
+		byte fakertc[0x2000];
+
 		// MBC 5 Vars
 		xword rombkid5;
 		byte rambkid5;
+		ofstream savefile;
 
 		// Hardware Registers
 		byte joyparrows;
@@ -134,8 +138,8 @@ class memboy
 		// Cartridge Specs
 		bool cgb;
 		bool battery;
-		byte nrom;
-		byte nram;
+		word nrom;
+		word nram;
 
 		// Locks
 		bool dmalock;
@@ -198,6 +202,7 @@ class memboy
 		// ROM MBC setters
 		void mbc1set( byte *addr, byte b );
 		void mbc2set( byte *addr, byte b );
+		void mbc3set( byte *addr, byte b );
 		void mbc5set( byte *addr, byte b );
 
 		// RAM MBC accessers
@@ -221,6 +226,8 @@ class memboy
 		// DIV memory accessers
 		void divset( byte *addr, byte b );
 
+		void startsave( const char *path );
+		void dumpsave( void );
 		memref *deref( word addr );
 	public:
 		struct header
