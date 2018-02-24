@@ -138,8 +138,8 @@ class memboy
 		// Cartridge Specs
 		bool cgb;
 		bool battery;
-		word nrom;
-		word nram;
+		dword nrom;
+		dword nram;
 
 		// Locks
 		bool dmalock;
