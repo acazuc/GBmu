@@ -143,6 +143,7 @@ class memboy
 
 		// Locks
 		bool dmalock;
+		bool vramdmawrote;
 
 		class memref
 		{
@@ -226,6 +227,9 @@ class memboy
 		// DIV memory accessers
 		void divset( byte *addr, byte b );
 
+		// HDMA5 memory accessers
+		void hdma5set( byte *addr, byte b );
+
 		void startsave( const char *path );
 		void dumpsave( void );
 		memref *deref( word addr );
@@ -283,6 +287,7 @@ class memboy
 		byte getarrowsstate( void );
 		byte getbuttonsstate( void );
 		bool isdmalocked( void );
+		bool hdma5writehappend( void );
 
 		// Destructor
 		~memboy( void );

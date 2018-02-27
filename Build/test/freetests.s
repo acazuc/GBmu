@@ -18,6 +18,11 @@ SVBK equ $FF70
 BCPS equ $FF68
 BCPD equ $FF69
 
+TDIV equ $FF04
+TIMA equ $FF05
+TMA equ $FF06
+TAC equ $FF07
+
 section "Vblank IRQ", ROM0[$40]
 
 	reti
@@ -28,6 +33,7 @@ section "LCD Stat IRQ", ROM0[$48]
 
 section "Timer IRQ", ROM0[$50]
 
+	inc c
 	reti
 
 section "Serial IRQ", ROM0[$58]
@@ -88,6 +94,22 @@ section "header", ROM0[$100]
 section "", ROM0[$150]
 
 start:	
+
+groo:	ld a, 0
+	ld [TMA], a
+
+	ld a, %00000100
+	ld [IE], a
+
+	ld c, 0
+
+	ld a, %00000111
+	ld [TAC], a
+	ei
+
+molly:	ldh a, [TIMA]
+	jr molly
+
 	ld a, $01
 	ld [$6000], a
 

@@ -130,6 +130,7 @@ class core
 		static bool ime;
 		static byte state;
 		static bool x2speed;
+		static bool on;
 		static struct instruction *next;
 
 		#include <InstructionSet/instructionset.h>
@@ -144,6 +145,8 @@ class core
 
 		// Control
 		static const char *cue( void );
+		static void switchon( void );
+		static void switchoff( void );
 
 		// 8 bits Getters
 		static byte geta( void );

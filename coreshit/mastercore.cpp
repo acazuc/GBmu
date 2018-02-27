@@ -133,21 +133,21 @@ void timer( void )
 	if ( !--divider )
 	{
 		divider = 256;
-		core::mem[DIV]++;
+		core::mem.sysregs( DIV )++;
 	}
 
-	if ( core::mem[TAC] & 0b00000100 )
+	if ( core::mem.sysregs( TAC ) & 0b00000100 )
 	{
-		if ( ++timer > clockselect[core::mem[TAC] & 3] )
+		if ( ++timer > clockselect[core::mem.sysregs( TAC ) & 3] )
 		{
 			timer = 0;
-			if ( core::mem[TIMA] == 0xff )
+			if ( core::mem.sysregs( TIMA ) == 0xff )
 			{
-				core::mem[TIMA] = core::mem[TMA];
-				core::mem[IF] |= 0b00000100;
+				core::mem.sysregs( TIMA ) = core::mem.sysregs( TMA );
+				core::mem.sysregs( IF ) |= 0b00000100;
 			}
 			else
-				core::mem[TIMA]++;
+				core::mem.sysregs( TIMA )++;
 		}
 	}
 }
@@ -183,6 +183,139 @@ void dmaoamtransfert( void )
 	}
 }
 
+#define VDMA_OFF 0
+#define VDMA_GENERAL 1
+#define VDMA_HBLANK 2
+#define VDMA_HBLANKWAIT 3
+
+void dmavramtransfert( void )
+{
+	static byte state = VDMA_OFF;
+	static byte count = 0x10;
+	static byte laststat;
+	static xword src;
+	static xword dst;
+
+	switch ( state )
+	{
+		case VDMA_OFF:
+			if ( core::mem.hdma5writehappend() )
+			{
+				src.b.h = core::mem.sysregs( HDMA1 );
+				src.b.l = core::mem.sysregs( HDMA2 ) & 0b11110000;
+
+				dst.b.h = core::mem.sysregs( HDMA3 ) & 0b00011111;
+				dst.b.l = core::mem.sysregs( HDMA4 ) & 0b11110000;
+
+				if ( !( core::mem.sysregs( HDMA5 ) & 0b10000000 ) )
+				{
+					laststat = core::mem.sysregs( STAT ) & 0b00000011;
+					state = VDMA_HBLANKWAIT;
+				}
+				else
+				{
+					state = VDMA_GENERAL;
+					core::switchoff();
+					goto vdmagen;
+				}
+			}
+			return;
+
+		case VDMA_GENERAL:
+vdmagen:		if ( core::is2xspeed() )
+			{
+				core::mem[dst.w++] = core::mem[src.w++];
+				count--;
+			}
+			else
+			{
+				core::mem[dst.w++] = core::mem[src.w++];
+				core::mem[dst.w++] = core::mem[src.w++];
+				count -= 2;
+			}
+
+			if ( !count )
+			{
+				count = 0x10;
+
+				core::mem.sysregs( HDMA1 ) = src.b.h;
+				core::mem.sysregs( HDMA2 ) = src.b.l;
+				core::mem.sysregs( HDMA3 ) = dst.b.h;
+				core::mem.sysregs( HDMA4 ) = dst.b.l;
+
+				if ( !core::mem.sysregs( HDMA5 ) )
+				{
+					state = VDMA_OFF;
+					core::switchon();
+					break;
+				}
+
+				core::mem.sysregs( HDMA5 )--;
+			}
+			break;
+
+		case VDMA_HBLANK:
+			if ( core::is2xspeed() )
+			{
+				core::mem[dst.w++] = core::mem[src.w++];
+				count--;
+			}
+			else
+			{
+				core::mem[dst.w++] = core::mem[src.w++];
+				count--;
+				if ( count )
+				{
+					core::mem[dst.w++] = core::mem[src.w++];
+					count--;
+				}
+			}
+
+			if ( !count )
+			{
+				count = 0x10;
+
+				core::mem.sysregs( HDMA1 ) = src.b.h;
+				core::mem.sysregs( HDMA2 ) = src.b.l;
+				core::mem.sysregs( HDMA3 ) = dst.b.h;
+				core::mem.sysregs( HDMA4 ) = dst.b.l;
+
+				if ( !( core::mem.sysregs( HDMA5 ) & 0b01111111 ) )
+				{
+					core::mem.sysregs( HDMA5 ) = 0;
+					state = VDMA_OFF;
+					core::switchon();
+					break;
+				}
+
+				core::mem.sysregs( HDMA5 )--;
+				laststat = core::mem.sysregs( STAT ) & 0b00000011;
+				core::switchon();
+			}
+			break;
+
+		case VDMA_HBLANKWAIT:
+			if ( core::mem.hdma5writehappend() )
+			{
+				core::mem.sysregs( HDMA5 ) &= 0b01111111;
+				state = VDMA_OFF;
+				core::switchon();
+			}
+
+			if ( !( core::mem.sysregs( STAT ) & 0b00000011 ) && laststat )
+			{
+				state = VDMA_HBLANK;
+				core::switchoff();
+			}
+
+			laststat = core::mem.sysregs( STAT ) & 0b00000011;
+	}
+
+	cout << WHITE << '[' << PURPLE << hex << setw( 4 ) << src.w << WHITE << "] >> [";
+	cout << SPRING << setw( 4 ) << dst.w << WHITE << "] : ";
+	cout << YELLOW << setw( 2 ) << ( int ) core::mem[dst.w] << WHITE << endl;
+}
+
 void corerun( dword cycle )
 {
 	static bool display = false;
@@ -214,6 +347,7 @@ void corerun( dword cycle )
 			}
 		}
 		dmaoamtransfert();
+		dmavramtransfert();
 
 		//stime.tv_sec = 0;
 		//stime.tv_nsec = ref::periode; 

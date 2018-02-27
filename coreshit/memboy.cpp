@@ -194,6 +194,7 @@ memboy::memboy( void )
 	curramget = &memboy::deadget;
 
 	dmalock = false;
+	vramdmawrote = false;
 }
 
 void memboy::classicset( byte *addr, byte b )
@@ -478,6 +479,12 @@ void memboy::divset( byte *addr, byte b )
 	*addr = 0;
 }
 
+void memboy::hdma5set( byte *addr, byte b )
+{
+	*addr = b;
+	vramdmawrote = true;
+}
+
 memboy::memref *memboy::deref( word addr )
 {
 	memref *ref;
@@ -619,39 +626,37 @@ echo1:			byte bkid = REGS( SVBK ) & 7;
 	}
 
 	// Registers Sector
-	if ( addr < 0xff80 )
+	if ( addr < 0xff80 ) switch ( addr )
 	{
-		if ( addr == JOYP )
-		{
+		case JOYP:
 			(*ref).getfunc = &memboy::joypget;
 			(*ref).setfunc = &memboy::joypset;
 			(*ref).addr = &hram[addr - 0xff00];
 			return ref;
-		}
 
-		if ( addr == BCPD )
-		{
+		case BCPD:
 			(*ref).getfunc = &memboy::bgpget;
 			(*ref).setfunc = &memboy::bgpset;
 			(*ref).addr = &hram[addr - 0xff00];
 			return ref;
-		}
 
-		if ( addr == OCPD )
-		{
+		case OCPD:
 			(*ref).getfunc = &memboy::sppget;
 			(*ref).setfunc = &memboy::sppset;
 			(*ref).addr = &hram[addr - 0xff00];
 			return ref;
-		}
 
-		if ( addr == DIV )
-		{
+		case DIV:
 			(*ref).getfunc = &memboy::classicget;
 			(*ref).setfunc = &memboy::divset;
 			(*ref).addr = &hram[addr - 0xff00];
 			return ref;
-		}
+
+		case HDMA5:
+			(*ref).getfunc = &memboy::classicget;
+			(*ref).setfunc = &memboy::hdma5set;
+			(*ref).addr = &hram[addr - 0xff00];
+			return ref;
 	}
 
 	// HRAM Sector
@@ -722,6 +727,16 @@ byte memboy::getbuttonsstate( void )
 bool memboy::isdmalocked( void )
 {
 	return dmalock;
+}
+
+bool memboy::hdma5writehappend( void )
+{
+	if ( vramdmawrote )
+	{
+		vramdmawrote = false;
+		return vramdmawrote;
+	}
+	return false;
 }
 
 void memboy::dmaswitchon( void )

@@ -8,6 +8,7 @@ union core::registers core::regs;
 bool core::ime;
 byte core::state;
 bool core::x2speed;
+bool core::on;
 
 void core::init( void )
 {
@@ -15,6 +16,7 @@ void core::init( void )
 	ime = false;
 	state = CPU_RUN;
 	x2speed = false;
+	on = true;
 	regs.w.pc = ref::start;
 	regs.w.sp = 0xFFFE;
 	regs.w.af = 0;
@@ -25,6 +27,9 @@ void core::init( void )
 
 const char *core::cue( void )
 {
+	if ( !on )
+		return nullptr;
+
 	if ( cycle )
 	{
 		cycle--;
@@ -124,4 +129,12 @@ bool core::getime( void )
 	return ime;
 }
 
+void core::switchon( void )
+{
+	on = true;
+}
 
+void core::switchoff( void )
+{
+	on = false;
+}
