@@ -734,7 +734,7 @@ bool memboy::hdma5writehappend( void )
 	if ( vramdmawrote )
 	{
 		vramdmawrote = false;
-		return vramdmawrote;
+		return true;
 	}
 	return false;
 }

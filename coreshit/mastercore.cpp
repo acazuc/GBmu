@@ -204,10 +204,10 @@ void dmavramtransfert( void )
 				src.b.h = core::mem.sysregs( HDMA1 );
 				src.b.l = core::mem.sysregs( HDMA2 ) & 0b11110000;
 
-				dst.b.h = core::mem.sysregs( HDMA3 ) & 0b00011111;
+				dst.b.h = ( core::mem.sysregs( HDMA3 ) & 0b00011111 ) | 0x80;
 				dst.b.l = core::mem.sysregs( HDMA4 ) & 0b11110000;
 
-				if ( !( core::mem.sysregs( HDMA5 ) & 0b10000000 ) )
+				if ( core::mem.sysregs( HDMA5 ) & 0b10000000 )
 				{
 					laststat = core::mem.sysregs( STAT ) & 0b00000011;
 					state = VDMA_HBLANKWAIT;
@@ -219,9 +219,13 @@ void dmavramtransfert( void )
 					goto vdmagen;
 				}
 			}
-			return;
+			break;
 
 		case VDMA_GENERAL:
+			/*cout << WHITE << '[' << PURPLE << hex << setw( 4 ) << src.w << WHITE << "] >> [";
+			cout << SPRING << setw( 4 ) << dst.w << WHITE << "] : ";
+			cout << YELLOW << setw( 2 ) << ( int ) core::mem[src.w] << WHITE << endl;*/
+
 vdmagen:		if ( core::is2xspeed() )
 			{
 				core::mem[dst.w++] = core::mem[src.w++];
@@ -255,6 +259,10 @@ vdmagen:		if ( core::is2xspeed() )
 			break;
 
 		case VDMA_HBLANK:
+			/*cout << WHITE << '[' << CYAN << hex << setw( 4 ) << src.w << WHITE << "] >> [";
+			cout << GREY << setw( 4 ) << dst.w << WHITE << "] : ";
+			cout << PEACHY << setw( 2 ) << ( int ) core::mem[src.w] << WHITE << endl;*/
+
 			if ( core::is2xspeed() )
 			{
 				core::mem[dst.w++] = core::mem[src.w++];
@@ -290,6 +298,7 @@ vdmagen:		if ( core::is2xspeed() )
 
 				core::mem.sysregs( HDMA5 )--;
 				laststat = core::mem.sysregs( STAT ) & 0b00000011;
+				state = VDMA_HBLANKWAIT;
 				core::switchon();
 			}
 			break;
@@ -310,10 +319,6 @@ vdmagen:		if ( core::is2xspeed() )
 
 			laststat = core::mem.sysregs( STAT ) & 0b00000011;
 	}
-
-	cout << WHITE << '[' << PURPLE << hex << setw( 4 ) << src.w << WHITE << "] >> [";
-	cout << SPRING << setw( 4 ) << dst.w << WHITE << "] : ";
-	cout << YELLOW << setw( 2 ) << ( int ) core::mem[dst.w] << WHITE << endl;
 }
 
 void corerun( dword cycle )

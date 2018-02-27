@@ -23,6 +23,12 @@ TIMA equ $FF05
 TMA equ $FF06
 TAC equ $FF07
 
+HDMA1 equ $FF51
+HDMA2 equ $FF52
+HDMA3 equ $FF53
+HDMA4 equ $FF54
+HDMA5 equ $FF55
+
 section "Vblank IRQ", ROM0[$40]
 
 	reti
@@ -68,7 +74,7 @@ section "header", ROM0[$100]
 	db 0
 
 	; Cartridge type
-        db 2
+        db 0
 
 	; Rom Size
         db $8
@@ -94,6 +100,16 @@ section "header", ROM0[$100]
 section "", ROM0[$150]
 
 start:	
+
+	
+
+	ld a, %10000011
+	ld [HDMA5], a
+
+lala:	jr lala
+
+
+
 
 groo:	ld a, 0
 	ld [TMA], a
