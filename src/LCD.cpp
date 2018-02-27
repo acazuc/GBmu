@@ -5,7 +5,7 @@
 #include <chrono>
 #include <cmath>
 
-#define IS_DMG true
+#define IS_DMG false
 
 using namespace chrono;
 
@@ -218,26 +218,26 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 	if (height16)
 		charcode &= ~1;
 	uint16_t charaddr = LCD_OBJ_CHAR_BEGIN + charcode * 16;
-	uint8_t pixel;
+	uint8_t coloridx;
 	if (charbank)
 	{
-		pixel = ((core::mem.cbank1(charaddr + by * 2)) >> ((~bx) & 7)) & 1;
-		pixel |= (((core::mem.cbank1(charaddr + by * 2 + 1)) >> ((~bx) & 7)) & 1) << 1;
+		coloridx = core::mem.cbank1(charaddr + by * 2) >> ((~bx) & 7) & 1;
+		coloridx |= (core::mem.cbank1(charaddr + by * 2 + 1) >> ((~bx) & 7) & 1) << 1;
 	}
 	else
 	{
-		pixel = ((core::mem.cbank0(charaddr + by * 2)) >> ((~bx) & 7)) & 1;
-		pixel |= (((core::mem.cbank0(charaddr + by * 2 + 1)) >> ((~bx) & 7)) & 1) << 1;
+		coloridx = core::mem.cbank0(charaddr + by * 2) >> ((~bx) & 7) & 1;
+		coloridx |= (core::mem.cbank0(charaddr + by * 2 + 1) >> ((~bx) & 7) & 1) << 1;
 	}
-	if (!pixel)
+	if (!coloridx)
 		return;
 	if ((priorities[y][x] || priority) && hasprinted[y][x])
 		return;
 	if (bx >= this->lowestx[x])
 		return;
 	this->lowestx[x] = bx;
-	uint8_t *pal = &core::mem.bgpalette(palette)[pixel * 2];
-	uint8_t color[] = {(uint8_t)(pal[1] & 0b00011111), (uint8_t)((pal[1] >> 5) | ((pal[0] << 3) & 0b00011000)), (uint8_t)((pal[0] >> 2) & 0b00011111)};
+	uint8_t *pal = core::mem.sppalette(palette) + coloridx * 2;
+	uint8_t color[] = {(uint8_t)(pal[0] & 0b00011111), (uint8_t)((pal[0] >> 5) | ((pal[1] << 3) & 0b00011000)), (uint8_t)((pal[1] >> 2) & 0b00011111)};
 	color[0] <<= 3;
 	color[1] <<= 3;
 	color[2] <<= 3;

@@ -344,10 +344,9 @@ static void updateEnvTick()
 			}
 			else
 			{
+				c1env--;
 				if (c1env == 0)
 					core::mem.sysregs(NR52) &= 0b11111110;
-				else
-					c1env--;
 			}
 		}
 	}
@@ -363,10 +362,9 @@ static void updateEnvTick()
 			}
 			else
 			{
+				c2env--;
 				if (c2env == 0)
 					core::mem.sysregs(NR52) &= 0b11111101;
-				else
-					c2env--;
 			}
 		}
 	}
@@ -382,10 +380,9 @@ static void updateEnvTick()
 			}
 			else
 			{
+				c4env--;
 				if (c4env == 0)
 					core::mem.sysregs(NR52) &= 0b11110111;
-				else
-					c4env--;
 			}
 		}
 	}
