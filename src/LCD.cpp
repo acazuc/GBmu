@@ -5,7 +5,7 @@
 #include <chrono>
 #include <cmath>
 
-#define IS_DMG false
+#define IS_DMG (!core::mem.iscgb())
 
 using namespace chrono;
 
@@ -46,7 +46,7 @@ void LCD::render()
 	core::mem.setbuttonsstate(buttonsstate);
 	if (keys != keys_org)
 		core::mem[IF] |= 1 << 4;
-	uint8_t div = core::is2xspeed() ? 2 : 4;
+	uint8_t mult = core::is2xspeed() ? 2 : 1;
 	for (uint8_t y = 0; y < 144; ++y)
 	{
 		std::memset(priorities[y], 0, sizeof(priorities[y]));
@@ -59,12 +59,12 @@ void LCD::render()
 		if (core::mem[STAT] & 0b00100000)
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
-			corerun(80 / div);
+			corerun(80 * mult);
 		core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 3;
 		if (core::mem[STAT] & 0b00001000)
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
-			corerun(172 / div);
+			corerun(172 * mult);
 		if (!stopped && core::mem[LCDC] & 0b10000000)
 		{
 			if (core::mem[LCDC] & 0b00000001)
@@ -82,7 +82,7 @@ void LCD::render()
 		if (core::mem[STAT] & 0b00010000)
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
-			corerun(204 / div);
+			corerun(204 * mult);
 	}
 	core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 1;
 	for (uint8_t y = 144; y < 154; ++y)
@@ -96,7 +96,7 @@ void LCD::render()
 		if (core::mem[STAT] & 0b00100000)
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
-			corerun(456 / div);
+			corerun(456 * mult);
 	}
 }
 
