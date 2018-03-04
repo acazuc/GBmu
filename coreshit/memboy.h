@@ -144,6 +144,7 @@ class memboy
 		// Locks
 		bool dmalock;
 		bool vramdmawrote;
+		bool divwrote;
 
 		class memref
 		{
@@ -288,6 +289,8 @@ class memboy
 		byte getbuttonsstate( void );
 		bool isdmalocked( void );
 		bool hdma5writehappend( void );
+		bool divwritehappend( void );
+		bool iscgb( void );
 
 		// Destructor
 		~memboy( void );

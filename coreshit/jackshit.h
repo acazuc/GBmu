@@ -179,7 +179,9 @@ class ref
 		static long start;
 		static long debugstart;
 		static long debugend;
-		static char *biospath;
+		static const char *dmgbiospath;
+		static const char *cgbbiospath;
+		static long gbtype;
 
 		static void init( void );
 };

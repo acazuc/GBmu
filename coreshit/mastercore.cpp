@@ -9,7 +9,9 @@ long ref::periode = PERIODE;
 long ref::start = 0x100;
 long ref::debugstart = 0x0000;
 long ref::debugend = 0xffff;
-char *ref::biospath = "./dmgbios.gb";
+const char *ref::dmgbiospath = "./dmgbios.gb";
+const char *ref::cgbbiospath = "./cgbbios.gbc";
+long ref::gbtype = 0;
 
 void ref::init( void )
 {
@@ -28,8 +30,18 @@ void ref::init( void )
 	if ( file.test( "debugend", SCF_INT ) )
 		debugend = file.getint( "debugend" );
 
-	if ( file.test( "biospath", SCF_STRING ) )
-		biospath = file.getstring( "biospath" );
+	if ( file.test( "gbtype", SCF_INT ) )
+	{
+		gbtype = file.getint( "gbtype" );
+		if ( ( gbtype > 2 ) || ( gbtype < 0 ) )
+			gbtype = 0;
+	}
+
+	if ( file.test( "dmgbiospath", SCF_STRING ) )
+		dmgbiospath = file.getstring( "dmgbiospath" );
+
+	if ( file.test( "cgbbiospath", SCF_STRING ) )
+		cgbbiospath = file.getstring( "cgbbiospath" );
 }
 
 void statedisplay( const char *s, word pc )
@@ -125,31 +137,48 @@ void stackdraw( void )
 
 void timer( void )
 {
-	static word divider = 256;
-	static dword timer = 0;
+	static xword timer = { 0 };
+	const word clockselect[4] = { 0b0000001000000000, 0b0000000000001000, 0b0000000000100000, 0b0000000010000000 };
+	static bool delayedmux = false;
+	static bool carry = false;
+	bool mux;
 
-	const dword clockselect[4] = { 1024, 16, 64, 256 };
-
-	if ( !--divider )
+	if ( carry )
 	{
-		divider = 256;
-		core::mem.sysregs( DIV )++;
+		core::mem.sysregs( TIMA ) = core::mem.sysregs( TMA );
+		core::mem.sysregs( IF ) |= 0b00000100;
+		carry = false;
 	}
 
-	if ( core::mem.sysregs( TAC ) & 0b00000100 )
+	if ( core::mem.divwritehappend() )
+		timer.w = 0;
+	timer.w++;
+	core::mem.sysregs( DIV ) = timer.b.h;
+
+	mux = ( core::mem.sysregs( TAC ) & 0b00000100 ? timer.w & clockselect[core::mem.sysregs( TAC ) & 3] : false );
+
+	if ( !mux && delayedmux )
 	{
-		if ( ++timer > clockselect[core::mem.sysregs( TAC ) & 3] )
-		{
-			timer = 0;
-			if ( core::mem.sysregs( TIMA ) == 0xff )
-			{
-				core::mem.sysregs( TIMA ) = core::mem.sysregs( TMA );
-				core::mem.sysregs( IF ) |= 0b00000100;
-			}
-			else
-				core::mem.sysregs( TIMA )++;
-		}
+		if ( core::mem.sysregs( TIMA ) == 0xff )
+			carry = true;
+		core::mem.sysregs( TIMA )++;
+		/*cout << dec << "Time : " << timer.w << " Timer : " << ( core::mem.sysregs( TAC ) & 0b00000100 );
+		  cout << " Chosen time : " << clockselect[core::mem.sysregs( TAC ) & 3];
+		  cout << " Mux : " << mux << " NOT Mux : " << !mux << " Delayed Mux : " << delayedmux;
+		  cout << " TIMA : " << ( int ) core::mem.sysregs( TIMA );
+		  cout << " TMA : " << ( int ) core::mem.sysregs( TMA ) << endl;*/
+
 	}
+
+	/*if ( core::mem.sysregs( TAC ) & 0b00000100 )
+	{*/
+	//	cout << dec << "Time : " << timer.w << " Timer : " << ( core::mem.sysregs( TAC ) & 0b00000100 );
+	//	cout << " Chosen time : " << clockselect[core::mem.sysregs( TAC ) & 3];
+	//	cout << " Mux : " << mux << " NOT Mux : " << !mux << " Delayed Mux : " << delayedmux;
+	//	cout << " TIMA : " << ( int ) core::mem.sysregs( TIMA ) << endl;
+	//}
+
+	delayedmux = mux;
 }
 
 void dmaoamtransfert( void )
@@ -223,8 +252,8 @@ void dmavramtransfert( void )
 
 		case VDMA_GENERAL:
 			/*cout << WHITE << '[' << PURPLE << hex << setw( 4 ) << src.w << WHITE << "] >> [";
-			cout << SPRING << setw( 4 ) << dst.w << WHITE << "] : ";
-			cout << YELLOW << setw( 2 ) << ( int ) core::mem[src.w] << WHITE << endl;*/
+			  cout << SPRING << setw( 4 ) << dst.w << WHITE << "] : ";
+			  cout << YELLOW << setw( 2 ) << ( int ) core::mem[src.w] << WHITE << endl;*/
 
 vdmagen:		if ( core::is2xspeed() )
 			{
@@ -260,8 +289,8 @@ vdmagen:		if ( core::is2xspeed() )
 
 		case VDMA_HBLANK:
 			/*cout << WHITE << '[' << CYAN << hex << setw( 4 ) << src.w << WHITE << "] >> [";
-			cout << GREY << setw( 4 ) << dst.w << WHITE << "] : ";
-			cout << PEACHY << setw( 2 ) << ( int ) core::mem[src.w] << WHITE << endl;*/
+			  cout << GREY << setw( 4 ) << dst.w << WHITE << "] : ";
+			  cout << PEACHY << setw( 2 ) << ( int ) core::mem[src.w] << WHITE << endl;*/
 
 			if ( core::is2xspeed() )
 			{
@@ -325,6 +354,8 @@ void corerun( dword cycle )
 {
 	static bool display = false;
 
+	//cycle *= 4; 
+
 	while ( cycle-- )
 	{
 		const char *s;
@@ -351,6 +382,7 @@ void corerun( dword cycle )
 				statedisplay( s, pc );
 			}
 		}
+
 		dmaoamtransfert();
 		dmavramtransfert();
 
@@ -371,19 +403,41 @@ void corereset( char *rom )
 	core::init();
 	core::mem.ramclear();
 	core::mem.romload( rom );
+	switch ( ref::gbtype )
+	{
+		case 0:
+			core::mem.biosload( core::mem.iscgb() ? ref::cgbbiospath : ref::dmgbiospath );
+			break;
+		case 1:
+			core::mem.biosload( ref::dmgbiospath );
+			break;
+		case 2:
+			core::mem.biosload( ref::cgbbiospath );
+			break;
+	}
 }
 
 void coremaster( void )
 {
 	ref::init();
 	core::init();
-	core::mem.biosload( ref::biospath );
 }
 
 void coremaster( char *rom )
 {
 	ref::init();
 	core::init();
-	core::mem.biosload( ref::biospath );
 	core::mem.romload( rom );
+	switch ( ref::gbtype )
+	{
+		case 0:
+			core::mem.biosload( core::mem.iscgb() ? ref::cgbbiospath : ref::dmgbiospath );
+			break;
+		case 1:
+			core::mem.biosload( ref::dmgbiospath );
+			break;
+		case 2:
+			core::mem.biosload( ref::cgbbiospath );
+			break;
+	}
 }

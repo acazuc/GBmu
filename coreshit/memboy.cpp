@@ -195,6 +195,7 @@ memboy::memboy( void )
 
 	dmalock = false;
 	vramdmawrote = false;
+	divwrote = false;
 }
 
 void memboy::classicset( byte *addr, byte b )
@@ -290,9 +291,9 @@ void memboy::mbc1set( byte *addr, byte b )
 			}
 			break;
 	}
-	cout << ( ( rbkid & 0b10000000 ) >> 7 ) << ' ' << ( ( rbkid & 0b01100000 ) >> 5 ) << ' ' << ( rbkid & 0b00011111 ) << endl;
-	cout << ( void * ) currom << ' ' << ( void * ) rombank1ton << endl;
-	cout << ( void * ) curram << ' ' << ( void * ) cartram << endl;
+	//cout << ( ( rbkid & 0b10000000 ) >> 7 ) << ' ' << ( ( rbkid & 0b01100000 ) >> 5 ) << ' ' << ( rbkid & 0b00011111 ) << endl;
+	//cout << ( void * ) currom << ' ' << ( void * ) rombank1ton << endl;
+	//cout << ( void * ) curram << ' ' << ( void * ) cartram << endl;
 }
 
 // ROM MBC2 Setter
@@ -477,6 +478,7 @@ byte memboy::sppget( byte *addr )
 void memboy::divset( byte *addr, byte b )
 {
 	*addr = 0;
+	divwrote = true;
 }
 
 void memboy::hdma5set( byte *addr, byte b )
@@ -739,6 +741,21 @@ bool memboy::hdma5writehappend( void )
 	return false;
 }
 
+bool memboy::divwritehappend( void )
+{
+	if ( divwrote )
+	{
+		divwrote = false;
+		return true;
+	}
+	return false;
+}
+
+bool memboy::iscgb( void )
+{
+	return cgb;
+}
+
 void memboy::dmaswitchon( void )
 {
 	dmalock = true;
@@ -806,6 +823,7 @@ void memboy::startsave( const char *path )
 	}
 
 	savefile.open( save );
+	savefile.write( cartram, nram );
 }
 
 void memboy::dumpsave( void )
@@ -990,7 +1008,9 @@ bool memboy::romload( const char *path )
 			return false;
 	}
 
-	cout << hex << ( int ) (*head).romsize << ' ' << ( int ) (*head).ramsize << endl;
+	cgb = ( (*head).shared.cgb.cgbflag & 0x80 ? true : false );
+
+	//cout << hex << ( int ) (*head).romsize << ' ' << ( int ) (*head).ramsize << endl;
 
 	// Load remaining ROM banks if any
 	if ( !--nbk )

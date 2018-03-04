@@ -31,6 +31,8 @@ HDMA5 equ $FF55
 
 section "Vblank IRQ", ROM0[$40]
 
+	ld a, b
+	ld [BGP], a
 	reti
 
 section "LCD Stat IRQ", ROM0[$48]
@@ -39,7 +41,9 @@ section "LCD Stat IRQ", ROM0[$48]
 
 section "Timer IRQ", ROM0[$50]
 
-	inc c
+	ld a, b
+	cpl
+	ld b, a
 	reti
 
 section "Serial IRQ", ROM0[$58]
@@ -99,7 +103,7 @@ section "header", ROM0[$100]
 
 section "", ROM0[$150]
 
-start:	
+start:	jr groo
 
 	
 
@@ -111,19 +115,31 @@ lala:	jr lala
 
 
 
-groo:	ld a, 0
-	ld [TMA], a
+groo:	ld a, %10000001
+	ldh [LCDC], a
 
-	ld a, %00000100
+	ld a, %11100100
+	ldh [BGP], a
+	ld b, a
+
+	ld a, $00
+	ldh [TMA], a
+	ldh [TIMA], a
+
+	ld a, %00000101
 	ld [IE], a
 
 	ld c, 0
 
-	ld a, %00000111
+	ld a, 0
+	ldh [TDIV], a
+
+	ld a, %00000100
 	ld [TAC], a
 	ei
 
-molly:	ldh a, [TIMA]
+molly:	halt
+	ldh a, [TDIV]
 	jr molly
 
 	ld a, $01
