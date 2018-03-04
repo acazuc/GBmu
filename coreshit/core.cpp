@@ -27,8 +27,14 @@ void core::init( void )
 
 const char *core::cue( void )
 {
+	static byte clockcount = 4;
+
 	if ( !on )
 		return nullptr;
+
+	if ( --clockcount )
+		return nullptr;
+	clockcount = 4;
 
 	if ( cycle )
 	{
