@@ -4,6 +4,7 @@
 
 #include <asmtypes.h>
 #include <fstream>
+#include <time.h>
 
 #define YAY cout << __FILE__ << ':' << __LINE__ << ": Breakpoint passed yay :3" << endl;
 
@@ -115,14 +116,34 @@ class memboy
 		byte ( memboy::*currom1get )( byte *addr );
 		void ( memboy::*curramset )( byte *addr, byte b );
 		byte ( memboy::*curramget )( byte *addr );
-		void ( memboy::*cramset )( byte *addr, byte b );
-		byte ( memboy::*cramget )( byte *addr );
+		void ( memboy::*choramset )( byte *addr, byte b );
+		byte ( memboy::*choramget )( byte *addr );
 
 		// MBC 1 Vars
 		byte rbkid;
 
 		// MBC 3 vars
-		byte fakertc[0x2000];
+		void ( memboy::*choramset3 )( byte *addr, byte b );
+		byte ( memboy::*choramget3 )( byte *addr );
+		struct
+		{
+			struct
+			{
+				int sec;
+				int min;
+				int hour;
+			}
+			off;
+			struct
+			{
+				int sec;
+				int min;
+				int hour;
+			}
+			latch;
+			bool latched;
+		}
+		rtc;
 
 		// MBC 5 Vars
 		xword rombkid5;
@@ -210,6 +231,12 @@ class memboy
 		// RAM MBC accessers
 		void mbc2rset( byte *addr, byte b );
 		byte mbc2rget( byte *addr );
+		void mbc3secset( byte *addr, byte b );
+		byte mbc3secget( byte *addr );
+		void mbc3minset( byte *addr, byte b );
+		byte mbc3minget( byte *addr );
+		void mbc3hourset( byte *addr, byte b );
+		byte mbc3hourget( byte *addr );
 
 		// P1/JOYP memory accessers
 		void joypset( byte *addr, byte b );

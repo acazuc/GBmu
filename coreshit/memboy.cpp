@@ -5,6 +5,8 @@
 
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 
+#define WORDOF( n ) ( ( word )( unsigned long ) n )
+
 void memboy::memref::set( byte b )
 {
 	( (*ref).*setfunc )( addr, b );
@@ -219,6 +221,43 @@ byte memboy::mbc2rget( byte *addr )
 	return *addr;
 }
 
+// MBC3 RTC Accessers
+void memboy::mbc3secset( byte *addr, byte b )
+{
+}
+
+byte memboy::mbc3secget( byte *addr )
+{
+	time_t tm;
+
+	tm = time( NULL );
+	return (*localtime( &tm )).tm_sec;
+}
+
+void memboy::mbc3minset( byte *addr, byte b )
+{
+}
+
+byte memboy::mbc3minget( byte *addr )
+{
+	time_t tm;
+
+	tm = time( NULL );
+	return (*localtime( &tm )).tm_min;
+}
+
+void memboy::mbc3hourset( byte *addr, byte b )
+{
+}
+
+byte memboy::mbc3hourget( byte *addr )
+{
+	time_t tm;
+
+	tm = time( NULL );
+	return (*localtime( &tm )).tm_hour;
+}
+
 // ROM Accessers
 void memboy::romset( byte *addr, byte b )
 {
@@ -231,26 +270,26 @@ byte memboy::romget( byte *addr )
 
 byte memboy::rom0get( byte *addr )
 {
-	return rombank0[( word ) addr];
+	return rombank0[WORDOF( addr )];
 }
 
 byte memboy::rom1get( byte *addr )
 {
-	return currom[( ( word ) addr ) - 0x4000];
+	return currom[WORDOF( addr ) - 0x4000];
 }
 
 // ROM MBC1 Setter
 void memboy::mbc1set( byte *addr, byte b )
 {
-	//cout << hex << ( word ) addr << ' ' << ( ( ( word ) addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
-	//cout << hex << ( word ) addr << ' ' << ( int ) b << endl;
-	switch ( ( ( word ) addr ) / 0x2000 )
+	//cout << hex << WORDOF( addr ) << ' ' << ( WORDOF( addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
+	//cout << hex << WORDOF( addr ) << ' ' << ( int ) b << endl;
+	switch ( WORDOF( addr ) / 0x2000 )
 	{
 		case 0:
 			if ( ( b & 0x0f ) == 0x0A )
 			{
-				curramset = memboy::cramset;
-				curramget = memboy::cramget;
+				curramset = memboy::choramset;
+				curramget = memboy::choramget;
 			}
 			else
 			{
@@ -299,15 +338,15 @@ void memboy::mbc1set( byte *addr, byte b )
 // ROM MBC2 Setter
 void memboy::mbc2set( byte *addr, byte b )
 {
-	switch ( ( ( word ) addr ) / 0x1000 )
+	switch ( WORDOF( addr ) / 0x1000 )
 	{
 		case 0:
-			if ( !( ( ( word ) addr ) & 0b00010000 ) )
+			if ( !( WORDOF( addr ) & 0b00010000 ) )
 			{
 				if ( ( b & 0x0f ) == 0x0A )
 				{
-					curramset = memboy::cramset;
-					curramget = memboy::cramget;
+					curramset = memboy::choramset;
+					curramget = memboy::choramget;
 				}
 				else
 				{
@@ -319,7 +358,7 @@ void memboy::mbc2set( byte *addr, byte b )
 			}
 			break;
 		case 1:
-			if ( ( ( word ) addr ) & 0b00010000 )
+			if ( WORDOF( addr ) & 0b00010000 )
 			{
 				b = b & 0x0f;
 
@@ -335,15 +374,15 @@ void memboy::mbc2set( byte *addr, byte b )
 // ROM MBC3 Setter
 void memboy::mbc3set( byte *addr, byte b )
 {
-	//cout << hex << ( word ) addr << ' ' << ( ( ( word ) addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
-	//cout << hex << ( word ) addr << ' ' << ( int ) b << endl;
-	switch ( ( ( word ) addr ) / 0x2000 )
+	//cout << hex << WORDOF( addr ) << ' ' << ( WORDOF( addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
+	//cout << hex << WORDOF( addr ) << ' ' << ( int ) b << endl;
+	switch ( WORDOF( addr ) / 0x2000 )
 	{
 		case 0:
 			if ( ( b & 0x0f ) == 0x0A )
 			{
-				curramset = memboy::cramset;
-				curramget = memboy::cramget;
+				curramset = choramset3;
+				curramget = choramget3;
 			}
 			else
 			{
@@ -354,40 +393,70 @@ void memboy::mbc3set( byte *addr, byte b )
 			}
 			break;
 		case 1:
-			b = b & 0b01111111;
+			b &= 0b01111111;
 
-			if ( b )
+			if ( !b )
 				currom = rombank1ton;
 			else
 				currom = rombank1ton + 0x4000 * ( b - 1 );
 			break;
 		case 2:
-			if ( b > 0x03 )
-				curram = fakertc;
-			else
-				curram = cartram + 0x2000 * rambkid5;
+			switch ( b )
+			{
+				case 0x00:
+				case 0x01:
+				case 0x02:
+				case 0x03:
+					curram = cartram + 0x2000 * b;
+					choramset3 = choramset;
+					choramget3 = choramget;
+					break;
+
+				case 0x08:
+					choramset3 = &memboy::mbc3secset;
+					choramget3 = &memboy::mbc3secget;
+					break;
+
+				case 0x09:
+					choramset3 = &memboy::mbc3minset;
+					choramget3 = &memboy::mbc3minget;
+					break;
+
+				case 0x0A:
+					choramset3 = &memboy::mbc3hourset;
+					choramget3 = &memboy::mbc3hourget;
+					break;
+			}
+
+			if ( curramset != &memboy::deadset )
+			{
+				curramset = choramset3;
+				curramget = choramget3;
+			}
 			break;
 		case 3:
 			break;
 	}
+	/*cout << ( WORDOF( addr ) / 0x2000 ) << ' ' << ( b & 0b01111111 ) << endl;
+	cout << ( void * ) currom << ' ' << ( void * ) rombank1ton << endl;
+	cout << ( void * ) curram << ' ' << ( void * ) cartram << endl;*/
 }
-
 
 // ROM MBC5 Setter
 void memboy::mbc5set( byte *addr, byte b )
 {
-	//cout << hex << ( word ) addr << ' ' << ( ( ( word ) addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
+	//cout << hex << WORDOF( addr ) << ' ' << ( WORDOF( addr ) / 0x2000 ) << ' ' << ( int ) b << endl;
 
-	//cout << hex << ( word ) addr << ' ' << ( int ) b << endl;
+	//cout << hex << WORDOF( addr ) << ' ' << ( int ) b << endl;
 
-	switch ( ( ( word ) addr ) / 0x1000 )
+	switch ( WORDOF( addr ) / 0x1000 )
 	{
 		case 0:
 		case 1:
 			if ( ( b & 0x0f ) == 0x0A )
 			{
-				curramset = memboy::cramset;
-				curramget = memboy::cramget;
+				curramset = memboy::choramset;
+				curramget = memboy::choramget;
 			}
 			else
 			{
@@ -818,18 +887,18 @@ void memboy::startsave( const char *path )
 	insave.open( save );
 	if ( insave )
 	{
-		insave.read( cartram, nram );	
+		insave.read( ( char * ) cartram, nram );
 		insave.close();
 	}
 
 	savefile.open( save );
-	savefile.write( cartram, nram );
+	savefile.write( ( const char * ) cartram, nram );
 }
 
 void memboy::dumpsave( void )
 {
 	savefile.seekp( 0 );
-	savefile.write( cartram, nram );
+	savefile.write( ( const char * ) cartram, nram );
 }
 
 bool memboy::romload( const char *path )
@@ -856,8 +925,8 @@ bool memboy::romload( const char *path )
 	currom1get = &memboy::deadget;
 	curramset = &memboy::deadset;
 	curramget = &memboy::deadget;
-	cramset = &memboy::deadset;
-	cramget = &memboy::deadget;
+	choramset = &memboy::deadset;
+	choramget = &memboy::deadget;
 	tmpramset = &memboy::deadset;
 	tmpramget = &memboy::deadget;
 
@@ -901,8 +970,8 @@ bool memboy::romload( const char *path )
 		case 0x02: // MBC 1 + RAM
 			currom0set = &memboy::mbc1set;
 			currom1set = &memboy::mbc1set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
 			rbkid = 1;
 			battery = false;
 			break;
@@ -910,8 +979,8 @@ bool memboy::romload( const char *path )
 		case 0x03: // MBC 1 + RAM + Battery
 			currom0set = &memboy::mbc1set;
 			currom1set = &memboy::mbc1set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
 			rbkid = 1;
 			battery = true;
 			break;
@@ -919,8 +988,8 @@ bool memboy::romload( const char *path )
 		case 0x05: // MBC 2
 			currom0set = &memboy::mbc2set;
 			currom1set = &memboy::mbc2set;
-			cramset = &memboy::mbc2rset;
-			cramget = &memboy::mbc2rget;
+			choramset = &memboy::mbc2rset;
+			choramget = &memboy::mbc2rget;
 			nram = 0x2000;
 			cartram = new byte [0x2000];
 			curram = cartram;
@@ -930,52 +999,53 @@ bool memboy::romload( const char *path )
 		case 0x06: // MBC 2 + Battery
 			currom0set = &memboy::mbc2set;
 			currom1set = &memboy::mbc2set;
-			cramset = &memboy::mbc2rset;
-			cramget = &memboy::mbc2rget;
+			choramset = &memboy::mbc2rset;
+			choramget = &memboy::mbc2rget;
 			nram = 0x2000;
 			cartram = new byte [0x2000];
 			curram = cartram;
 			battery = true;
 			break;
 
-		case 0x0a: // MBC 3 + Timer + Battery
+		case 0x0f: // MBC 3 + Timer + Battery
 			currom0set = &memboy::mbc3set;
 			currom1set = &memboy::mbc3set;
-			rbkid = 1;
 			battery = true;
 			break;
 
-		case 0x10: // MBC 3 + RAM + Battery
+		case 0x10: // MBC 3 + Timer + RAM + Battery
 			currom0set = &memboy::mbc3set;
 			currom1set = &memboy::mbc3set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
-			rbkid = 1;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
+			choramset3 = &memboy::classicset;
+			choramget3 = &memboy::classicget;
 			battery = true;
 			break;		
 
 		case 0x11: // MBC 3
 			currom0set = &memboy::mbc3set;
 			currom1set = &memboy::mbc3set;
-			rbkid = 1;
 			battery = false;
 			break;
 
 		case 0x12: // MBC 3 + RAM
 			currom0set = &memboy::mbc3set;
 			currom1set = &memboy::mbc3set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
-			rbkid = 1;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
+			choramset3 = &memboy::classicset;
+			choramget3 = &memboy::classicget;
 			battery = false;
 			break;
 
 		case 0x13: // MBC 3 + RAM + Battery
 			currom0set = &memboy::mbc3set;
 			currom1set = &memboy::mbc3set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
-			rbkid = 1;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
+			choramset3 = &memboy::classicset;
+			choramget3 = &memboy::classicget;
 			battery = true;
 			break;
 
@@ -989,8 +1059,8 @@ bool memboy::romload( const char *path )
 		case 0x1a: // MBC 5 + RAM
 			currom0set = &memboy::mbc5set;
 			currom1set = &memboy::mbc5set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
 			rombkid5.w = 1;
 			battery = false;
 			break;
@@ -998,8 +1068,8 @@ bool memboy::romload( const char *path )
 		case 0x1b: // MBC 5 + RAM + Battery
 			currom0set = &memboy::mbc5set;
 			currom1set = &memboy::mbc5set;
-			cramset = &memboy::classicset;
-			cramget = &memboy::classicget;
+			choramset = &memboy::classicset;
+			choramget = &memboy::classicget;
 			rombkid5.w = 1;
 			battery = true;
 			break;
@@ -1064,6 +1134,8 @@ bool memboy::romload( const char *path )
 			curramget = tmpramget;
 			break;
 	}
+
+	cout << hex << nram << endl;
 
 	/*for ( int i = 0 ; i < 0x4000 ; i++ )
 	  cout << hex << ( int ) rombank0[i] << ' ';
