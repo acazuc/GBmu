@@ -12,14 +12,19 @@
 # define BIND_ST 5
 # define BIND_B 6
 # define BIND_A 7
+# define BIND_SAVE_STATE 8
+# define BIND_LOAD_STATE 9
+
+# define BINDS 10
 
 class BindDisplay
 {
 
 	private:
-		GtkWidget *buttons[8];
+		GtkWidget *buttons[BINDS];
+		GtkWidget *labels[BINDS];
 		GtkWidget *window;
-		guint binds[8];
+		guint binds[BINDS];
 		bool displayed;
 
 	public:

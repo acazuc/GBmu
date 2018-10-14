@@ -42,6 +42,9 @@ void Main::run(int ac, char **av)
 	int fps = 0;
 	while (true)
 	{
+		core::mem.sysregs(0xFF03) = 0xFF;
+		core::mem.sysregs(SC) = 0x7E;
+		core::mem.sysregs(IF) = 0xE0;
 		tmp = high_resolution_clock::now();
 		auto basecount = duration_cast<nanoseconds>(tmp - draw_last).count();
 		if (!speedFactor || basecount > 1000000000  / (59.72750056960583276373 * speedFactor))

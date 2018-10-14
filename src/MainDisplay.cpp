@@ -430,7 +430,7 @@ static void cb_help_about(GtkWidget *osef1, gpointer osef2)
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), "xdbcp license v1");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/acazuc/GBmu");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog), "Le github interdit");
-	char *authors[2] = {(char*)"moi", (char*)"lui"};
+	char *authors[3] = {(char*)"moi", (char*)"lui", NULL};
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), (const char**)authors);
 	g_signal_connect(G_OBJECT(dialog), "destroy", G_CALLBACK(cb_dialog_quit), NULL);
 	gint result = gtk_dialog_run(GTK_DIALOG(dialog));

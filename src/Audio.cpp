@@ -69,14 +69,16 @@ static void c1freqtoreg(uint32_t freq, uint8_t *nr13, uint8_t *nr14)
 
 static uint32_t c2regtofreq(uint8_t nr23, uint8_t nr24)
 {
-	uint16_t reg = (uint16_t)nr23 | (((uint16_t)(nr24 & 0x7)) << 8);
-	return (CLOCK_FREQ / (32 * (2048 - reg)));
+	return (c1regtofreq(nr23, nr24));
+	//uint16_t reg = (uint16_t)nr23 | (((uint16_t)(nr24 & 0x7)) << 8);
+	//return (CLOCK_FREQ / (32 * (2048 - reg)));
 }
 
 static uint32_t c3regtofreq(uint8_t nr33, uint8_t nr34)
 {
-	uint16_t reg = (uint16_t)nr33 | (((uint16_t)(nr34 & 0x7)) << 8);
-	return (CLOCK_FREQ / (32 * (2048 - reg)));
+	return (c1regtofreq(nr33, nr34));
+	//uint16_t reg = (uint16_t)nr33 | (((uint16_t)(nr34 & 0x7)) << 8);
+	//return (CLOCK_FREQ / (32 * (2048 - reg)));
 }
 
 static int16_t getc1val()
@@ -303,29 +305,25 @@ static void updateLengthTick()
 	//Channel 1
 	if (core::mem.sysregs(NR14) & 0b01000000)
 	{
-		c1len--;
-		if (c1len == 0)
+		if (!--c1len)
 			core::mem.sysregs(NR52) &= 0b11111110;
 	}
 	//Channel 2
 	if (core::mem.sysregs(NR24) & 0b01000000)
 	{
-		c2len--;
-		if (c2len == 0)
+		if (!--c2len)
 			core::mem.sysregs(NR52) &= 0b11111101;
 	}
 	//Channel 3
 	if (core::mem.sysregs(NR34) & 0b01000000)
 	{
-		c3len--;
-		if (c3len == 0)
+		if (!--c3len)
 			core::mem.sysregs(NR52) &= 0b11111011;
 	}
 	//Channel 4
 	if (core::mem.sysregs(NR44) & 0b01000000)
 	{
-		c4len--;
-		if (c4len == 0)
+		if (!--c4len)
 			core::mem.sysregs(NR52) &= 0b11110111;
 	}
 }
@@ -431,21 +429,21 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			bool c2on = core::mem.sysregs(NR52) & 0b00000010;
 			bool c3on = core::mem.sysregs(NR52) & 0b00000100;
 			bool c4on = core::mem.sysregs(NR52) & 0b00001000;
-			int16_t c1 = getc1val() / 0xfff * 0xfff;
-			int16_t c2 = getc2val() / 0xfff * 0xfff;
-			int16_t c3 = getc3val() / 0xfff * 0xfff;
-			int16_t c4 = getc4val() / 0xfff * 0xfff;
+			int16_t c1 = getc1val() & 0xf000;
+			int16_t c2 = getc2val() & 0xf000;
+			int16_t c3 = getc3val() & 0xf000;
+			int16_t c4 = getc4val() & 0xf000;
 			uint8_t pcm12 = 0;
 			if (c1on)
-				pcm12 += (c1 / 0xfff + CHAR_MIN);
+				pcm12 += (c1 / 0xfff - CHAR_MIN);
 			if (c2on)
-				pcm12 += (c2 / 0xfff + CHAR_MIN) << 4;
+				pcm12 += (c2 / 0xfff - CHAR_MIN) << 4;
 			core::mem.sysregs(PCM12) = pcm12;
 			uint8_t pcm34 = 0;
 			if (c3on)
-				pcm34 += (c3 / 0xfff + CHAR_MIN);
+				pcm34 += (c3 / 0xfff - CHAR_MIN);
 			if (c4on)
-				pcm34 += (c4 / 0xfff + CHAR_MIN) << 4;
+				pcm34 += (c4 / 0xfff - CHAR_MIN) << 4;
 			core::mem.sysregs(PCM34) = pcm34;
 			if (i & 0x1)
 			{
@@ -454,13 +452,13 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				bool lc3on = c3on && (core::mem.sysregs(NR51) & 0b00000100);
 				bool lc4on = c4on && (core::mem.sysregs(NR51) & 0b00001000);
 				if (lc1on)
-					out[i] += c1 / 4.;
+					out[i] += c1 / 4;
 				if (lc2on)
-					out[i] += c2 / 4.;
+					out[i] += c2 / 4;
 				if (lc3on)
-					out[i] += c3 / 4.;
+					out[i] += c3 / 4;
 				if (lc4on)
-					out[i] += c4 / 4.;
+					out[i] += c4 / 4;
 				out[i] *= ((core::mem.sysregs(NR50) & 0b00000111) >> 0) / 7.;
 			}
 			else
@@ -470,19 +468,25 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 				bool rc3on = c3on && (core::mem.sysregs(NR51) & 0b01000000);
 				bool rc4on = c4on && (core::mem.sysregs(NR51) & 0b10000000);
 				if (rc1on)
-					out[i] += c1 / 4.;
+					out[i] += c1 / 4;
 				if (rc2on)
-					out[i] += c2 / 4.;
+					out[i] += c2 / 4;
 				if (rc3on)
-					out[i] += c3 / 4.;
+					out[i] += c3 / 4;
 				if (rc4on)
-					out[i] += c4 / 4.;
+					out[i] += c4 / 4;
 				out[i] *= ((core::mem.sysregs(NR50) & 0b01110000) >> 4) / 7.;
 			}
 		}
+		else
+		{
+			core::mem.sysregs(NR12) = 0;
+			core::mem.sysregs(NR13) = 0;
+			core::mem.sysregs(NR14) = 0;
+		}
 		if (frame >= nextClock)
 		{
-			if (clockCount % 1 == 1)
+			if (clockCount % 2 == 0)
 			{
 				updateLengthTick();
 			}
@@ -518,7 +522,7 @@ Audio::Audio()
 	parameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
 	parameters.sampleFormat = paInt16;
 	parameters.hostApiSpecificStreamInfo = 0;
-	PaError error = Pa_OpenStream(&this->stream, 0, &parameters, freq, freq / 128, paNoFlag, paCallback, this);
+	PaError error = Pa_OpenStream(&this->stream, 0, &parameters, freq, freq / 60, paNoFlag, paCallback, this);
 	if (error)
 	{
 		std::cerr << "Failed to create stream" << std::endl;

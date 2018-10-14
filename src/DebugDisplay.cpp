@@ -40,7 +40,7 @@ void DebugDisplay::iter()
 	gint height;
 	gtk_window_get_size(GTK_WINDOW(Main::getDebugDisplay()->getWindow()), &width, &height);
 	gtk_widget_set_size_request(Main::getDebugDisplay()->getScrolledinst(), width / 2, height);
-	gtk_widget_set_size_request(Main::getDebugDisplay()->getScrolledregs(), width / 2, height);
+	gtk_widget_set_size_request(Main::getDebugDisplay()->getRegisters(), width / 2, height);
 }
 
 void DebugDisplay::show()
@@ -62,12 +62,11 @@ void DebugDisplay::show()
 	gtk_text_view_set_monospace(GTK_TEXT_VIEW(this->instructions), true);
 	gtk_container_add(GTK_CONTAINER(this->scrolledinst), this->instructions);
 	gtk_paned_add1(GTK_PANED(paned), this->scrolledinst);
-	this->scrolledregs = gtk_scrolled_window_new(NULL, NULL);
-	this->registers = gtk_text_view_new();
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(this->registers), false);
-	gtk_text_view_set_monospace(GTK_TEXT_VIEW(this->registers), true);
-	gtk_container_add(GTK_CONTAINER(this->scrolledregs), this->registers);
-	gtk_paned_add2(GTK_PANED(paned), this->scrolledregs);
+	this->registers = gtk_fixed_new();
+	char *empty = "";
+	this->regsFlagsLabel = gtk_label_new(empty);
+	gtk_fixed_put(GTK_FIXED(this->registers), this->regsFlagsLabel, 0, 0);
+	gtk_paned_add2(GTK_PANED(paned), this->registers);
 	gtk_container_add(GTK_CONTAINER(this->window), paned);
 	gtk_widget_show_all(this->window);
 }
@@ -78,4 +77,43 @@ void DebugDisplay::hide()
 		return;
 	this->displayed = false;
 	gtk_widget_destroy(this->window);
+}
+
+static char tohex(char c)
+{
+	c &= 0xf;
+	if (c >= 10)
+		return ('A' + c - 10);
+	return ('0' + c);
+}
+
+static std::string build_regs(std::string name, uint8_t r1, uint8_t r2)
+{
+	return name + std::string(": ") + std::string(1, tohex(r1 >> 4)) + std::string(1, tohex(r1)) + std::string(" ") + std::string(1, tohex(r2 >> 4)) + std::string(1, tohex(r2)) + std::string("\n");
+}
+
+static std::string build_flag(std::string name, bool enabled)
+{
+	if (enabled)
+		return std::string("<span color=\"green\">") + name + std::string("</span>");
+	return std::string("<span color=\"red\">") + name + std::string("</span>");
+}
+
+void DebugDisplay::updateRegsFlags(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint8_t h, uint8_t l)
+{
+	if (!this->displayed)
+		return;
+	std::string text;
+	text += "<tt><span font=\"13\">";
+	text += build_regs("AF ", a, f);
+	text += build_regs("BC ", b, c);
+	text += build_regs("DE ", d, e);
+	text += build_regs("HL ", h, l);
+	text += "Flags ";
+	text += build_flag("Z", f & 0x80);
+	text += build_flag("N", f & 0x40);
+	text += build_flag("H", f & 0x20);
+	text += build_flag("C", f & 0x10);
+	text += "</span></tt>";
+	gtk_label_set_markup(GTK_LABEL(this->regsFlagsLabel), text.c_str());
 }

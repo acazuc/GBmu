@@ -3,18 +3,18 @@
 #include <iostream>
 #include <cstring>
 
-gint bposx[] = {100, 200, 150, 150, 300, 400, 500, 600};
-gint bposy[] = {85, 85, 55, 115, 250, 250, 90, 60};
+gint bposx[] =		{100, 200, 150, 150, 300, 400, 500, 600, 300, 400};
+gint bposy[] =		{85 , 85 , 55 , 115, 250, 250, 90 , 60 , 350, 350};
 
-gint lposx[] = {0, 300, 150, 150, 300, 400, 400, 700};
-gint lposy[] = {85, 85, 20, 150, 280, 280, 90, 60};
-gfloat lxalign[] = {1, 0, .5, .5, .5, .5, 1, 0};
-gfloat lyalign[] = {.5, .5, 1, 0, 0, 0, .5, .5};
+gint lposx[] =		{0  , 300, 150, 150, 300, 400, 400, 700, 300, 400};
+gint lposy[] =		{85 , 85 , 20 , 150, 280, 280, 90 , 60 , 380, 380};
+gfloat lxalign[] =	{1  , 0  , .5 , .5 , .5 , .5 , 1  , 0  , .5 , .5};
+gfloat lyalign[] =	{.5 , .5 , 1  , 0  , 0  , 0  , .5 , .5 , 0  , 0};
 
-std::string labels[] = {"Left", "Right", "Up", "Down", "Select", "Start", "B", "A"};
+std::string labels_texts[] = {"Left", "Right", "Up", "Down", "Select", "Start", "B", "A", "Save state", "Load state"};
 
 //               Left    Right  Up     Down  rctrl  rshift num0   num3
-gint dbinds[] = {65361, 65363, 65362, 65364, 65508, 65506, 65456, 65459};
+gint dbinds[] = {65361, 65363, 65362, 65364, 65508, 65506, 65456, 65459, 0, 0};
 
 int focused = -1;
 
@@ -57,7 +57,7 @@ BindDisplay::BindDisplay()
 	std::ifstream ifs("binds");
 	if (!ifs.is_open())
 	{
-		for (uint8_t i = 0; i < 8; ++i)
+		for (uint8_t i = 0; i < BINDS; ++i)
 			binds[i] = dbinds[i];
 		writeBinds();
 		return;
@@ -66,7 +66,7 @@ BindDisplay::BindDisplay()
 	std::string s;
 	try
 	{
-		while (i < 8 && getline(ifs, s))
+		while (i < BINDS && getline(ifs, s))
 		{
 			try
 			{
@@ -83,9 +83,9 @@ BindDisplay::BindDisplay()
 	{
 		i = 0;
 	}
-	if (i != 8)
+	if (i != BINDS)
 	{
-		for (uint8_t i = 0; i < 8; ++i)
+		for (uint8_t i = 0; i < BINDS; ++i)
 			binds[i] = dbinds[i];
 		writeBinds();
 	}
@@ -106,7 +106,7 @@ void BindDisplay::writeBinds()
 	}
 	try
 	{
-		for (uint8_t i = 0; i < 8; ++i)
+		for (uint8_t i = 0; i < BINDS; ++i)
 			ofs << binds[i] << std::endl;
 	}
 	catch (std::exception &e)
@@ -135,18 +135,17 @@ void BindDisplay::show()
 	gtk_window_set_resizable(GTK_WINDOW(this->window), false);
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
 	GtkWidget *fixed = gtk_fixed_new();
-	GtkWidget *glabels[8];
-	for (uint8_t i = 0; i < 8; ++i)
+	for (uint8_t i = 0; i < BINDS; ++i)
 	{
 		this->buttons[i] = gtk_button_new_with_label(gdk_keyval_name(binds[i]));
 		gtk_widget_set_size_request(this->buttons[i], 100, 30);
 		g_signal_connect(G_OBJECT(this->buttons[i]), "clicked", G_CALLBACK(cb_bind_press), (gpointer)((int64_t)i));
 		gtk_fixed_put(GTK_FIXED(fixed), this->buttons[i], bposx[i], bposy[i]);
-		glabels[i] = gtk_label_new(labels[i].c_str());
-		gtk_label_set_xalign(GTK_LABEL(glabels[i]), lxalign[i]);
-		gtk_label_set_yalign(GTK_LABEL(glabels[i]), lyalign[i]);
-		gtk_widget_set_size_request(glabels[i], 100, 30);
-		gtk_fixed_put(GTK_FIXED(fixed), glabels[i], lposx[i], lposy[i]);
+		this->labels[i] = gtk_label_new(labels_texts[i].c_str());
+		gtk_label_set_xalign(GTK_LABEL(this->labels[i]), lxalign[i]);
+		gtk_label_set_yalign(GTK_LABEL(this->labels[i]), lyalign[i]);
+		gtk_widget_set_size_request(this->labels[i], 100, 30);
+		gtk_fixed_put(GTK_FIXED(fixed), this->labels[i], lposx[i], lposy[i]);
 	}
 	gtk_widget_set_size_request(fixed, 750, 400);
 	gtk_container_add(GTK_CONTAINER(this->window), fixed);
