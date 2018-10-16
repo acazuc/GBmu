@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/12/13 13:45:41 by acazuc           ###   ########.fr        #
+#    Updated: 2018/10/16 11:08:04 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = g++
 
 CFLAGS = -g -Ofast -std=c++11 -flto
 
-INCLUDES_PATH = include/ -I coreshit -I Essentials
+INCLUDES_PATH = `pkg-config --cflags --libs gtk+3-0` -I include/ -I coreshit -I Essentials
 
 SRCS_PATH = src/
 
@@ -35,7 +35,7 @@ OBJS_NAME = $(SRCS_NAME:.cpp=.o)
 
 OBJS = $(addprefix $(OBJS_PATH), $(OBJS_NAME))
 
-LIBRARY = `pkg-config --cflags --libs gtk+-3.0` -lGL -lepoxy -lportaudio -L coreshit -L Essentials -lcore -lessentials
+LIBRARY = `pkg-config --libs gtk+-3.0` -lGL -lepoxy -lportaudio -L coreshit -L Essentials -lcore -lessentials
 
 all: odir $(NAME)
 
@@ -45,7 +45,7 @@ $(NAME): $(OBJS) coreshit/libcore.a
 
 $(OBJS_PATH)%.o: $(SRCS_PATH)%.cpp
 	@echo " - Compiling $<"
-	@$(CC) $(CFLAGS) -o $@ -c $< -I$(INCLUDES_PATH) $(LIBRARY)
+	@$(CC) $(CFLAGS) -o $@ -c $< $(INCLUDES)
 
 coreshit/libcore.a:
 
