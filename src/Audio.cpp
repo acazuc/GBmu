@@ -96,7 +96,7 @@ static int16_t getc1val()
 		core::mem.sysregs(NR14) &= 0b01111111;
 		core::mem.sysregs(NR52) |= 0b00000001;
 	}
-	if (!c1swpdir && !core::mem.sysregs(NR10) & 8)
+	if (!c1swpdir && !(core::mem.sysregs(NR10) & 8))
 	{
 		core::mem.sysregs(NR52) &= 0b11111110;
 		return (0);
@@ -153,6 +153,7 @@ static int16_t getc1val()
 			return (SHRT_MAX * envfac);
 		return (SHRT_MIN * envfac);
 	}
+	return (0);
 }
 
 static int16_t getc2val()
@@ -211,6 +212,7 @@ static int16_t getc2val()
 		return (SHRT_MIN * envfac);
 			return (SHRT_MAX * envfac);
 	}
+	return (0);
 }
 
 static int16_t getc3val()

@@ -142,8 +142,8 @@ void BindDisplay::show()
 		g_signal_connect(G_OBJECT(this->buttons[i]), "clicked", G_CALLBACK(cb_bind_press), (gpointer)((int64_t)i));
 		gtk_fixed_put(GTK_FIXED(fixed), this->buttons[i], bposx[i], bposy[i]);
 		this->labels[i] = gtk_label_new(labels_texts[i].c_str());
-		gtk_label_set_xalign(GTK_LABEL(this->labels[i]), lxalign[i]);
-		gtk_label_set_yalign(GTK_LABEL(this->labels[i]), lyalign[i]);
+		//gtk_label_set_xalign(GTK_LABEL(this->labels[i]), lxalign[i]);
+		//gtk_label_set_yalign(GTK_LABEL(this->labels[i]), lyalign[i]);
 		gtk_widget_set_size_request(this->labels[i], 100, 30);
 		gtk_fixed_put(GTK_FIXED(fixed), this->labels[i], lposx[i], lposy[i]);
 	}

@@ -1,10 +1,9 @@
-#version 330
+#version 130
+#extension GL_EXT_gpu_shader4 : enable
 
-in vec2 UV;
+varying vec2 UV;
 
 uniform sampler2D image;
-
-layout(location = 0) out vec4 frag_color;
 
 vec3 rgb_to_hq_colospace(vec4 rgb)
 {
@@ -43,15 +42,15 @@ vec4 HQ2x(vec2 texCoord)
 		o.x = -o.x;
 	if (p.y > 0.5)
 		o.y = -o.y;
-	vec4 w0 = texture(image, texCoord + vec2( -o.x, -o.y));
-	vec4 w1 = texture(image, texCoord + vec2(    0, -o.y));
-	vec4 w2 = texture(image, texCoord + vec2(  o.x, -o.y));
-	vec4 w3 = texture(image, texCoord + vec2( -o.x,    0));
-	vec4 w4 = texture(image, texCoord + vec2(    0,    0));
-	vec4 w5 = texture(image, texCoord + vec2(  o.x,    0));
-	vec4 w6 = texture(image, texCoord + vec2( -o.x,  o.y));
-	vec4 w7 = texture(image, texCoord + vec2(    0,  o.y));
-	vec4 w8 = texture(image, texCoord + vec2(  o.x,  o.y));
+	vec4 w0 = texture2D(image, texCoord + vec2( -o.x, -o.y));
+	vec4 w1 = texture2D(image, texCoord + vec2(    0, -o.y));
+	vec4 w2 = texture2D(image, texCoord + vec2(  o.x, -o.y));
+	vec4 w3 = texture2D(image, texCoord + vec2( -o.x,    0));
+	vec4 w4 = texture2D(image, texCoord + vec2(    0,    0));
+	vec4 w5 = texture2D(image, texCoord + vec2(  o.x,    0));
+	vec4 w6 = texture2D(image, texCoord + vec2( -o.x,  o.y));
+	vec4 w7 = texture2D(image, texCoord + vec2(    0,  o.y));
+	vec4 w8 = texture2D(image, texCoord + vec2(  o.x,  o.y));
 	int pattern = 0;
 	if (is_different(w0, w4))
 		pattern |= 1;
@@ -108,7 +107,7 @@ vec4 HQ2x(vec2 texCoord)
 
 void main()
 {
-	frag_color = HQ2x(UV);
+	gl_FragColor = HQ2x(UV);
 }
 
 /* https://github.com/LIJI32/SameBoy */

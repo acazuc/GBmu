@@ -29,8 +29,8 @@ void Main::run(int ac, char **av)
 		exit(EXIT_FAILURE);
 	}
 	coremaster(av[1]);
-	debugDisplay = new DebugDisplay();
 	mainDisplay = new MainDisplay();
+	debugDisplay = new DebugDisplay();
 	bindDisplay = new BindDisplay();
 	lcd = new LCD();
 	audio = new Audio();
@@ -40,11 +40,11 @@ void Main::run(int ac, char **av)
 	draw_last = high_resolution_clock::now();
 	render_last = high_resolution_clock::now();
 	int fps = 0;
+	core::mem.sysregs(0xFF03) = 0xFF;
+	core::mem.sysregs(SC) = 0x7E;
+	core::mem.sysregs(IF) = 0xE0;
 	while (true)
 	{
-		core::mem.sysregs(0xFF03) = 0xFF;
-		core::mem.sysregs(SC) = 0x7E;
-		core::mem.sysregs(IF) = 0xE0;
 		tmp = high_resolution_clock::now();
 		auto basecount = duration_cast<nanoseconds>(tmp - draw_last).count();
 		if (!speedFactor || basecount > 1000000000  / (59.72750056960583276373 * speedFactor))
@@ -107,6 +107,7 @@ int main(int ac, char **av)
 		return (-1);
 	}
 	gtk_init(&ac, &av);
+	gtk_gl_init(&ac, &av);
 	Main::run(ac, av);
 	return (0);
 }

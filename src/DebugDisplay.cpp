@@ -55,11 +55,11 @@ void DebugDisplay::show()
 	gtk_window_set_title(GTK_WINDOW(this->window), "GBmu debugger");
 	gtk_window_resize(GTK_WINDOW(this->window), 640, 480);
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
-	GtkWidget *paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+	GtkWidget *paned = gtk_hpaned_new();
 	this->scrolledinst = gtk_scrolled_window_new(NULL, NULL);
 	this->instructions = gtk_text_view_new();
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(this->instructions), false);
-	gtk_text_view_set_monospace(GTK_TEXT_VIEW(this->instructions), true);
+	//gtk_text_view_set_monospace(GTK_TEXT_VIEW(this->instructions), true);
 	gtk_container_add(GTK_CONTAINER(this->scrolledinst), this->instructions);
 	gtk_paned_add1(GTK_PANED(paned), this->scrolledinst);
 	this->registers = gtk_fixed_new();

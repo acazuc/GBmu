@@ -1,6 +1,7 @@
 #ifndef LCD_H
 # define LCD_H
 
+# include <epoxy/gl.h>
 # include <memboy.h>
 
 # define LCD_BG1_CHAR_BEGIN 0x9000

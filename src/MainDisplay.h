@@ -2,9 +2,10 @@
 # define DISPLAY_H
 
 # include <gtk/gtk.h>
+# include <gtk/gtkgl.h>
+# include <gdk/gdkgl.h>
 # include <gdk/gdk.h>
-# include <epoxy/gl.h>
-# include <epoxy/glx.h>
+# include <gdk/gdkkeysyms.h>
 # include <cstdint>
 
 class MainDisplay

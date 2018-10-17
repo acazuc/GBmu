@@ -1,10 +1,8 @@
-#version 330
+#version 120
 
-in vec2 UV;
+varying vec2 UV;
 
 uniform sampler2D image;
-
-layout(location = 0) out vec3 frag_color;
 
 #define BLEND_NONE 0
 #define BLEND_NORMAL 1
@@ -77,27 +75,27 @@ void main()
 
 	vec3 src[25];
 
-	src[21] = texture(image, t1.xw).rgb;
-	src[22] = texture(image, t1.yw).rgb;
-	src[23] = texture(image, t1.zw).rgb;
-	src[ 6] = texture(image, t2.xw).rgb;
-	src[ 7] = texture(image, t2.yw).rgb;
-	src[ 8] = texture(image, t2.zw).rgb;
-	src[ 5] = texture(image, t3.xw).rgb;
-	src[ 0] = texture(image, t3.yw).rgb;
-	src[ 1] = texture(image, t3.zw).rgb;
-	src[ 4] = texture(image, t4.xw).rgb;
-	src[ 3] = texture(image, t4.yw).rgb;
-	src[ 2] = texture(image, t4.zw).rgb;
-	src[15] = texture(image, t5.xw).rgb;
-	src[14] = texture(image, t5.yw).rgb;
-	src[13] = texture(image, t5.zw).rgb;
-	src[19] = texture(image, t6.xy).rgb;
-	src[18] = texture(image, t6.xz).rgb;
-	src[17] = texture(image, t6.xw).rgb;
-	src[ 9] = texture(image, t7.xy).rgb;
-	src[10] = texture(image, t7.xz).rgb;
-	src[11] = texture(image, t7.xw).rgb;
+	src[21] = texture2D(image, t1.xw).rgb;
+	src[22] = texture2D(image, t1.yw).rgb;
+	src[23] = texture2D(image, t1.zw).rgb;
+	src[ 6] = texture2D(image, t2.xw).rgb;
+	src[ 7] = texture2D(image, t2.yw).rgb;
+	src[ 8] = texture2D(image, t2.zw).rgb;
+	src[ 5] = texture2D(image, t3.xw).rgb;
+	src[ 0] = texture2D(image, t3.yw).rgb;
+	src[ 1] = texture2D(image, t3.zw).rgb;
+	src[ 4] = texture2D(image, t4.xw).rgb;
+	src[ 3] = texture2D(image, t4.yw).rgb;
+	src[ 2] = texture2D(image, t4.zw).rgb;
+	src[15] = texture2D(image, t5.xw).rgb;
+	src[14] = texture2D(image, t5.yw).rgb;
+	src[13] = texture2D(image, t5.zw).rgb;
+	src[19] = texture2D(image, t6.xy).rgb;
+	src[18] = texture2D(image, t6.xz).rgb;
+	src[17] = texture2D(image, t6.xw).rgb;
+	src[ 9] = texture2D(image, t7.xy).rgb;
+	src[10] = texture2D(image, t7.xz).rgb;
+	src[11] = texture2D(image, t7.xw).rgb;
 
 	float v[9];
 	v[0] = reduce(src[0]);
@@ -343,7 +341,7 @@ void main()
 		                mix( mix( mix(dst[35], dst[34], step(one_sixth, f.x) ), dst[33], step(two_sixth, f.x) ), mix( mix(dst[32], dst[31], step(four_sixth, f.x) ), dst[30], step(five_sixth, f.x) ), step(0.50, f.x) ), step(five_sixth, f.y) ),
 		        step(0.50, f.y) );
 
-	frag_color = res;
+	gl_FragColor = res;
 }
 
 /* https://github.com/libretro/glsl-shaders/ */
