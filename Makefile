@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2017/12/13 13:45:41 by acazuc           ###   ########.fr        #
+#    Updated: 2018/10/13 18:31:50 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = Build/gbmu
 
 CC = g++
 
-CFLAGS = -g -Ofast -std=c++11 -flto
+CFLAGS = -g -Ofast -std=c++11 -fsanitize=address -fsanitize=undefined
 
 INCLUDES_PATH = include/ -I coreshit -I Essentials
 

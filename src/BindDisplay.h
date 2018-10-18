@@ -13,13 +13,15 @@
 # define BIND_B 6
 # define BIND_A 7
 
+# define NBINDS 10
+
 class BindDisplay
 {
 
 	private:
-		GtkWidget *buttons[8];
+		GtkWidget *buttons[NBINDS];
 		GtkWidget *window;
-		guint binds[8];
+		guint binds[NBINDS];
 		bool displayed;
 
 	public:

@@ -431,21 +431,21 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			bool c2on = core::mem.sysregs(NR52) & 0b00000010;
 			bool c3on = core::mem.sysregs(NR52) & 0b00000100;
 			bool c4on = core::mem.sysregs(NR52) & 0b00001000;
-			int16_t c1 = getc1val() / 0xfff * 0xfff;
-			int16_t c2 = getc2val() / 0xfff * 0xfff;
-			int16_t c3 = getc3val() / 0xfff * 0xfff;
-			int16_t c4 = getc4val() / 0xfff * 0xfff;
+			int16_t c1 = getc1val() & 0xf000;
+			int16_t c2 = getc2val() & 0xf000;
+			int16_t c3 = getc3val() & 0xf000;
+			int16_t c4 = getc4val() & 0xf000;
 			uint8_t pcm12 = 0;
 			if (c1on)
-				pcm12 += (c1 / 0xfff + CHAR_MIN);
+				pcm12 += ((c1 >> 12) - CHAR_MIN);
 			if (c2on)
-				pcm12 += (c2 / 0xfff + CHAR_MIN) << 4;
+				pcm12 += ((c2 >> 12) - CHAR_MIN) << 4;
 			core::mem.sysregs(PCM12) = pcm12;
 			uint8_t pcm34 = 0;
 			if (c3on)
-				pcm34 += (c3 / 0xfff + CHAR_MIN);
+				pcm34 += ((c3 >> 12) - CHAR_MIN);
 			if (c4on)
-				pcm34 += (c4 / 0xfff + CHAR_MIN) << 4;
+				pcm34 += ((c4 >> 12) - CHAR_MIN) << 4;
 			core::mem.sysregs(PCM34) = pcm34;
 			if (i & 0x1)
 			{

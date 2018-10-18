@@ -22,13 +22,8 @@ void Main::run(int ac, char **av)
 {
 	(void)ac;
 	(void)av;
-	paused = false;
-	if (ac < 2)
-	{
-		std::cerr << "mdr no" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	coremaster(av[1]);
+	paused = ac < 2;
+	coremaster(ac >= 2 ? av[1] : (char*)"");
 	debugDisplay = new DebugDisplay();
 	mainDisplay = new MainDisplay();
 	bindDisplay = new BindDisplay();
