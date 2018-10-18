@@ -23,6 +23,7 @@ class BindDisplay
 	private:
 		GtkWidget *buttons[NBINDS];
 		GtkWidget *labels[NBINDS];
+		GtkWidget *window;
 		guint binds[NBINDS];
 		bool displayed;
 

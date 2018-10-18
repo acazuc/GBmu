@@ -6,7 +6,7 @@
 #    By: acazuc <acazuc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/11/25 06:50:12 by acazuc            #+#    #+#              #
-#    Updated: 2018/10/18 14:14:16 by acazuc           ###   ########.fr        #
+#    Updated: 2018/10/18 14:27:25 by acazuc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,10 @@ NAME = Build/gbmu
 
 CC = g++
 
-CFLAGS = -g -Ofast -std=c++11 -fsanitize=address -fsanitize=undefined
+CFLAGS = -g -Ofast -std=c++11
+#CFLAGS+= -fsanitize=address -fsanitize=undefined
 
-INCLUDES_PATH = `pkg-config --cflags --libs gtk+3-0` -I include/ -I coreshit -I Essentials
+INCLUDES = `pkg-config --cflags gtk+-2.0 gtkglext-1.0` -I include/ -I coreshit -I Essentials
 
 SRCS_PATH = src/
 
@@ -35,7 +36,7 @@ OBJS_NAME = $(SRCS_NAME:.cpp=.o)
 
 OBJS = $(addprefix $(OBJS_PATH), $(OBJS_NAME))
 
-LIBRARY = `pkg-config --libs gtk+-3.0` -lGL -lepoxy -lportaudio -L coreshit -L Essentials -lcore -lessentials
+LIBRARY = `pkg-config --libs gtk+-2.0 gtkglext-1.0 ` -lGL -lepoxy -lportaudio -L coreshit -L Essentials -lcore -lessentials
 
 all: odir $(NAME)
 

@@ -63,7 +63,7 @@ void DebugDisplay::show()
 	gtk_container_add(GTK_CONTAINER(this->scrolledinst), this->instructions);
 	gtk_paned_add1(GTK_PANED(paned), this->scrolledinst);
 	this->registers = gtk_fixed_new();
-	char *empty = "";
+	char *empty = (char*)"";
 	this->regsFlagsLabel = gtk_label_new(empty);
 	gtk_fixed_put(GTK_FIXED(this->registers), this->regsFlagsLabel, 0, 0);
 	gtk_paned_add2(GTK_PANED(paned), this->registers);

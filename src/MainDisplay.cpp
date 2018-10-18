@@ -22,8 +22,8 @@
 #define FILTER_LAST 7
 
 static float mat[16];
-static int32_t ctx_width = 160;
-static int32_t ctx_height = 144;
+static int32_t ctx_width = -1;
+static int32_t ctx_height = -1;
 static GLuint texture;
 static GLuint vao;
 
@@ -230,17 +230,20 @@ static bool gl_render(GtkWidget *widget, cairo_t *cr, gpointer data)
 	glUniformMatrix4fv(currentprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
 	glUniform1i(currentprogram->textureLocation, 0);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	ctx_width = widget->allocation.width;
-	ctx_height = widget->allocation.height;
-	gl_resize(widget, ctx_width, ctx_height, NULL);
-	float tmpw = ctx_width / 160.;
-	float tmph = ctx_height / 144.;
-	float tmp;
-	if (tmpw > tmph)
-		tmp = tmph;
-	else
-		tmp = tmpw;
-	glViewport((ctx_width - tmp * 160) / 2, (ctx_height - tmp * 144) / 2, tmp * 160, tmp * 144);
+	if (ctx_width != widget->allocation.width || ctx_height != widget->allocation.height)
+	{
+		ctx_width = widget->allocation.width;
+		ctx_height = widget->allocation.height;
+		gl_resize(widget, ctx_width, ctx_height, NULL);
+		float tmpw = ctx_width / 160.;
+		float tmph = ctx_height / 144.;
+		float tmp;
+		if (tmpw > tmph)
+			tmp = tmph;
+		else
+			tmp = tmpw;
+		glViewport((ctx_width - tmp * 160) / 2, (ctx_height - tmp * 144) / 2, tmp * 160, tmp * 144);
+	}
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -452,7 +455,7 @@ static void cb_help_about(GtkWidget *osef1, gpointer osef2)
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), "xdbcp license v1");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/acazuc/GBmu");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog), "Le github interdit");
-	char *authors[] = {"moi", "lui", NULL};
+	char *authors[] = {(char*)"moi", (char*)"lui", NULL};
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), (const char**)authors);
 	g_signal_connect(G_OBJECT(dialog), "destroy", G_CALLBACK(cb_dialog_quit), NULL);
 	gint result = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -840,11 +843,9 @@ MainDisplay::MainDisplay()
 	gtk_widget_set_gl_capability(this->gl, glconfig, NULL, TRUE, GDK_GL_RGBA_TYPE);
 	//gtk_widget_set_hexpand(this->gl, true);
 	g_signal_connect(this->gl, "realize", G_CALLBACK(gl_realize), NULL);
-	g_signal_connect(this->gl, "resize", G_CALLBACK(gl_resize), NULL);
 	g_signal_connect(this->gl, "expose_event", G_CALLBACK(gl_render), NULL);
 	gtk_widget_set_size_request(this->gl, 160, 144);
 	gtk_container_add(GTK_CONTAINER(box), this->gl);
-	g_object_set(this->gl, "expand", TRUE, NULL);
 	gtk_widget_show(this->gl);
 	gtk_widget_show(box);
 	gtk_container_add(GTK_CONTAINER(this->window), box);
