@@ -15,15 +15,30 @@
 # define BIND_SAVE_STATE 8
 # define BIND_LOAD_STATE 9
 
+# define BINDS 10
+
 # define NBINDS 10
 
 class BindDisplay
 {
 
 	private:
+<<<<<<< HEAD
 		GtkWidget *buttons[NBINDS];
-		GtkWidget *labels[NBINDS];
+||||||| merged common ancestors
+		GtkWidget *buttons[8];
+=======
+		GtkWidget *buttons[BINDS];
+		GtkWidget *labels[BINDS];
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
+		GtkWidget *window;
+<<<<<<< HEAD
 		guint binds[NBINDS];
+||||||| merged common ancestors
+		guint binds[8];
+=======
+		guint binds[BINDS];
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
 		bool displayed;
 
 	public:

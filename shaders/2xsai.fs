@@ -1,4 +1,4 @@
-#version 330
+#version 300
 
 in vec2 UV;
 
@@ -15,23 +15,23 @@ void main()
 	vec4 xh = vec4(3. * dx,      dy, -3. * dx,      -dy);
 	vec4 yv = vec4(     dx, 3. * dy,      -dx, -3. * dy);
 	vec4 ox = 2. * yx; 
-	vec3 c11 = texture(image, UV        ).xyz;
-	vec3 s00 = texture(image, UV + yx.zw).xyz;
-	vec3 s20 = texture(image, UV + yx.xw).xyz;
-	vec3 s22 = texture(image, UV + yx.xy).xyz;
-	vec3 s02 = texture(image, UV + yx.zy).xyz;
-	vec3 h00 = texture(image, UV + xh.zw).xyz;
-	vec3 h20 = texture(image, UV + xh.xw).xyz;
-	vec3 h22 = texture(image, UV + xh.xy).xyz;
-	vec3 h02 = texture(image, UV + xh.zy).xyz;
-	vec3 v00 = texture(image, UV + yv.zw).xyz;
-	vec3 v20 = texture(image, UV + yv.xw).xyz;
-	vec3 v22 = texture(image, UV + yv.xy).xyz;
-	vec3 v02 = texture(image, UV + yv.zy).xyz;
-	vec3 o00 = texture(image, UV + ox.zw).xyz;
-	vec3 o20 = texture(image, UV + ox.xw).xyz;
-	vec3 o22 = texture(image, UV + ox.xy).xyz;
-	vec3 o02 = texture(image, UV + ox.zy).xyz;
+	vec3 c11 = texture2D(image, UV        ).xyz;
+	vec3 s00 = texture2D(image, UV + yx.zw).xyz;
+	vec3 s20 = texture2D(image, UV + yx.xw).xyz;
+	vec3 s22 = texture2D(image, UV + yx.xy).xyz;
+	vec3 s02 = texture2D(image, UV + yx.zy).xyz;
+	vec3 h00 = texture2D(image, UV + xh.zw).xyz;
+	vec3 h20 = texture2D(image, UV + xh.xw).xyz;
+	vec3 h22 = texture2D(image, UV + xh.xy).xyz;
+	vec3 h02 = texture2D(image, UV + xh.zy).xyz;
+	vec3 v00 = texture2D(image, UV + yv.zw).xyz;
+	vec3 v20 = texture2D(image, UV + yv.xw).xyz;
+	vec3 v22 = texture2D(image, UV + yv.xy).xyz;
+	vec3 v02 = texture2D(image, UV + yv.zy).xyz;
+	vec3 o00 = texture2D(image, UV + ox.zw).xyz;
+	vec3 o20 = texture2D(image, UV + ox.xw).xyz;
+	vec3 o22 = texture2D(image, UV + ox.xy).xyz;
+	vec3 o02 = texture2D(image, UV + ox.zy).xyz;
 	float m1 = 1.0 / (dot(abs(s00 - s22), dt) + 0.00001);
 	float m2 = 1.0 / (dot(abs(s02 - s20), dt) + 0.00001);
 	float h1 = 1.0 / (dot(abs(s00 - h22), dt) + 0.00001);

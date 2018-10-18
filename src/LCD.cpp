@@ -83,6 +83,7 @@ void LCD::render()
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
 			corerun(204 * mult);
+		y = core::mem[LY];
 	}
 	core::mem[STAT] = (core::mem[STAT] & 0b11111100) | 1;
 	for (uint8_t y = 144; y < 154; ++y)
@@ -97,7 +98,9 @@ void LCD::render()
 			core::mem[IF] |= 1 << 1;
 		if (!paused)
 			corerun(456 * mult);
+		y = core::mem[LY];
 	}
+	Main::getDebugDisplay()->updateRegsFlags(core::geta(), core::getb(), core::getc(), core::getd(), core::gete(), core::geth(), core::getl(), core::getflags());
 }
 
 void LCD::renderBGCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode)
@@ -176,6 +179,7 @@ void LCD::renderBG(uint8_t y)
 
 void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
 {
+	uint8_t orgbx = bx;
 	bool height16 = core::mem[LCDC] & 0b00000100;
 	uint8_t palette = (attr & 0b00010000) >> 4;
 	bool hflip = (attr & 0b00100000) >> 5;
@@ -194,9 +198,9 @@ void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		return;
 	if ((priorities[y][x] || priority) && hasprinted[y][x])
 		return;
-	if (bx >= this->lowestx[x])
+	if (orgbx >= this->lowestx[x])
 		return;
-	this->lowestx[x] = bx;
+	this->lowestx[x] = orgbx;
 	uint8_t color = (core::mem[palette ? OBP1 : OBP0] >> (pixel << 1)) & 3;
 	color = UCHAR_MAX - (color / 3. * UCHAR_MAX);
 	uint8_t col[] = {color, color, color};
@@ -205,6 +209,7 @@ void LCD::renderOBJCharDMG(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 
 void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t charcode, uint8_t attr)
 {
+	uint8_t orgbx = bx;
 	bool height16 = core::mem[LCDC] & 0b00000100;
 	uint8_t palette = attr & 0b00000111;
 	bool charbank = (attr & 0b00001000) >> 3;
@@ -233,9 +238,9 @@ void LCD::renderOBJCharCGB(uint8_t x, uint8_t y, uint8_t bx, uint8_t by, uint8_t
 		return;
 	if ((priorities[y][x] || priority) && hasprinted[y][x])
 		return;
-	if (bx >= this->lowestx[x])
+	if (orgbx >= this->lowestx[x])
 		return;
-	this->lowestx[x] = bx;
+	this->lowestx[x] = orgbx;
 	uint8_t *pal = core::mem.sppalette(palette) + coloridx * 2;
 	uint8_t color[] = {(uint8_t)(pal[0] & 0b00011111), (uint8_t)((pal[0] >> 5) | ((pal[1] << 3) & 0b00011000)), (uint8_t)((pal[1] >> 2) & 0b00011111)};
 	color[0] <<= 3;

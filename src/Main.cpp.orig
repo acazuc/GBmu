@@ -22,9 +22,28 @@ void Main::run(int ac, char **av)
 {
 	(void)ac;
 	(void)av;
+<<<<<<< HEAD
 	paused = ac < 2;
 	coremaster(ac >= 2 ? av[1] : (char*)"");
 	debugDisplay = new DebugDisplay();
+||||||| merged common ancestors
+	paused = false;
+	if (ac < 2)
+	{
+		std::cerr << "mdr no" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	coremaster(av[1]);
+	debugDisplay = new DebugDisplay();
+=======
+	paused = false;
+	if (ac < 2)
+	{
+		std::cerr << "mdr no" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	coremaster(av[1]);
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
 	mainDisplay = new MainDisplay();
 	debugDisplay = new DebugDisplay();
 	bindDisplay = new BindDisplay();

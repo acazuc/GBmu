@@ -19,7 +19,7 @@
 #define FILTER_XBR 11
 #define FILTER_XBRZ 12
 #define FILTER_GAMEBOY 13
-#define FILTER_LAST 14
+#define FILTER_LAST 7
 
 static float mat[16];
 static int32_t ctx_width = 160;
@@ -103,6 +103,7 @@ static std::string readfile(std::string file)
 
 static void initProgram(glprogram *program, std::string vertex, std::string fragment)
 {
+	std::cout << "Creating shader with "  << vertex << " and " << fragment << std::endl;
 	GLuint fs;
 	GLuint vs;
 	initVertexShader(vs, readfile(vertex));
@@ -138,7 +139,8 @@ static void initProgram(glprogram *program, std::string vertex, std::string frag
 
 static void initPrograms()
 {
-	std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
+	//std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
+	std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "basic.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
 	for (uint8_t i = 0; i < FILTER_LAST; ++i)
 		initProgram(&programs[i], "shaders/basic.vs", "shaders/" + fragments[i]);
 	currentprogram = &programs[0];
@@ -162,10 +164,15 @@ static void initBuffers()
 	glDeleteBuffers(1, &buffer);
 }
 
-static void gl_realize(GtkGLArea *area)
+static void gl_realize(GtkWidget *widget)
 {
-	(void)area;
-	gtk_gl_area_make_current(area);
+	GdkGLContext *glcontext = gtk_widget_get_gl_context(widget);
+	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable(widget);
+	if (!gdk_gl_drawable_gl_begin(gldrawable, glcontext))
+	{
+		std::cerr << "gtk_widget_begin_gl failed" << std::endl;
+		return;
+	}
 	glBlendEquation(GL_FUNC_ADD);
 	glClearColor(0, 0, 0, 0);
 	glDisable(GL_DEPTH_TEST);
@@ -178,39 +185,14 @@ static void gl_realize(GtkGLArea *area)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	Main::glErrors("1");
+	gdk_gl_drawable_gl_end(gldrawable);
 }
 
-static bool gl_render(GtkGLArea *area, GdkGLContext *context)
+static void gl_resize(GtkWidget *widget, gint width, gint height, gpointer osef)
 {
-	(void)area;
-	(void)context;
-	gdk_gl_context_make_current(context);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
-	glBindVertexArray(vao);
-	glUseProgram(currentprogram->program);
-	glUniformMatrix4fv(currentprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	float tmpw = ctx_width / 160.;
-	float tmph = ctx_height / 144.;
-	float tmp;
-	if (tmpw > tmph)
-		tmp = tmph;
-	else
-		tmp = tmpw;
-	glViewport((ctx_width - tmp * 160) / 2, (ctx_height - tmp * 144) / 2, tmp * 160, tmp * 144);
-	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glFlush();
-	Main::glErrors("main");
-	return (TRUE);
-}
-
-static void gl_resize(GtkGLArea *area, gint width, gint height, gpointer osef)
-{
-	(void)area;
+	(void)widget;
 	(void)osef;
-	std::cout << "width: " << width << ", height: " << height << std::endl;
+	//std::cout << "width: " << width << ", height: " << height << std::endl;
 	ctx_width = width;
 	ctx_height = height;
 	mat[0] = 2 / 1;
@@ -229,6 +211,46 @@ static void gl_resize(GtkGLArea *area, gint width, gint height, gpointer osef)
 	mat[13] = 1;
 	mat[14] = 0;
 	mat[15] = 1;
+}
+
+static bool gl_render(GtkWidget *widget, cairo_t *cr, gpointer data)
+{
+	(void)cr;
+	(void)data;
+	GdkGLContext *glcontext = gtk_widget_get_gl_context(widget);
+	GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable(widget);
+	if (!gdk_gl_drawable_gl_begin(gldrawable, glcontext))
+	{
+		std::cerr << "gtk_widget_begin_gl failed" << std::endl;
+		return FALSE;
+	}
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
+	glBindVertexArray(vao);
+	glUseProgram(currentprogram->program);
+	glUniformMatrix4fv(currentprogram->mvpLocation, 1, GL_FALSE, &mat[0]);
+	glUniform1i(currentprogram->textureLocation, 0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	ctx_width = widget->allocation.width;
+	ctx_height = widget->allocation.height;
+	gl_resize(widget, ctx_width, ctx_height, NULL);
+	float tmpw = ctx_width / 160.;
+	float tmph = ctx_height / 144.;
+	float tmp;
+	if (tmpw > tmph)
+		tmp = tmph;
+	else
+		tmp = tmpw;
+	glViewport((ctx_width - tmp * 160) / 2, (ctx_height - tmp * 144) / 2, tmp * 160, tmp * 144);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	if (gdk_gl_drawable_is_double_buffered(gldrawable))
+		gdk_gl_drawable_swap_buffers(gldrawable);
+	else
+		glFlush();
+	Main::glErrors("main");
+	gdk_gl_drawable_gl_end(gldrawable);
+	return (TRUE);
 }
 
 //Choualbox dbar
@@ -430,7 +452,7 @@ static void cb_help_about(GtkWidget *osef1, gpointer osef2)
 	gtk_about_dialog_set_license(GTK_ABOUT_DIALOG(dialog), "xdbcp license v1");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://github.com/acazuc/GBmu");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog), "Le github interdit");
-	char *authors[2] = {(char*)"moi", (char*)"lui"};
+	char *authors[] = {"moi", "lui", NULL};
 	gtk_about_dialog_set_authors(GTK_ABOUT_DIALOG(dialog), (const char**)authors);
 	g_signal_connect(G_OBJECT(dialog), "destroy", G_CALLBACK(cb_dialog_quit), NULL);
 	gint result = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -792,8 +814,7 @@ MainDisplay::MainDisplay()
 	g_signal_connect(G_OBJECT(this->window), "destroy", G_CALLBACK(cb_quit), NULL);
 	g_signal_connect(G_OBJECT(this->window), "key-release-event", G_CALLBACK(cb_key_release_event), NULL);
 	g_signal_connect(G_OBJECT(this->window), "key-press-event", G_CALLBACK(cb_key_press_event), NULL);
-	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	g_object_set(box, "expand", TRUE, NULL);
+	GtkWidget *box = gtk_vbox_new(false, 0);
 	this->menu = gtk_menu_bar_new();
 
 	build_menu_file();
@@ -803,11 +824,24 @@ MainDisplay::MainDisplay()
 
 	gtk_widget_show_all(this->menu);
 	gtk_box_pack_start(GTK_BOX(box), this->menu, FALSE, FALSE, 0);
-	this->gl = gtk_gl_area_new();
-	gtk_widget_set_hexpand(this->gl, true);
+	this->gl = gtk_drawing_area_new();
+	GdkGLConfig *glconfig = gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH/* | GDK_GL_MODE_DOUBLE*/));
+	if (glconfig == NULL)
+	{
+		g_print("*** Cannot find the double-buffered visual.\n");
+		g_print("*** Trying single-buffered visual.\n");
+		glconfig = gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH));
+		if (glconfig == NULL)
+		{
+			g_print("*** No appropriate OpenGL-capable visual found.\n");
+			exit(1);
+		}
+	}
+	gtk_widget_set_gl_capability(this->gl, glconfig, NULL, TRUE, GDK_GL_RGBA_TYPE);
+	//gtk_widget_set_hexpand(this->gl, true);
 	g_signal_connect(this->gl, "realize", G_CALLBACK(gl_realize), NULL);
 	g_signal_connect(this->gl, "resize", G_CALLBACK(gl_resize), NULL);
-	g_signal_connect(this->gl, "render", G_CALLBACK(gl_render), NULL);
+	g_signal_connect(this->gl, "expose_event", G_CALLBACK(gl_render), NULL);
 	gtk_widget_set_size_request(this->gl, 160, 144);
 	gtk_container_add(GTK_CONTAINER(box), this->gl);
 	g_object_set(this->gl, "expand", TRUE, NULL);

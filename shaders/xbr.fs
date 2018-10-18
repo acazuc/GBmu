@@ -1,10 +1,8 @@
-#version 330
+#version 120
 
-in vec2 UV;
+varying vec2 UV;
 
 uniform sampler2D image;
-
-layout(location = 0) out vec3 frag_color;
 
 #define XBR_Y_WEIGHT 48.0
 #define XBR_EQ_THRESHOLD 10.0
@@ -75,33 +73,33 @@ void main()
 
 	vec2 fp = fract(UV * size.xy);
 
-	vec3 A1 = texture(image, t1.xw).rgb;
-	vec3 B1 = texture(image, t1.yw).rgb;
-	vec3 C1 = texture(image, t1.zw).rgb;
+	vec3 A1 = texture2D(image, t1.xw).rgb;
+	vec3 B1 = texture2D(image, t1.yw).rgb;
+	vec3 C1 = texture2D(image, t1.zw).rgb;
 
-	vec3 A = texture(image, t2.xw).rgb;
-	vec3 B = texture(image, t2.yw).rgb;
-	vec3 C = texture(image, t2.zw).rgb;
+	vec3 A = texture2D(image, t2.xw).rgb;
+	vec3 B = texture2D(image, t2.yw).rgb;
+	vec3 C = texture2D(image, t2.zw).rgb;
 
-	vec3 D = texture(image, t3.xw).rgb;
-	vec3 E = texture(image, t3.yw).rgb;
-	vec3 F = texture(image, t3.zw).rgb;
+	vec3 D = texture2D(image, t3.xw).rgb;
+	vec3 E = texture2D(image, t3.yw).rgb;
+	vec3 F = texture2D(image, t3.zw).rgb;
 
-	vec3 G = texture(image, t4.xw).rgb;
-	vec3 H = texture(image, t4.yw).rgb;
-	vec3 I = texture(image, t4.zw).rgb;
+	vec3 G = texture2D(image, t4.xw).rgb;
+	vec3 H = texture2D(image, t4.yw).rgb;
+	vec3 I = texture2D(image, t4.zw).rgb;
 
-	vec3 G5 = texture(image, t5.xw).rgb;
-	vec3 H5 = texture(image, t5.yw).rgb;
-	vec3 I5 = texture(image, t5.zw).rgb;
+	vec3 G5 = texture2D(image, t5.xw).rgb;
+	vec3 H5 = texture2D(image, t5.yw).rgb;
+	vec3 I5 = texture2D(image, t5.zw).rgb;
 
-	vec3 A0 = texture(image, t6.xy).rgb;
-	vec3 D0 = texture(image, t6.xz).rgb;
-	vec3 G0 = texture(image, t6.xw).rgb;
+	vec3 A0 = texture2D(image, t6.xy).rgb;
+	vec3 D0 = texture2D(image, t6.xz).rgb;
+	vec3 G0 = texture2D(image, t6.xw).rgb;
 
-	vec3 C4 = texture(image, t7.xy).rgb;
-	vec3 F4 = texture(image, t7.xz).rgb;
-	vec3 I4 = texture(image, t7.xw).rgb;
+	vec3 C4 = texture2D(image, t7.xy).rgb;
+	vec3 F4 = texture2D(image, t7.xz).rgb;
+	vec3 I4 = texture2D(image, t7.xw).rgb;
 
 	vec4 b = transpose(mat4x3(B, D, H, F)) * (XBR_Y_WEIGHT * yuv[0]);
 	vec4 c = transpose(mat4x3(C, A, G, I)) * (XBR_Y_WEIGHT * yuv[0]);
@@ -232,7 +230,7 @@ void main()
 	res1 = mix(E, pix1, blend1);
 	res2 = mix(E, pix2, blend2);
 	vec3 res = mix(res1, res2, step(c_df(E, res1), c_df(E, res2)));
-	frag_color = res;
+	gl_FragColor = res;
 }
 
 /* https://github.com/libretro/glsl-shaders/ */

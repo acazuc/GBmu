@@ -1,9 +1,9 @@
-#version 330
+#version 120
 
-in vec2 texCoords;
-in vec2 vertexes;
+attribute vec2 texCoords;
+attribute vec2 vertexes;
 
-out vec2 UV;
+varying vec2 UV;
 
 uniform mat4 MVP;
 

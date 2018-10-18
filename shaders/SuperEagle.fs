@@ -1,10 +1,8 @@
-#version 330
+#version 120
 
-in vec2 UV;
+varying vec2 UV;
 
 uniform sampler2D image;
-
-layout(location = 0) out vec4 frag_color;
 
 vec3 dtt = vec3(65536, 255, 1);
 
@@ -29,22 +27,22 @@ vec4 SuperEagle(vec2 texCoord)
 	float dy = 1. / 144;
 	vec2 fp = fract(texCoord * vec2(160, 144));
 	// Reading the texels
-	vec3 C0 = texture(image, texCoord + vec2(-dx     , -dy    )).xyz; 
-	vec3 C1 = texture(image, texCoord + vec2(-dx     , 0      )).xyz;
-	vec3 C2 = texture(image, texCoord + vec2( dx     , -dy    )).xyz;
-	vec3 C3 = texture(image, texCoord + vec2(-dx     , 0      )).xyz;
-	vec3 C4 = texture(image, texCoord).xyz;
-	vec3 C5 = texture(image, texCoord + vec2( dx     , 0      )).xyz;
-	vec3 C6 = texture(image, texCoord + vec2(-dx     , dy     )).xyz;
-	vec3 C7 = texture(image, texCoord + vec2(  0     , dy     )).xyz;
-	vec3 C8 = texture(image, texCoord + vec2( dx     , dy     )).xyz;
-	vec3 D0 = texture(image, texCoord + vec2(-dx     , dy + dy)).xyz;
-	vec3 D1 = texture(image, texCoord + vec2(  0     , dy + dy)).xyz;
-	vec3 D2 = texture(image, texCoord + vec2( dx     , dy + dy)).xyz;
-	vec3 D3 = texture(image, texCoord + vec2( dx + dx, -dy    )).xyz;
-	vec3 D4 = texture(image, texCoord + vec2( dx + dx, 0      )).xyz;
-	vec3 D5 = texture(image, texCoord + vec2( dx + dx, dy     )).xyz;
-	vec3 D6 = texture(image, texCoord + vec2( dx + dx, dy + dy)).xyz;
+	vec3 C0 = texture2D(image, texCoord + vec2(-dx     , -dy    )).xyz; 
+	vec3 C1 = texture2D(image, texCoord + vec2(-dx     , 0      )).xyz;
+	vec3 C2 = texture2D(image, texCoord + vec2( dx     , -dy    )).xyz;
+	vec3 C3 = texture2D(image, texCoord + vec2(-dx     , 0      )).xyz;
+	vec3 C4 = texture2D(image, texCoord).xyz;
+	vec3 C5 = texture2D(image, texCoord + vec2( dx     , 0      )).xyz;
+	vec3 C6 = texture2D(image, texCoord + vec2(-dx     , dy     )).xyz;
+	vec3 C7 = texture2D(image, texCoord + vec2(  0     , dy     )).xyz;
+	vec3 C8 = texture2D(image, texCoord + vec2( dx     , dy     )).xyz;
+	vec3 D0 = texture2D(image, texCoord + vec2(-dx     , dy + dy)).xyz;
+	vec3 D1 = texture2D(image, texCoord + vec2(  0     , dy + dy)).xyz;
+	vec3 D2 = texture2D(image, texCoord + vec2( dx     , dy + dy)).xyz;
+	vec3 D3 = texture2D(image, texCoord + vec2( dx + dx, -dy    )).xyz;
+	vec3 D4 = texture2D(image, texCoord + vec2( dx + dx, 0      )).xyz;
+	vec3 D5 = texture2D(image, texCoord + vec2( dx + dx, dy     )).xyz;
+	vec3 D6 = texture2D(image, texCoord + vec2( dx + dx, dy + dy)).xyz;
 	vec3 p00;
 	vec3 p10;
 	vec3 p01;
@@ -133,7 +131,7 @@ vec4 SuperEagle(vec2 texCoord)
 
 void main()
 {
-	frag_color = SuperEagle(UV);
+	gl_FragColor = SuperEagle(UV);
 }
 
 /* https://github.com/libretro/slang-shaders */

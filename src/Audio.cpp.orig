@@ -437,15 +437,39 @@ static int paCallback(const void *input, void *output, unsigned long frameCount,
 			int16_t c4 = getc4val() & 0xf000;
 			uint8_t pcm12 = 0;
 			if (c1on)
+<<<<<<< HEAD
 				pcm12 += ((c1 >> 12) - CHAR_MIN);
+||||||| merged common ancestors
+				pcm12 += (c1 / 0xfff + CHAR_MIN);
+=======
+				pcm12 += (c1 / 0xfff - CHAR_MIN);
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
 			if (c2on)
+<<<<<<< HEAD
 				pcm12 += ((c2 >> 12) - CHAR_MIN) << 4;
+||||||| merged common ancestors
+				pcm12 += (c2 / 0xfff + CHAR_MIN) << 4;
+=======
+				pcm12 += (c2 / 0xfff - CHAR_MIN) << 4;
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
 			core::mem.sysregs(PCM12) = pcm12;
 			uint8_t pcm34 = 0;
 			if (c3on)
+<<<<<<< HEAD
 				pcm34 += ((c3 >> 12) - CHAR_MIN);
+||||||| merged common ancestors
+				pcm34 += (c3 / 0xfff + CHAR_MIN);
+=======
+				pcm34 += (c3 / 0xfff - CHAR_MIN);
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
 			if (c4on)
+<<<<<<< HEAD
 				pcm34 += ((c4 >> 12) - CHAR_MIN) << 4;
+||||||| merged common ancestors
+				pcm34 += (c4 / 0xfff + CHAR_MIN) << 4;
+=======
+				pcm34 += (c4 / 0xfff - CHAR_MIN) << 4;
+>>>>>>> 5195b28eed4688205cc782b3c5cd407d91d4a479
 			core::mem.sysregs(PCM34) = pcm34;
 			if (i & 0x1)
 			{
