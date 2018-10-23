@@ -6,26 +6,28 @@
 #include <fstream>
 
 #define FILTER_NONE 0
-#define FILTER_AASCALE2X 1
-#define FILTER_AASCALE4X 2
-#define FILTER_AASCALE8X 3
-#define FILTER_SCALE2X 4
-#define FILTER_SCALE4X 5
-#define FILTER_SCALE8X 6
-#define FILTER_HQ2X 7
-#define FILTER_OMNISCALE 8
-#define FILTER_SUPEREAGLE 9
-#define FILTER_2XSAI 10
-#define FILTER_XBR 11
-#define FILTER_XBRZ 12
-#define FILTER_GAMEBOY 13
-#define FILTER_LAST 7
+#define FILTER_BILINEAR 1
+#define FILTER_AASCALE2X 2
+#define FILTER_AASCALE4X 3
+#define FILTER_AASCALE8X 4
+#define FILTER_SCALE2X 5
+#define FILTER_SCALE4X 6
+#define FILTER_SCALE8X 7
+#define FILTER_HQ2X 8
+#define FILTER_OMNISCALE 9
+#define FILTER_SUPEREAGLE 10
+#define FILTER_2XSAI 11
+#define FILTER_XBR 12
+#define FILTER_XBRZ 13
+#define FILTER_GAMEBOY 14
+#define FILTER_LAST 8
 
 static float mat[16];
 static int32_t ctx_width = -1;
 static int32_t ctx_height = -1;
 static GLuint texture;
 static GLuint vao;
+static uint64_t used_program = 0;
 
 struct glprogram
 {
@@ -139,8 +141,7 @@ static void initProgram(glprogram *program, std::string vertex, std::string frag
 
 static void initPrograms()
 {
-	//std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
-	std::string fragments[] = {"basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "basic.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
+	std::string fragments[] = {"basic.fs", "basic.fs", "AAScale2x.fs", "AAScale4x.fs", "AAScale8x.fs", "Scale2x.fs", "Scale4x.fs", "Scale8x.fs", "HQ2x.fs", "OmniScale.fs", "SuperEagle.fs", "2xsai.fs", "xbr.fs", "xbrz.fs", "Gameboy.fs"};
 	for (uint8_t i = 0; i < FILTER_LAST; ++i)
 		initProgram(&programs[i], "shaders/basic.vs", "shaders/" + fragments[i]);
 	currentprogram = &programs[0];
@@ -182,8 +183,8 @@ static void gl_realize(GtkWidget *widget)
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	Main::glErrors("1");
 	gdk_gl_drawable_gl_end(gldrawable);
 }
@@ -224,6 +225,9 @@ static bool gl_render(GtkWidget *widget, cairo_t *cr, gpointer data)
 		std::cerr << "gtk_widget_begin_gl failed" << std::endl;
 		return FALSE;
 	}
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, used_program == 1 ? GL_LINEAR : GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, used_program == 1 ? GL_LINEAR : GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, 160, 144, 0, GL_RGB, GL_UNSIGNED_BYTE, Main::getMainDisplay()->getTexDatas());
 	glBindVertexArray(vao);
 	glUseProgram(currentprogram->program);
@@ -375,13 +379,16 @@ static void cb_options_filter(GtkWidget *widget, gpointer type)
 {
 	if (!gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)))
 		return;
-	uint64_t id = (uint64_t)type;
+	used_program = (uint64_t)type;
+	uint64_t id = used_program;
 	if (id >= FILTER_LAST)
 		id = FILTER_NONE;
 	currentprogram = &programs[id];
 	MainDisplay *mainDisplay = Main::getMainDisplay();
 	if (id != FILTER_NONE)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_none), false);
+	if (id != FILTER_BILINEAR)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_bilinear), false);
 	if (id != FILTER_AASCALE2X)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(mainDisplay->menu_options_filter_aascale2x), false);
 	if (id != FILTER_AASCALE4X)
@@ -579,6 +586,11 @@ void MainDisplay::build_menu_options_filter()
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(this->menu_options_filter_none), true);
 	g_signal_connect(G_OBJECT(this->menu_options_filter_none), "activate", G_CALLBACK(cb_options_filter), (void*)((unsigned long)FILTER_NONE));
 	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_none);
+
+	//Bilinear
+	this->menu_options_filter_bilinear = gtk_check_menu_item_new_with_label("Bilinear");
+	g_signal_connect(G_OBJECT(this->menu_options_filter_bilinear), "activate", G_CALLBACK(cb_options_filter), (void*)((unsigned long)FILTER_BILINEAR));
+	gtk_menu_shell_append(GTK_MENU_SHELL(this->menu_options_filter_menu), this->menu_options_filter_bilinear);
 
 	//AAScale2x
 	this->menu_options_filter_aascale2x = gtk_check_menu_item_new_with_label("AAScale2x");

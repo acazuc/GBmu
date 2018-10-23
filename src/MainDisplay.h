@@ -44,6 +44,7 @@ class MainDisplay
 		GtkWidget *menu_options_filter;
 		GtkWidget *menu_options_filter_menu;
 		GtkWidget *menu_options_filter_none;
+		GtkWidget *menu_options_filter_bilinear;
 		GtkWidget *menu_options_filter_aascale2x;
 		GtkWidget *menu_options_filter_aascale4x;
 		GtkWidget *menu_options_filter_aascale8x;
